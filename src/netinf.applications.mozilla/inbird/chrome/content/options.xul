@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
 Copyright (C) 2009,2010 University of Paderborn, Computer Networks Group
 Copyright (C) 2009,2010 Christian Dannewitz <christian.dannewitz@upb.de>
@@ -36,7 +37,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
-<?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!DOCTYPE inbird SYSTEM "chrome://inbird/locale/translations.dtd">
 <prefwindow 
