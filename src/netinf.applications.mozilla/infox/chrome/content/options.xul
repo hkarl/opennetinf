@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE infox SYSTEM "chrome://infox/locale/translations.dtd">
+<prefwindow 
+     title="InFox Preferences"
+     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+ 
+	<prefpane label="InFox Preferences">
+		<preferences>
+			<preference id="infox-server" name="extensions.infox.server" type="string"/>
+			<preference id="infox-port" name="extensions.infox.port" type="string"/>
+			<preference id="infox-username" name="extensions.infox.username" type="string"/>
+			<preference id="infox-password" name="extensions.infox.password" type="string"/>
+			<preference id="infox-autorun" name="extensions.infox.autorun" type="bool"/>
+			<preference id="infox-autoopen" name="extensions.infox.autoopen" type="bool"/>
+			<preference id="infox-colorizelinks" name="extensions.infox.colorizelinks" type="bool"/>
+			<preference id="infox-unrescolor" name="extensions.infox.unrescolor" type="string"/>
+			<preference id="infox-rescolor" name="extensions.infox.rescolor" type="string"/>
+		</preferences>
+
+		<grid>
+			<columns>
+				<column flex="4" />
+				<column flex="1" />
+			</columns>
+			<rows>
+				<row>
+					<label control="server" value="&server;" />
+					<textbox id="server" rows="15" preference="infox-server" />
+				</row>
+				<row>
+					<label control="port" value="&port;" />
+					<textbox id="port" rows="15" preference="infox-port" />
+				</row>
+				<row>
+					<label control="username" value="&username;" />
+					<textbox id="username" rows="15" preference="infox-username" />
+				</row>
+				<row>
+					<label control="password" value="&password;" />
+					<textbox id="password" rows="15" preference="infox-password" />
+				</row>
+				<row>
+					<label control="autoopen" value="&autoopen;" />
+					<checkbox id="autoopen" preference="infox-autoopen" />
+				</row>
+				<row>
+					<label control="colorizelinks" value="&colorizelinks;" />
+					<checkbox id="colorizelinks" preference="infox-colorizelinks" />
+				</row>
+				<row>
+					<label control="unrescolor" value="&unrescolor;" />
+					<colorpicker type="button" id="unrescolor" preference="infox-unrescolor" />
+				</row>
+				<row>
+					<label control="rescolor" value="&rescolor;" />
+					<colorpicker type="button" id="rescolor" preference="infox-rescolor" />
+				</row>
+				<row>
+					
+				</row>
+			</rows>
+		</grid>
+		<box>
+			<label href="http://www.netinf.org/about-2/license/" class="text-link" value="Authors and License Information" />
+		</box>
+	</prefpane>
+</prefwindow>

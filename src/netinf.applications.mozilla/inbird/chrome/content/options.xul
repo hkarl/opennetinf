@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE inbird SYSTEM "chrome://inbird/locale/translations.dtd">
+<prefwindow 
+     title="InBird Preferences"
+     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+ 
+	<prefpane label="InBird Preferences">
+		<preferences>
+			<preference id="inbird-server" name="extensions.inbird.server" type="string"/>
+			<preference id="inbird-port" name="extensions.inbird.port" type="string"/>
+			<preference id="inbird-username" name="extensions.inbird.username" type="string"/>
+			<preference id="inbird-password" name="extensions.inbird.password" type="string"/>
+		</preferences>
+
+		<grid>
+			<columns>
+				<column flex="4" />
+				<column flex="1" />
+			</columns>
+			<rows>
+				<row>
+					<label control="server" value="&server;" />
+					<textbox id="server" rows="15" preference="inbird-server" />
+				</row>
+				<row>
+					<label control="port" value="&port;" />
+					<textbox id="port" rows="15" preference="inbird-port" />
+				</row>
+				<row>
+					<label control="username" value="&username;" />
+					<textbox id="username" rows="15" preference="inbird-username" />
+				</row>
+				<row>
+					<label control="password" value="&password;" />
+					<textbox id="password" rows="15" preference="inbird-password" />
+				</row>
+			</rows>
+		</grid>
+		<box>
+			<label href="http://www.netinf.org/about-2/license/" class="text-link" value="Authors and License Information" />
+		</box>
+	</prefpane>
+ 
+</prefwindow>

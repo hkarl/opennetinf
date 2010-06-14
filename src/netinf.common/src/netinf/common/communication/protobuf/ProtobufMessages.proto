@@ -1,0 +1,238 @@
+package netinf.common.communication.protobuf;
+
+// Documentation: Each "ProtoXY" message has a corresponding "XY.java" class
+// with JavaDoc comments in the package netinf.common.messages
+
+enum ProtoSerializeFormat
+{
+	RDF = 1;
+	JAVA = 2;
+}
+
+message ProtoNetInfMessage
+{
+	required ProtoSerializeFormat serializeFormat = 1;
+	optional string userName = 2;
+	optional string privateKey = 3;
+	optional string errorMessage = 4;
+	
+	optional ProtoRSGetRequest RSGetRequest = 11;
+	optional ProtoRSGetResponse RSGetResponse = 12;
+	optional ProtoRSPutRequest RSPutRequest = 13;
+	optional ProtoRSPutResponse RSPutResponse = 14;
+	optional ProtoRSGetNameRequest RSGetNameRequest = 17;
+	optional ProtoRSGetNameResponse RSGetNameResponse = 18;
+	optional ProtoRSGetPriorityRequest RSGetPriorityRequest = 19;
+	optional ProtoRSGetPriorityResponse RSGetPriorityResponse = 20;
+	optional ProtoRSGetServicesRequest RSGetServicesRequest = 21;
+	optional ProtoRSGetServicesResponse RSGetServicesResponse = 22;
+	
+	optional ProtoESFRegistrationRequest ESFRegistrationRequest = 31;
+	optional ProtoESFRegistrationResponse ESFRegistrationResponse = 32;
+	optional ProtoESFFetchMissedEventsRequest ESFFetchMissedEventsRequest = 33;
+	optional ProtoESFFetchMissedEventsResponse ESFFetchMissedEventsResponse = 34;
+	optional ProtoESFEventMessage ESFEventMessage = 40;
+	optional ProtoESFSubscriptionRequest ESFSubscriptionRequest = 36;
+	optional ProtoESFSubscriptionResponse ESFSubscriptionResponse = 37;
+	optional ProtoESFUnsubscriptionRequest ESFUnsubscriptionRequest = 38;
+	optional ProtoESFUnsubscriptionResponse ESFUnsubscriptionResponse = 39;
+	
+	optional ProtoTCGetServicesRequest TCGetServicesRequest = 41;
+	optional ProtoTCGetServicesResponse TCGetServicesResponse = 42;
+	optional ProtoTCChangeTransferRequest TCChangeTransferRequest = 43;
+	optional ProtoTCChangeTransferResponse TCChangeTransferResponse = 44;
+	optional ProtoTCStartTransferRequest TCStartTransferRequest = 45;
+	optional ProtoTCStartTransferResponse TCStartTransferResponse = 46;
+	
+	optional ProtoSCGetBySPARQLRequest SCGetBySPARQLRequest = 51;
+	optional ProtoSCGetByQueryTemplateRequest SCGetByQueryTemplateRequest = 59;
+	optional ProtoSCSearchResponse SCSearchResponse = 52;
+	optional ProtoSCGetTimeoutAndNewSearchIDRequest SCGetTimeoutAndNewSearchIDRequest = 57;
+	optional ProtoSCGetTimeoutAndNewSearchIDResponse SCGetTimeoutAndNewSearchIDResponse = 58;
+
+}
+
+
+/*
+// ResolutionController + ResolutionService Messages
+*/
+message ProtoRSGetRequest
+{
+	required bytes identifier = 1;
+	optional bool fetchAllVersions = 2;
+	repeated bytes resolutionServicesToUse = 3;
+	optional bool downloadBinaryObject = 4;
+}
+
+message ProtoRSGetResponse
+{
+	repeated bytes informationObjects = 1;
+}
+
+message ProtoRSPutRequest
+{
+	required bytes informationObject = 1;
+	repeated bytes resolutionServicesToUse = 2;
+}
+
+message ProtoRSPutResponse
+{
+}
+
+message ProtoRSGetNameRequest
+{
+	required bytes resolutionServiceIdentifier = 1;
+}
+
+message ProtoRSGetNameResponse
+{
+	required string name = 1;
+}
+
+message ProtoRSGetPriorityRequest
+{
+	required bytes resolutionServiceIdentifier = 1;
+}
+
+message ProtoRSGetPriorityResponse
+{
+	required int32 priority = 1;
+}
+
+message ProtoRSGetServicesRequest
+{
+}
+
+message ProtoRSGetServicesResponse
+{
+	repeated bytes resolutionServiceIdentifiers = 1;
+}
+
+
+/*
+// Event Service Messages
+*/
+message ProtoESFRegistrationRequest
+{
+	required bytes personObjectIdentifier = 1;
+	optional bytes eventContainerIdentifier = 2;
+}
+
+message ProtoESFRegistrationResponse
+{
+	optional bytes eventContainerIdentifier = 1;
+}
+
+message ProtoESFFetchMissedEventsRequest
+{
+}
+
+message ProtoESFFetchMissedEventsResponse
+{
+ repeated ProtoESFEventMessage eventMessages = 1;
+}
+
+message ProtoESFEventMessage
+{
+	optional string matchedSubscriptionIdentification = 1;
+	optional bytes oldInformationObject = 2;
+	optional bytes newInformationObject = 3;
+}
+
+message ProtoESFSubscriptionRequest
+{
+	required string subscriptionIdentification = 1;
+	required int64 expires = 2;
+	required string sparqlSubscription = 3;
+}
+
+message ProtoESFSubscriptionResponse
+{
+}
+
+message ProtoESFUnsubscriptionRequest
+{
+	required string subscriptionIdentification = 1;
+}
+
+message ProtoESFUnsubscriptionResponse
+{
+}
+
+
+/*
+// Transfer Controller Messages
+*/
+
+message ProtoTCGetServicesRequest
+{
+}
+
+message ProtoTCGetServicesResponse
+{
+	repeated string transferServices = 1;
+}
+
+message ProtoTCStartTransferRequest
+{
+	required string source = 1;
+	optional string destination = 2;
+	optional string transferServiceToUse = 3;
+}
+
+message ProtoTCStartTransferResponse
+{
+	required string source = 1;
+	//It is not necessary to inform the initiater about the destination of the Transfer
+	optional string destination = 2;
+	required string jobId = 3;
+}
+
+message ProtoTCChangeTransferRequest
+{
+	required bool proceed = 1;
+	optional string newDestination = 2;
+	required string jobId = 3;
+	optional string transferServiceToUse = 4;
+}
+
+message ProtoTCChangeTransferResponse
+{
+	required string source = 1;
+	optional string newDestination = 2;
+	required string jobId = 3;
+}
+
+
+/*
+// Search Controller Messages
+*/
+
+message ProtoSCGetBySPARQLRequest
+{
+	required string request = 1;
+	required int32 searchID = 2;
+}
+
+message ProtoSCSearchResponse
+{
+	repeated bytes resultIdentifiers = 1;
+}
+
+message ProtoSCGetTimeoutAndNewSearchIDRequest
+{
+	required int32 desiredTimeout = 1;
+}
+
+message ProtoSCGetTimeoutAndNewSearchIDResponse
+{
+	required int32 usedTimeout = 1;
+	required int32 searchID = 2;
+}
+
+message ProtoSCGetByQueryTemplateRequest
+{
+	required string type = 1;
+	repeated string parameters = 2;
+	required int32 searchID = 3;
+}

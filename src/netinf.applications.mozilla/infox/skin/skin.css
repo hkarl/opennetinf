@@ -1,0 +1,21 @@
+/* Plugin User Interface */
+#infox-gp-switchdevice-button {
+	list-style-image: url("chrome://infox/skin/redirect.png");
+}
+
+#infox-statusbar-status {
+	width: 83px;
+	margin: 0 5px;
+}
+
+/* NetInf Links */
+.netinf-selected {
+	padding-left: 18px;
+	background-image: url("chrome://infox/skin/oni16.png");
+	background-repeat: no-repeat;
+}
+.netinf-resolved {
+	padding-left: 18px;
+	background-image: url("chrome://infox/skin/loading.gif");
+	background-repeat: no-repeat;
+}

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/"?>
+<?xml-stylesheet href="chrome://infox/skin/iodialog-skin.css" type="text/css"?> 
+<dialog
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  id="informationObjectDialog"
+  title="Information Object"
+  onload="onLoad();"
+  buttons="accept"  
+  ondialogaccept="close();"
+  persist="screenX screenY width height">
+
+  <script type="application/javascript" src="chrome://infox/content/iodialog.js"/>
+  
+  <vbox>	  
+	  <hbox id="verificationbox">
+	    <label id="verificationstatus-label" value="Verification: " />
+	  	<label id="verificationstatus-text" value="Passed" />
+	  </hbox>
+  </vbox>
+  
+  <tree flex="1" cols="4">
+	  <treecols>
+	    <treecol id="security" label="Security"/>
+	    <treecol id="name" label="Name" flex="1"/>
+	    <treecol id="purpose" label="Purpose" flex="1"/>
+	    <treecol id="value" label="Value" flex="2"/>
+	  </treecols>
+	
+	  <treechildren id="attribrows">
+	  </treechildren>
+  </tree>
+
+</dialog>

@@ -1,0 +1,27 @@
+/* Plugin User Interface */
+#type {
+	font-size: 2em;
+	padding-left:70px;
+	padding-bottom: 30px;
+	background-image: url("chrome://infox/skin/oni64.png");
+	background-repeat: no-repeat;
+}
+
+#logo {
+	width: 32px;
+	height: 32px;
+}
+
+#verificationbox {
+	margin: 			1em .5em;
+	border: 			1px solid #0000ff;
+	background-color:	#ddddff;
+	padding:			5px 40px;
+	background-image: 	url("chrome://infox/skin/large/security-high.png");
+	background-repeat: 	no-repeat;
+	background-position: center left;
+}
+
+#name {
+	treecol-image: url("chrome://infox/skin/security-high.png") !important;
+}

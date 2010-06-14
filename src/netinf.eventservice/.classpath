@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src-test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/netinf.common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/netinf.database"/>
+	<classpathentry kind="lib" path="lib/siena.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/netinf.access"/>
+	<classpathentry kind="lib" path="/netinf.common/lib/jena.jar" sourcepath="/netinf.common/lib-source/jena-2.6.2-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/netinf.common/lib-source/jena-2.6.2-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/netinf.common/lib/arq.jar" sourcepath="/netinf.common/lib-source/arq-2.8.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/netinf.common/lib-source/arq_javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/netinf.common/lib/junit-4.5.jar"/>
+	<classpathentry kind="lib" path="/netinf.common/lib/icu4j_3_4.jar"/>
+	<classpathentry kind="lib" path="/netinf.common/lib/iri.jar"/>
+	<classpathentry kind="lib" path="/netinf.common/lib/slf4j-api-1.5.6.jar"/>
+	<classpathentry kind="lib" path="/netinf.common/lib/slf4j-log4j12-1.5.6.jar"/>
+	<classpathentry kind="lib" path="/netinf.common/lib/xercesImpl.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

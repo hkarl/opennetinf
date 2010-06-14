@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://netinfbird/skin/skin.css" type="text/css"?> 
+<!DOCTYPE netinfox SYSTEM "chrome://netinfbird/locale/translations.dtd">
+<overlay id="sample" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <script src="netinfbird.js" />
+		
+  <statusbar class="chromeclass-status" id="status-bar"> 
+    <hbox insertafter="totalMessageCount" id="status-bar-end-box">
+      <statusbarpanel id="netinfbird-status" label="InBird active" /> 
+    </hbox>
+  </statusbar> 
+		
+</overlay>
