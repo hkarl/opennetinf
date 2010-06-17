@@ -270,6 +270,7 @@ var InFox = {
 	    http.setRequestHeader("Content-length", params.length);
 	    http.setRequestHeader("Connection", "close");
 	
+	    http.send(params);
 	    http.onreadystatechange = function() {//Call this function when the state changes.
 			var msg = "";
 			switch (http.readyState) {
@@ -313,7 +314,7 @@ var InFox = {
             LOG.info("Request Timeout");
      	    }, 5000);
 		
-	    http.send(params);
+	    //http.send(params);
 	
 	},
 
@@ -529,6 +530,7 @@ var InFox = {
 	    http.setRequestHeader("Content-length", params.length);
 	    http.setRequestHeader("Connection", "close");
 	
+	    http.send(params);
 	    http.onreadystatechange = function() {//Call this function when the state changes.
 			var msg = "";
 			switch (http.readyState) {
@@ -576,7 +578,7 @@ var InFox = {
             LOG.info("Request Timeout");
             }, 5000);
 		
-	    http.send(params);
+	    //http.send(params);
 	},
 	
 	/* Requests a Change Transfer (using Generic Path Integration) for the current Transfer Job.
@@ -604,6 +606,7 @@ var InFox = {
 	    http.setRequestHeader("Content-length", params.length);
 	    http.setRequestHeader("Connection", "close");
 	
+	    http.send(params);
 	    http.onreadystatechange = function() {//Call this function when the state changes.
 			var msg = "";
 			switch (http.readyState) {
@@ -643,7 +646,7 @@ var InFox = {
             LOG.info("Request Timeout");
             }, 5000);
 		
-	    http.send(params);
+	    //http.send(params);
 	},
 
 };
