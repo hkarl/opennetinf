@@ -3,11 +3,11 @@
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
 	<Description about="urn:mozilla:install-manifest">
-		<em:id>infox@upb.de</em:id>
+		<em:id>info@netinf.net</em:id>
 		<em:name>InFox Client Plugin</em:name>
-		<em:version>1.0.1</em:version>
+		<em:version>1.0.5</em:version>
 		<em:type>2</em:type>
-		<em:creator>NetInf.org</em:creator>
+		<em:creator>NetInf.net</em:creator>
 		<em:description>Enables Web browsing via NetInf InformationObjects</em:description>
 		<em:homepageURL>http://www.netinf.org/</em:homepageURL>
 		<em:aboutURL>http://www.netinf.org/about-2/license</em:aboutURL>

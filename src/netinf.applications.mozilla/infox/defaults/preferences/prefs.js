@@ -3,10 +3,10 @@ pref("network.protocol-handler.warn-external.ni", false);
 pref("network.protocol-handler.expose.ni", false);
 pref("security.fileuri.strict", false);
 
-pref("extensions.infox.server", "localhost");
+pref("extensions.infox.server", "netinf-loc1.cs.upb.de");
 pref("extensions.infox.port", "8080");
-pref("extensions.infox.username", "privateKeyFile");
-pref("extensions.infox.password", "passwordpasswordpassword");
+pref("extensions.infox.username", "generic");
+pref("extensions.infox.password", "rO0ABXNyABRqYXZhLnNlY3VyaXR5LktleVJlcL35T7OImqVDAgAETAAJYWxnb3JpdGhtdAASTGphdmEvbGFuZy9TdHJpbmc7WwAHZW5jb2RlZHQAAltCTAAGZm9ybWF0cQB+AAFMAAR0eXBldAAbTGphdmEvc2VjdXJpdHkvS2V5UmVwJFR5cGU7eHB0AANSU0F1cgACW0Ks8xf4BghU4AIAAHhwAAACejCCAnYCAQAwDQYJKoZIhvcNAQEBBQAEggJgMIICXAIBAAKBgQCUgvL33oJm1KfdRKxjt8st/Bbgcs5NLrTBC5fnhmU1j/Lk0MRmfIn2PIsGodOKz7u3JZVJAl7mdoVd0enp764a35fdCwZzI2LmtvgqZbjQn6scQ1DWhZDbfvbcHFV/lganhmW9rI9FzjqAj5x79VLhlJZ++dqTPVMuHUODDk21dwIDAQABAoGAO7jpYnqNsDKmitnaBYPc5lIxFPO2ON2mfNdfsBCg1Mhdoly+DoTYqjgwpGshefoOABnSDfkxFrbk7RTEX3ouZit1c1rLgdCDzZQHBQQTlmNOlVFLPun6vsBNnVgZPSqbjHvHRvPH5IK2z0eNR3BvX56pLqGEuejdn4Wn/QJFy+ECQQDj7PcxnZM0x9+EBGyjpiXBNYpRJk3DTZv7Oi2RBRisa4A9RakB8GpGwKh/VHl9HNRlVEE2D2F9FNlyKMsJC2BnAkEAps3eTKl5NhdUytYztWGV2ZVWRGox1I57Y2goexsyzQqWDjcQx8+qSRK5qp01AwdqlG/Qdh7zLi0Oat0l5b2YcQJBAMZv7x9RU3JmeeFUgMlRxBkc5hmUwatCDIWDt1xFFaA3z+SIm4ZGrCCBZ7HD+CnHSdwWqNfKOFRQLKjJf0uWjg0CQEK8yX1orQt8SDujeirO8XKNsmdLCcbefvWl3dRrbGbnHmRvmbIoHxx/dnOR1HzywazEE+a+uVM3SbZt5tTFh7ECQHo+A4+twAx6GufgNDdVoSazFLZN6Fa9bvcAGvNnmtfJfSwqLb4BoH/sUWIrZxxNIOhx5Ae/jnC8zdFv4VqJuEx0AAZQS0NTIzh+cgAZamF2YS5zZWN1cml0eS5LZXlSZXAkVHlwZQAAAAAAAAAAEgAAeHIADmphdmEubGFuZy5FbnVtAAAAAAAAAAASAAB4cHQAB1BSSVZBVEU=");
 pref("extensions.infox.autoopen", true);
 pref("extensions.infox.colorizelinks", true);
 pref("extensions.infox.unrescolor", "#ffaaaa");

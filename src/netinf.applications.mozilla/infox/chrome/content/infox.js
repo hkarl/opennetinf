@@ -125,7 +125,7 @@ var InFox = {
 	 */
 	checkContextMenu: function(event) {
 		// check if the link contains a NetInf URI (ni:)
-		var pattern = /ni:(.*)/;
+		var pattern = /^ni:(.*)/;
 		var patternfound = false;
 		
 		var isNetInfAnchor = event.target instanceof HTMLAnchorElement && pattern.test(event.target.getAttributeNode("href").nodeValue)
@@ -148,7 +148,7 @@ var InFox = {
 
 			// Get all NetInf links
 			var netinfLink		= allLinks[i];
-			var pattern			= /ni:(.*)/;
+			var pattern			= /^ni:(.*)/;
 			var patternfound	= false;
 			
 			try {
@@ -211,7 +211,7 @@ var InFox = {
 			if (event.target instanceof HTMLAnchorElement) {
 			
 				// check if the link contains a NetInf URI (ni:)
-				var pattern = /ni:(.*)/;
+				var pattern = /^ni:(.*)/;
 				var patternfound = false;
 				
 				// check id- and href attribute. Resolved links just have the id left to distinguish them from usual links
@@ -307,6 +307,11 @@ var InFox = {
 	    		LOG.error(msg);
 	    	}
 	    };
+
+	    var requestTimer = setTimeout(function() {
+       	    http.abort();
+            LOG.info("Request Timeout");
+     	    }, 5000);
 		
 	    http.send(params);
 	
@@ -565,6 +570,11 @@ var InFox = {
 	    		LOG.error(msg);
 	    	}
 	    };
+
+            var requestTimer = setTimeout(function() {
+            http.abort();
+            LOG.info("Request Timeout");
+            }, 5000);
 		
 	    http.send(params);
 	},
@@ -627,6 +637,11 @@ var InFox = {
 	    		LOG.error(msg);
 	    	}
 	    };
+
+            var requestTimer = setTimeout(function() {
+            http.abort();
+            LOG.info("Request Timeout");
+            }, 5000);
 		
 	    http.send(params);
 	},

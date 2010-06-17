@@ -60,7 +60,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 		<toolbarpalette id="BrowserToolbarPalette">
 			<toolbaritem id="infox-gp-label" flex="1">
-				<label id="infox-gp-label" value="&moveto;" control="infox-gp-target"/>
 				<textbox id="infox-gp-target" multiline="false" label="&switchdevice;" />
 				<toolbarbutton id="infox-gp-switchdevice-button" label="&switchdevice;" oncommand="InFox.tcChangeRequest();"/>
 			</toolbaritem>

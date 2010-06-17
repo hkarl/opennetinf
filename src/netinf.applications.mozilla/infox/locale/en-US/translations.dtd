@@ -6,11 +6,11 @@
 <!ENTITY port				"HTTP Interface Port">
 <!ENTITY username			"Username">
 <!ENTITY password			"Passowrd">
-<!ENTITY moveto				"Move to: ">
+<!ENTITY moveto				" GP Relocation\n Destination: ">
 <!ENTITY autorun			"Start Plugin at Startup">
 <!ENTITY autoopen			"Automatically follow links">
 <!ENTITY colorizelinks		"Style links">
 <!ENTITY unrescolor			"Unresolved link's color">
 <!ENTITY rescolor			"Resolved link's color">
-<!ENTITY switchdevice		"Switch">
-<!ENTITY switchdevicedesc	"Switch to other Device">
+<!ENTITY switchdevice		"Relocate GP">
+<!ENTITY switchdevicedesc	"Relocate GP">
