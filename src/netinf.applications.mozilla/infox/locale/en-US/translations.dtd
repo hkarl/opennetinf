@@ -4,8 +4,8 @@
 <!ENTITY showio				"Show InformationObject">
 <!ENTITY server				"HTTP Interface Server">
 <!ENTITY port				"HTTP Interface Port">
-<!ENTITY username			"Username">
-<!ENTITY password			"Passowrd">
+<!ENTITY username			"Username/Identification">
+<!ENTITY password			"Password/Key">
 <!ENTITY moveto				" GP Relocation\n Destination: ">
 <!ENTITY autorun			"Start Plugin at Startup">
 <!ENTITY autoopen			"Automatically follow links">

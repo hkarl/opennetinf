@@ -80,7 +80,8 @@ var InBird = {
 		// Replace a NetInf formatted mail address ( attribute@IdO-Identifier ) with the mail address stored within the given attribute
 		netinfaddress = gMsgCompose.compFields.to;
 		
-		var pattern = /([a-zA-Z0-9._-].)+<(.*)@(.*)\.netinf/;
+		//var pattern = /([a-zA-Z0-9._-].)+<(.*)@(.*)\.netinf/;
+		  var pattern = /([^<]*)<(.*)@(.*)\.netinf>/;
 		var patternfound = pattern.test(netinfaddress);
 			
 		var patternfound = pattern.test(netinfaddress);

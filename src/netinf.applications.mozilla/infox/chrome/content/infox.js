@@ -128,7 +128,7 @@ var InFox = {
 		var pattern = /^ni:(.*)/;
 		var patternfound = false;
 		
-		var isNetInfAnchor = event.target instanceof HTMLAnchorElement && pattern.test(event.target.getAttributeNode("href").nodeValue)
+		var isNetInfAnchor = event.target instanceof HTMLAnchorElement && (pattern.test(event.target.getAttributeNode("href").nodeValue) || pattern.test(event.target.getAttributeNode("ni").nodeValue))
 	
 		document.getElementById("infox-anchor-contextmenu").hidden = !isNetInfAnchor;
 		
@@ -152,7 +152,8 @@ var InFox = {
 			var patternfound	= false;
 			
 			try {
-				patternfound = pattern.test(netinfLink.getAttributeNode("href").nodeValue);
+				patternfound = patternfound || pattern.test(netinfLink.getAttributeNode("href").nodeValue);
+				patternfound = patternfound || pattern.test(netinfLink.getAttributeNode("ni").nodeValue);
 			} catch (e) {
 				patternfound = false;
 			}
@@ -194,7 +195,7 @@ var InFox = {
 			document.getElementById('infox-gp-target').disabled = true;
 			document.getElementById('infox-gp-switchdevice-button').disabled = true;
 		} catch (e) {
-			LOG.info("Please add the GP-bar under 'View -> Toolbars -> Customize...' to enable GP functionality.");
+			//LOG.info("Please add the GP-bar under 'View -> Toolbars -> Customize...' to enable GP functionality.");
 		}
 		
 	},
@@ -213,24 +214,31 @@ var InFox = {
 				// check if the link contains a NetInf URI (ni:)
 				var pattern = /^ni:(.*)/;
 				var patternfound = false;
+				var strIdentifier;
 				
 				// check id- and href attribute. Resolved links just have the id left to distinguish them from usual links
 				if (event.target.getAttributeNode("id") != null) {
 					patternfound = pattern.test(event.target.getAttributeNode("id").nodeValue);
+					pattern.exec(event.target.getAttributeNode("id").nodeValue);
+					strIdentifier = RegExp.$1;
+				}
+				else if (event.target.getAttributeNode("ni") != null) {
+					patternfound = pattern.test(event.target.getAttributeNode("ni").nodeValue);
+					pattern.exec(event.target.getAttributeNode("ni").nodeValue);
+					strIdentifier = RegExp.$1;
 				}
 				else {
 					patternfound = pattern.test(event.target.getAttributeNode("href").nodeValue);
+					pattern.exec(event.target.getAttributeNode("href").nodeValue);
+					strIdentifier = RegExp.$1;
 				}
-				
-				// okay, first let's get the NetInf Identifier (old target). And chop off the protocol prefix (ni:)
-				pattern.exec(event.target.getAttributeNode("href").nodeValue);
-				var strIdentifier = RegExp.$1;
-				
+				if(patternfound) {				
 				// ... and fire! Get that Locator from our InformationObject
-				var showinfo = false;
-				if (event.onLink)
-					showinfo = true;
-				InFox.sendRequest(strIdentifier, event.target, showinfo);	
+					var showinfo = false;
+					if (event.onLink)
+						showinfo = true;
+					InFox.sendRequest(strIdentifier, event.target, showinfo);	
+				}
 			} else {
 				// do nothing
 			}
@@ -289,7 +297,7 @@ var InFox = {
 					} else {
 						msg = "Request unsuccessfull. HTTP status: " + http.status
 						LOG.info(msg);
-						return;
+						//return;
 					}
 					break;
 				default:
@@ -305,7 +313,7 @@ var InFox = {
 	    			InFox.showIO(http.responseXML);
 	    		}
 	    	} else if (http.readyState == 4 && http.status != 200) {
-	    		LOG.error(msg);
+			content.location.href = "http://www.netinf.org/infoxerror/";		
 	    	}
 	    };
 
@@ -414,7 +422,7 @@ var InFox = {
 					htmlAnchor.getAttributeNode("href").nodeValue = newhref;
 					if (this.colorize_links) {
 						htmlAnchor.className = "netinf-selected";
-						htmlAnchor.style.background = this.rescolor + " url(\"chrome://fox/skin/oni16.png\") no-repeat";
+						htmlAnchor.style.background = this.rescolor + " url(\"chrome://infox/skin/oni16.png\") no-repeat";
 					}
 					this.updateUI();
 					LOG.info("just update the URI from InformationObject");
