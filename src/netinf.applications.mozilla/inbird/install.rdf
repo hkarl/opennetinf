@@ -5,7 +5,7 @@
 	<Description about="urn:mozilla:install-manifest">
 		<em:id>info@netinf.net</em:id>
 		<em:name>InBird NetInf IdentityObject Handler</em:name>
-		<em:version>1.0.3</em:version>
+		<em:version>0.3.4</em:version>
 		<em:creator>NetInf.net</em:creator>
 		<em:description>Gets current e-mail address from NetInf Identity Object</em:description>
 		<em:homepageURL>http://www.netinf.org/</em:homepageURL>

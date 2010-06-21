@@ -3,7 +3,7 @@ pref("network.protocol-handler.warn-external.ni", false);
 pref("network.protocol-handler.expose.ni", false);
 pref("security.fileuri.strict", false);
 
-pref("extensions.infox.server", "netinf-loc1.cs.upb.de");
+pref("extensions.infox.server", "nn1.testbed.netinf.org");
 pref("extensions.infox.port", "8080");
 pref("extensions.infox.username", "generic");
 pref("extensions.infox.password", "generic");
