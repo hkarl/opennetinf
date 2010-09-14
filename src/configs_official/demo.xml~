@@ -1,0 +1,690 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     25.02.2010 20:55:11                                                        
+
+     NetInf    
+     This can build and deploy all possible components of NetInf
+     
+     IMPORTANT TARGETS:
+     clean 				cleans all .class-files, build-dir and archive
+     create_archive		creates deploy.tgz in demo
+     deploy				deploy to demo testbed 
+	 deploy_local		deploy to local machine, current user
+	                    
+     azamir                                                                
+     ====================================================================== -->
+<project name="NetInf" default="create_archive">
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+
+	<!-- DESCRIPTION -->
+	<description>
+            This can build all possible components of NetInf
+    </description>
+
+	<!-- ENVIRONMENT -->
+	<property environment="env" />
+
+	<!-- GENERAL LOCATIONS AND NAMES -->
+	<property name="projects.location" value=".." />
+	<property name="builddir.location" value="../../demo/builddir" />
+	<property name="build.location" value="../../demo/build" />
+	<property name="plugin.location" value="${builddir.location}/plugins" />
+	<property name="jar.location" value="${build.location}/jar" />
+	<property name="nlibs.location" value="${jar.location}/netinf_libs" />
+	<property name="libs.location" value="${jar.location}/libs" />
+
+	<!-- PROJECT LOCATIONS -->
+	<property name="netinf.access.location" value="${projects.location}/netinf.access" />
+	<property name="netinf.common.location" value="${projects.location}/netinf.common" />
+	<property name="netinf.database.location" value="${projects.location}/netinf.database" />
+	<property name="netinf.eventservice.location" value="${projects.location}/netinf.eventservice" />
+	<property name="netinf.node.location" value="${projects.location}/netinf.node" />
+	<property name="netinf.tools.iomanagement.location" value="${projects.location}/netinf.tools.iomanagement" />
+	<property name="netinf.tools.logging.location" value="${projects.location}/netinf.tools.logging" />
+	<property name="netinf.tools.productlist.location" value="${projects.location}/netinf.tools.productlist" />
+	<property name="netinf.tools.shopping.location" value="${projects.location}/netinf.tools.shopping" />
+
+	<!-- DEBUGLEVEL -->
+	<property name="debuglevel" value="source,lines,vars" />
+
+	<!-- SOURCE AND TARGET -->
+	<property name="target" value="1.6" />
+	<property name="source" value="1.6" />
+
+	<!-- COMMON CLASSPATHS -->
+	<path id="JUnit 4.libraryclasspath">
+		<pathelement location="${plugin.location}/org.junit4_4.5.0.v20090824/junit.jar" />
+		<pathelement location="${plugin.location}/org.hamcrest.core_1.1.0.v20090501071000.jar" />
+	</path>
+
+	<!-- OWN CLASSPATHS -->
+	<!-- netinf.access CP -->
+	<path id="netinf.access.classpath">
+		<pathelement location="${netinf.access.location}/bin" />
+		<path refid="netinf.common.classpath" />
+		<path refid="JUnit 4.libraryclasspath" />
+	</path>
+	<!-- netinf.common CP -->
+	<path id="netinf.common.classpath">
+		<pathelement location="${netinf.common.location}/bin" />
+		<pathelement location="${netinf.common.location}/lib/log4j-1.2.15.jar" />
+		<pathelement location="${netinf.common.location}/lib/commons-io-1.4.jar" />
+		<pathelement location="${netinf.common.location}/lib/commons-lang-2.4.jar" />
+		<pathelement location="${netinf.common.location}/lib/aopalliance.jar" />
+		<pathelement location="${netinf.common.location}/lib/guice-2.0.jar" />
+		<pathelement location="${netinf.common.location}/lib/google-protobuf.jar" />
+		<pathelement location="${netinf.common.location}/lib/commons-codec-1.4.jar" />
+		<pathelement location="${netinf.common.location}/lib/jena.jar" />
+		<pathelement location="${netinf.common.location}/lib/arq.jar" />
+		<pathelement location="${netinf.common.location}/lib/arq-extra.jar" />
+		<pathelement location="${netinf.common.location}/lib/guice-2.0-src.zip" />
+		<pathelement location="${netinf.common.location}/lib/icu4j_3_4.jar" />
+		<pathelement location="${netinf.common.location}/lib/iri.jar" />
+		<pathelement location="${netinf.common.location}/lib/jenatest.jar" />
+		<pathelement location="${netinf.common.location}/lib/json.jar" />
+		<pathelement location="${netinf.common.location}/lib/junit-4.5.jar" />
+		<pathelement location="${netinf.common.location}/lib/lucene-core-2.3.1.jar" />
+		<pathelement location="${netinf.common.location}/lib/sdb.jar" />
+		<pathelement location="${netinf.common.location}/lib/slf4j-api-1.5.6.jar" />
+		<pathelement location="${netinf.common.location}/lib/slf4j-log4j12-1.5.6.jar" />
+		<pathelement location="${netinf.common.location}/lib/stax-api-1.0.jar" />
+		<pathelement location="${netinf.common.location}/lib/wstx-asl-3.0.0.jar" />
+		<pathelement location="${netinf.common.location}/lib/xercesImpl.jar" />
+		<pathelement location="${netinf.common.location}/lib-test/easymock.jar" />
+		<pathelement location="${netinf.common.location}/lib-test/easymockclassextension.jar" />
+		<pathelement location="${netinf.common.location}/lib-test/cglib-nodep-2.2.jar" />
+		<path refid="JUnit 4.libraryclasspath" />
+	</path>
+	<!-- netinf.database CP -->
+	<path id="netinf.database.classpath">
+		<pathelement location="${netinf.database.location}/bin" />
+		<path refid="netinf.common.classpath" />
+		<pathelement location="${netinf.database.location}/lib/mysql-connector-java-5.0.8-bin.jar" />
+	</path>
+	<!-- netinf.eventservice CP -->
+	<path id="netinf.eventservice.classpath">
+		<pathelement location="${netinf.eventservice.location}/bin" />
+		<path refid="netinf.access.classpath" />
+		<path refid="netinf.common.classpath" />
+		<path refid="netinf.database.classpath" />
+		<pathelement location="${netinf.eventservice.location}/lib/siena.jar" />
+		<pathelement location="${netinf.common.location}/lib/jena.jar" />
+		<pathelement location="${netinf.common.location}/lib/arq.jar" />
+		<pathelement location="${netinf.common.location}/lib/junit-4.5.jar" />
+		<pathelement location="${netinf.common.location}/lib/icu4j_3_4.jar" />
+		<pathelement location="${netinf.common.location}/lib/iri.jar" />
+		<pathelement location="${netinf.common.location}/lib/slf4j-api-1.5.6.jar" />
+		<pathelement location="${netinf.common.location}/lib/slf4j-log4j12-1.5.6.jar" />
+		<pathelement location="${netinf.common.location}/lib/xercesImpl.jar" />
+	</path>
+	<!-- netinf.node CP -->
+	<path id="netinf.node.classpath">
+		<pathelement location="${netinf.node.location}/bin" />
+		<path refid="netinf.common.classpath" />
+		<path refid="netinf.database.classpath" />
+		<path refid="netinf.access.classpath" />
+		<path refid="JUnit 4.libraryclasspath" />
+		<pathelement location="${netinf.node.location}/lib/bouncycastle.jar" />
+		<pathelement location="${netinf.node.location}/lib/commons-jxpath-1.1.jar" />
+		<pathelement location="${netinf.node.location}/lib/commons-logging.jar" />
+		<pathelement location="${netinf.node.location}/lib/FreePastry-2.1.jar" />
+		<pathelement location="${netinf.node.location}/lib/sbbi-upnplib-1.0.4.jar" />
+		<pathelement location="${netinf.node.location}/lib/xmlpull_1_1_3_4a.jar" />
+		<pathelement location="${netinf.node.location}/lib/xpp3-1.1.3.4d_b2.jar" />
+		<pathelement location="${netinf.node.location}/lib/mysql-connector-java-5.1.10-bin.jar" />
+		<pathelement location="${netinf.node.location}/lib/JSAP-2.1.jar" />
+		<pathelement location="${netinf.common.location}/lib/arq-extra.jar" />
+		<pathelement location="${netinf.common.location}/lib/arq.jar" />
+		<pathelement location="${netinf.common.location}/lib/icu4j_3_4.jar" />
+		<pathelement location="${netinf.common.location}/lib/iri.jar" />
+		<pathelement location="${netinf.common.location}/lib/jena.jar" />
+		<pathelement location="${netinf.common.location}/lib/jenatest.jar" />
+		<pathelement location="${netinf.common.location}/lib/json.jar" />
+		<pathelement location="${netinf.common.location}/lib/junit-4.5.jar" />
+		<pathelement location="${netinf.common.location}/lib/log4j-1.2.15.jar" />
+		<pathelement location="${netinf.common.location}/lib/lucene-core-2.3.1.jar" />
+		<pathelement location="${netinf.common.location}/lib/sdb.jar" />
+		<pathelement location="${netinf.common.location}/lib/slf4j-api-1.5.6.jar" />
+		<pathelement location="${netinf.common.location}/lib/slf4j-log4j12-1.5.6.jar" />
+		<pathelement location="${netinf.common.location}/lib/stax-api-1.0.jar" />
+		<pathelement location="${netinf.common.location}/lib/wstx-asl-3.0.0.jar" />
+		<pathelement location="${netinf.common.location}/lib/xercesImpl.jar" />
+		<pathelement location="${netinf.common.location}/lib-test/cglib-nodep-2.2.jar" />
+		<pathelement location="${netinf.common.location}/lib-test/easymock.jar" />
+		<pathelement location="${netinf.common.location}/lib-test/easymockclassextension.jar" />
+	</path>
+	<!-- netinf.tools.iomanagement CP -->
+	<path id="netinf.tools.iomanagement.classpath">
+		<pathelement location="${netinf.tools.iomanagement.location}/bin" />
+		<path refid="netinf.common.classpath" />
+		<path refid="JUnit 4.libraryclasspath" />
+		<pathelement location="${netinf.tools.iomanagement.location}/lib/derby.jar" />
+		<pathelement location="${netinf.tools.iomanagement.location}/lib/JSAP-2.1.jar" />
+	</path>
+	<!-- netinf.tools.logging CP -->
+	<path id="netinf.tools.logging.classpath">
+		<pathelement location="${netinf.tools.logging.location}/bin" />
+		<pathelement location="${netinf.tools.logging.location}/lib/log4j-1.2.15.jar" />
+		<path refid="netinf.common.classpath" />
+	</path>
+	<!-- netinf.tools.productlist CP -->
+	<path id="netinf.tools.productlist.classpath">
+		<pathelement location="${netinf.tools.productlist.location}/bin" />
+		<pathelement location="${netinf.tools.productlist.location}/lib/miglayout-3.7.2-swing.jar" />
+		<path refid="netinf.common.classpath" />
+	</path>
+	<!-- netinf.tools.shopping CP -->
+	<path id="netinf.tools.shopping.classpath">
+		<pathelement location="${netinf.tools.shopping.location}/bin" />
+		<path refid="netinf.common.classpath" />
+		<pathelement location="${netinf.tools.shopping.location}/lib/swingx-1.6.jar" />
+		<pathelement location="${netinf.tools.shopping.location}/lib/swingx-beaninfo-1.6.jar" />
+		<pathelement location="${netinf.tools.shopping.location}/lib/swingx-ws-1.0.jar" />
+	</path>
+
+	<!-- meta-targets -->
+	<target name="jar" depends="newbuild,copyconfig,copystuff,jar_libs,jar_nlibs,jar_runner,mgmt2" />
+	<target name="jar_nlibs" depends="jar_access,jar_common,jar_database" />
+	<target name="jar_runner" depends="jar_eventservice,jar_node,jar_tools_iomanagement,jar_tools_logging,jar_tools_productlist,jar_tools_shopping,jar_createdefaultios" />
+	<target name="cleanprojects" depends="clean_access,clean_common,clean_database,clean_eventservice,clean_node,clean_tools_iomanagement,clean_tools_logging,clean_tools_productlist,clean_tools_shopping" />
+	<target name="clean" depends="cleanprojects,cleanbuild,cleanarchive" />
+
+	<target name="jar_libs">
+		<copy file="${netinf.common.location}/lib/log4j-1.2.15.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/commons-io-1.4.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/commons-lang-2.4.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/aopalliance.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/guice-2.0.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/google-protobuf.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/commons-codec-1.4.jar" todir="${libs.location}" />
+		<copy file="${plugin.location}/org.junit4_4.5.0.v20090824/junit.jar" todir="${libs.location}" />
+		<copy file="${plugin.location}/org.hamcrest.core_1.1.0.v20090501071000.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/jena.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/arq.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/arq-extra.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/guice-2.0-src.zip" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/icu4j_3_4.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/iri.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/jenatest.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/json.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/junit-4.5.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/lucene-core-2.3.1.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/sdb.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/slf4j-api-1.5.6.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/slf4j-log4j12-1.5.6.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/stax-api-1.0.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/wstx-asl-3.0.0.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib/xercesImpl.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib-test/easymock.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib-test/easymockclassextension.jar" todir="${libs.location}" />
+		<copy file="${netinf.common.location}/lib-test/cglib-nodep-2.2.jar" todir="${libs.location}" />
+		<copy file="${netinf.database.location}/lib/mysql-connector-java-5.0.8-bin.jar" todir="${libs.location}" />
+		<copy file="${netinf.eventservice.location}/lib/siena.jar" todir="${libs.location}" />
+		<copy file="${netinf.node.location}/lib/bouncycastle.jar" todir="${libs.location}" />
+		<copy file="${netinf.node.location}/lib/commons-jxpath-1.1.jar" todir="${libs.location}" />
+		<copy file="${netinf.node.location}/lib/commons-logging.jar" todir="${libs.location}" />
+		<copy file="${netinf.node.location}/lib/FreePastry-2.1.jar" todir="${libs.location}" />
+		<copy file="${netinf.node.location}/lib/sbbi-upnplib-1.0.4.jar" todir="${libs.location}" />
+		<copy file="${netinf.node.location}/lib/xmlpull_1_1_3_4a.jar" todir="${libs.location}" />
+		<copy file="${netinf.node.location}/lib/xpp3-1.1.3.4d_b2.jar" todir="${libs.location}" />
+		<copy file="${netinf.node.location}/lib/mysql-connector-java-5.1.10-bin.jar" todir="${libs.location}" />
+		<copy file="${netinf.node.location}/lib/JSAP-2.1.jar" todir="${libs.location}" />
+		<copy file="${netinf.tools.iomanagement.location}/lib/derby.jar" todir="${libs.location}" />
+		<copy file="${netinf.tools.iomanagement.location}/lib/JSAP-2.1.jar" todir="${libs.location}" />
+		<copy file="${netinf.tools.productlist.location}/lib/miglayout-3.7.2-swing.jar" todir="${libs.location}" />
+		<copy file="${netinf.tools.shopping.location}/lib/swingx-1.6.jar" todir="${libs.location}" />
+		<copy file="${netinf.tools.shopping.location}/lib/swingx-beaninfo-1.6.jar" todir="${libs.location}" />
+		<copy file="${netinf.tools.shopping.location}/lib/swingx-ws-1.0.jar" todir="${libs.location}" />
+	</target>
+
+	<target name="copyconfig">
+		<copy todir="${build.location}/configs">
+			<fileset dir="${projects.location}/configs" />
+		</copy>
+		<delete file="${build.location}/configs/Identities/privateKeyFile.pkf" />
+		<copy tofile="${build.location}/configs/Identities/privateKeyFile.pkf" file="${build.location}/configs/Identities/privateKeyFile_orig.pkf" />
+		<replace dir="${build.location}/configs" value="10.10.10.3">
+			<include name="scenario2/productlistCheckout.properties" />
+			<include name="scenario2/productlistGirlfriendPeter.properties" />
+			<include name="scenario2/shoppingJack.properties" />
+			<include name="scenario2/shoppingPeter.properties" />
+			<include name="scenario2/log4j/shoppingPeter.xml" />
+			<include name="scenario2/log4j/managementTool.xml" />
+			<include name="scenario2/log4j/shoppingJack.xml" />
+			<include name="scenario2/log4j/globalRSNode.xml" />
+			<include name="scenario2/log4j/searchRdfNode.xml" />
+			<include name="scenario2/log4j/eventServiceSiena.xml" />
+			<include name="scenario2/log4j/shopping.xml" />
+			<include name="scenario2/log4j/productlistGirlfriendPeter.xml" />
+			<include name="scenario2/log4j/productlistCheckout.xml" />
+			<include name="scenario2/log4j/productlist.xml" />
+			<replacetoken>localhost</replacetoken>
+		</replace>
+		<replace dir="${build.location}/configs" value="color=true">
+			<include name="log4j/logging.properties" />
+			<replacetoken>color=false</replacetoken>
+		</replace>
+	</target>
+
+	<target name="mgmt2">
+		<copy todir="${build.location}/mgmt2/configs">
+			<fileset dir="${build.location}/configs" />
+		</copy>
+		<copy todir="${build.location}/mgmt2/jar/netinf_libs/">
+			<fileset dir="${nlibs.location}" />
+		</copy>
+		<copy todir="${build.location}/mgmt2/jar/libs">
+			<fileset dir="${libs.location}" />
+		</copy>
+		<delete file="${build.location}/mgmt2/configs/Identities/privateKeyFile.pkf" />
+		<copy tofile="${build.location}/mgmt2/configs/Identities/privateKeyFile.pkf" file="${build.location}/mgmt2/configs/Identities/privateKeyFileIdentity2_orig.pkf" />
+		<copy tofile="${build.location}/mgmt2/jar/mgmt.jar" file="${jar.location}/mgmt.jar" />
+	</target>
+
+	<target name="copystuff">
+		<copy todir="${build.location}/infox">
+			<fileset dir="${projects.location}/netinf.applications.mozilla/infox" />
+		</copy>
+		<copy todir="${build.location}/inbird">
+                        <fileset dir="${projects.location}/netinf.applications.mozilla/inbird" />
+                </copy>
+		<copy todir="${build.location}/netinf">
+			<fileset dir="${builddir.location}/netinf" />
+		</copy>
+		<copy todir="${build.location}/httpdata">
+			<fileset dir="${builddir.location}/httpdata" />
+		</copy>
+		<copy todir="${build.location}/sql">
+			<fileset dir="${builddir.location}/sql" />
+		</copy>
+		<copy todir="${build.location}/scripts">
+			<fileset dir="${builddir.location}/scripts" />
+		</copy>
+	</target>
+
+	<target depends="cleanarchive,jar" name="create_archive">
+		<tar destfile="${build.location}/../deploy.tgz" compression="gzip">
+			<tarfileset dir="${build.location}/.." filemode="755">
+				<include name="build/scripts/**/*.sh" />
+			</tarfileset>
+			<tarfileset dir="${build.location}/.." filemode="644">
+				<include name="build/**/*" />
+				<exclude name="build/scripts/**/*.sh" />
+			</tarfileset>
+		</tar>
+		<antcall target="cleanbuild" />
+	</target>
+
+	<target name="cleanbuild">
+		<delete dir="${build.location}" />
+	</target>
+
+	<target name="cleanarchive">
+		<delete file="${build.location}../deploy.tgz" />
+	</target>
+
+	<target depends="cleanbuild" name="newbuild">
+		<mkdir dir="${build.location}" />
+		<mkdir dir="${jar.location}" />
+		<mkdir dir="${nlibs.location}" />
+		<mkdir dir="${libs.location}" />
+	</target>
+
+	<!-- netinf.access targets -->
+	<target name="clean_access">
+		<delete dir="${netinf.access.location}/bin" />
+		<mkdir dir="${netinf.access.location}/bin" />
+	</target>
+
+	<target name="copydata_access">
+		<copy includeemptydirs="false" todir="${netinf.access.location}/bin">
+			<fileset dir="${netinf.access.location}/src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="${netinf.access.location}/src-test">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target depends="build_common,copydata_access" name="build_access">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.access.location}/bin" source="${source}" target="${target}">
+			<src path="${netinf.access.location}/src" />
+			<src path="${netinf.access.location}/src-test" />
+			<classpath refid="netinf.access.classpath" />
+		</javac>
+	</target>
+
+	<target depends="build_access" name="jar_access">
+		<jar destfile="${nlibs.location}/netinf_access.jar">
+			<fileset dir="${netinf.access.location}/bin" />
+		</jar>
+	</target>
+
+	<!-- netinf.common targets -->
+	<target name="clean_common">
+		<delete dir="${netinf.common.location}/bin" />
+		<mkdir dir="${netinf.common.location}/bin" />
+	</target>
+
+	<target name="copydata_common">
+		<copy includeemptydirs="false" todir="${netinf.common.location}/bin">
+			<fileset dir="${netinf.common.location}/src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="${netinf.common.location}/src-test">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target depends="copydata_common" name="build_common">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.common.location}/bin" source="${source}" target="${target}">
+			<src path="${netinf.common.location}/src" />
+			<src path="${netinf.common.location}/src-test" />
+			<classpath refid="netinf.common.classpath" />
+		</javac>
+	</target>
+
+	<target depends="build_common" name="jar_common">
+		<jar destfile="${nlibs.location}/netinf_common.jar">
+			<fileset dir="${netinf.common.location}/bin" />
+		</jar>
+	</target>
+
+	<!-- netinf.database targets -->
+	<target name="clean_database">
+		<delete dir="${netinf.database.location}/bin" />
+		<mkdir dir="${netinf.database.location}/bin" />
+	</target>
+
+	<target name="copydata_database">
+		<copy includeemptydirs="false" todir="${netinf.database.location}/bin">
+			<fileset dir="${netinf.database.location}/src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target depends="build_common,copydata_database" name="build_database">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.database.location}/bin" source="${source}" target="${target}">
+			<src path="${netinf.database.location}/src" />
+			<classpath refid="netinf.database.classpath" />
+		</javac>
+	</target>
+
+	<target depends="build_database" name="jar_database">
+		<jar destfile="${nlibs.location}/netinf_database.jar">
+			<fileset dir="${netinf.database.location}/bin" />
+		</jar>
+	</target>
+
+	<!-- netinf.eventservice targets -->
+	<target name="clean_eventservice">
+		<delete dir="${netinf.eventservice.location}/bin" />
+		<mkdir dir="${netinf.eventservice.location}/bin" />
+	</target>
+
+	<target name="copydata_eventservice">
+		<copy includeemptydirs="false" todir="${netinf.eventservice.location}/bin">
+			<fileset dir="${netinf.eventservice.location}/src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="${netinf.eventservice.location}/src-test">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target depends="build_access,build_database,copydata_eventservice" name="build_eventservice">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.eventservice.location}/bin" source="${source}" target="${target}">
+			<src path="${netinf.eventservice.location}/src" />
+			<src path="${netinf.eventservice.location}/src-test" />
+			<classpath refid="netinf.eventservice.classpath" />
+		</javac>
+	</target>
+
+	<target depends="build_eventservice" name="jar_eventservice">
+		<jar destfile="${jar.location}/essiena.jar">
+			<manifest>
+				<attribute name="Main-Class" value="netinf.eventservice.siena.StarterEventServiceSiena" />
+				<attribute name="Class-Path" value=". libs/log4j-1.2.15.jar libs/commons-io-1.4.jar libs/commons-lang-2.4.jar libs/aopalliance.jar libs/guice-2.0.jar libs/google-protobuf.jar libs/commons-codec-1.4.jar libs/junit.jar libs/org.hamcrest.core_1.1.0.v20090501071000.jar libs/jena.jar libs/arq.jar libs/arq-extra.jar libs/guice-2.0-src.zip libs/icu4j_3_4.jar libs/iri.jar libs/jenatest.jar libs/json.jar libs/junit-4.5.jar libs/lucene-core-2.3.1.jar libs/sdb.jar libs/slf4j-api-1.5.6.jar libs/slf4j-log4j12-1.5.6.jar libs/stax-api-1.0.jar libs/wstx-asl-3.0.0.jar libs/xercesImpl.jar libs/easymock.jar libs/easymockclassextension.jar libs/cglib-nodep-2.2.jar libs/mysql-connector-java-5.0.8-bin.jar libs/siena.jar netinf_libs/netinf_access.jar netinf_libs/netinf_common.jar netinf_libs/netinf_database.jar" />
+			</manifest>
+			<fileset dir="${netinf.eventservice.location}/bin" />
+		</jar>
+	</target>
+
+	<!-- netinf.node targets -->
+	<target name="clean_node">
+		<delete dir="${netinf.node.location}/bin" />
+		<mkdir dir="${netinf.node.location}/bin" />
+	</target>
+
+	<target name="copydata_node">
+		<copy includeemptydirs="false" todir="${netinf.node.location}/bin">
+			<fileset dir="${netinf.node.location}/src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="${netinf.node.location}/src-test">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="${netinf.node.location}/src-test-integration">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target depends="build_access,build_database,copydata_node" name="build_node">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.node.location}/bin" source="${source}" target="${target}">
+			<src path="${netinf.node.location}/src" />
+			<src path="${netinf.node.location}/src-test" />
+			<src path="${netinf.node.location}/src-test-integration" />
+			<classpath refid="netinf.node.classpath" />
+		</javac>
+	</target>
+
+	<target depends="build_node" name="jar_node">
+		<jar destfile="${jar.location}/node.jar">
+			<manifest>
+				<attribute name="Main-Class" value="netinf.node.StarterNode" />
+				<attribute name="Class-Path" value=". libs/log4j-1.2.15.jar libs/commons-io-1.4.jar libs/commons-lang-2.4.jar libs/aopalliance.jar libs/guice-2.0.jar libs/google-protobuf.jar libs/commons-codec-1.4.jar libs/junit.jar libs/org.hamcrest.core_1.1.0.v20090501071000.jar libs/jena.jar libs/arq.jar libs/arq-extra.jar libs/guice-2.0-src.zip libs/icu4j_3_4.jar libs/iri.jar libs/jenatest.jar libs/json.jar libs/junit-4.5.jar libs/lucene-core-2.3.1.jar libs/sdb.jar libs/slf4j-api-1.5.6.jar libs/slf4j-log4j12-1.5.6.jar libs/stax-api-1.0.jar libs/wstx-asl-3.0.0.jar libs/xercesImpl.jar libs/easymock.jar libs/easymockclassextension.jar libs/cglib-nodep-2.2.jar libs/mysql-connector-java-5.0.8-bin.jar libs/bouncycastle.jar libs/commons-jxpath-1.1.jar libs/commons-logging.jar libs/FreePastry-2.1.jar libs/sbbi-upnplib-1.0.4.jar libs/xmlpull_1_1_3_4a.jar libs/xpp3-1.1.3.4d_b2.jar libs/mysql-connector-java-5.1.10-bin.jar libs/JSAP-2.1.jar netinf_libs/netinf_access.jar netinf_libs/netinf_common.jar netinf_libs/netinf_database.jar" />
+			</manifest>
+			<fileset dir="${netinf.node.location}/bin" />
+		</jar>
+	</target>
+
+	<target depends="build_node" name="jar_createdefaultios">
+		<jar destfile="${jar.location}/createdefaultios.jar">
+			<manifest>
+				<attribute name="Main-Class" value="netinf.node.CreateDefaultIOs" />
+				<attribute name="Class-Path" value=". libs/log4j-1.2.15.jar libs/commons-io-1.4.jar libs/commons-lang-2.4.jar libs/aopalliance.jar libs/guice-2.0.jar libs/google-protobuf.jar libs/commons-codec-1.4.jar libs/junit.jar libs/org.hamcrest.core_1.1.0.v20090501071000.jar libs/jena.jar libs/arq.jar libs/arq-extra.jar libs/guice-2.0-src.zip libs/icu4j_3_4.jar libs/iri.jar libs/jenatest.jar libs/json.jar libs/junit-4.5.jar libs/lucene-core-2.3.1.jar libs/sdb.jar libs/slf4j-api-1.5.6.jar libs/slf4j-log4j12-1.5.6.jar libs/stax-api-1.0.jar libs/wstx-asl-3.0.0.jar libs/xercesImpl.jar libs/easymock.jar libs/easymockclassextension.jar libs/cglib-nodep-2.2.jar libs/mysql-connector-java-5.0.8-bin.jar libs/bouncycastle.jar libs/commons-jxpath-1.1.jar libs/commons-logging.jar libs/FreePastry-2.1.jar libs/sbbi-upnplib-1.0.4.jar libs/xmlpull_1_1_3_4a.jar libs/xpp3-1.1.3.4d_b2.jar libs/mysql-connector-java-5.1.10-bin.jar libs/JSAP-2.1.jar netinf_libs/netinf_access.jar netinf_libs/netinf_common.jar netinf_libs/netinf_database.jar" />
+			</manifest>
+			<fileset dir="${netinf.node.location}/bin" />
+		</jar>
+	</target>
+
+	<!-- netinf.tools.iomanagement targets -->
+	<target name="clean_tools_iomanagement">
+		<delete dir="${netinf.tools.iomanagement.location}/bin" />
+		<mkdir dir="${netinf.tools.iomanagement.location}/bin" />
+	</target>
+
+	<target name="copydata_tools_iomanagement">
+		<copy includeemptydirs="false" todir="${netinf.tools.iomanagement.location}/bin">
+			<fileset dir="${netinf.tools.iomanagement.location}/src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="${netinf.tools.iomanagement.location}/src-test">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="${netinf.tools.iomanagement.location}/images">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target depends="copydata_tools_iomanagement" name="build_tools_iomanagement">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.iomanagement.location}/bin" source="${source}" target="${target}">
+			<src path="${netinf.tools.iomanagement.location}/src" />
+			<src path="${netinf.tools.iomanagement.location}/src-test" />
+			<src path="${netinf.tools.iomanagement.location}/images" />
+			<classpath refid="netinf.tools.iomanagement.classpath" />
+		</javac>
+	</target>
+
+	<target depends="build_tools_iomanagement" name="jar_tools_iomanagement">
+		<jar destfile="${jar.location}/mgmt.jar">
+			<manifest>
+				<attribute name="Main-Class" value="netinf.tools.iomanagement.StarterIoManagementTool" />
+				<attribute name="Class-Path" value=". libs/log4j-1.2.15.jar libs/commons-io-1.4.jar libs/commons-lang-2.4.jar libs/aopalliance.jar libs/guice-2.0.jar libs/google-protobuf.jar libs/commons-codec-1.4.jar libs/junit.jar libs/org.hamcrest.core_1.1.0.v20090501071000.jar libs/jena.jar libs/arq.jar libs/arq-extra.jar libs/guice-2.0-src.zip libs/icu4j_3_4.jar libs/iri.jar libs/jenatest.jar libs/json.jar libs/junit-4.5.jar libs/lucene-core-2.3.1.jar libs/sdb.jar libs/slf4j-api-1.5.6.jar libs/slf4j-log4j12-1.5.6.jar libs/stax-api-1.0.jar libs/wstx-asl-3.0.0.jar libs/xercesImpl.jar libs/easymock.jar libs/easymockclassextension.jar libs/cglib-nodep-2.2.jar libs/derby.jar libs/JSAP-2.1.jar netinf_libs/netinf_common.jar" />
+			</manifest>
+			<fileset dir="${netinf.tools.iomanagement.location}/bin" />
+		</jar>
+	</target>
+
+	<!-- netinf.tools.logging targets -->
+	<target name="clean_tools_logging">
+		<delete dir="${netinf.tools.logging.location}/bin" />
+		<mkdir dir="${netinf.tools.logging.location}/bin" />
+	</target>
+
+	<target name="copydata_tools_logging">
+		<copy includeemptydirs="false" todir="${netinf.tools.logging.location}/bin">
+			<fileset dir="${netinf.tools.logging.location}/src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target depends="copydata_tools_logging" name="build_tools_logging">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.logging.location}/bin" source="${source}" target="${target}">
+			<src path="${netinf.tools.logging.location}/src" />
+			<classpath refid="netinf.tools.logging.classpath" />
+		</javac>
+	</target>
+
+	<target depends="build_tools_logging" name="jar_tools_logging">
+		<jar destfile="${jar.location}/logging.jar">
+			<manifest>
+				<attribute name="Main-Class" value="netinf.tools.logging.StarterLogging" />
+				<attribute name="Class-Path" value=". libs/log4j-1.2.15.jar libs/log4j-1.2.15.jar libs/commons-io-1.4.jar libs/commons-lang-2.4.jar libs/aopalliance.jar libs/guice-2.0.jar libs/google-protobuf.jar libs/commons-codec-1.4.jar libs/junit.jar libs/org.hamcrest.core_1.1.0.v20090501071000.jar libs/jena.jar libs/arq.jar libs/arq-extra.jar libs/guice-2.0-src.zip libs/icu4j_3_4.jar libs/iri.jar libs/jenatest.jar libs/json.jar libs/junit-4.5.jar libs/lucene-core-2.3.1.jar libs/sdb.jar libs/slf4j-api-1.5.6.jar libs/slf4j-log4j12-1.5.6.jar libs/stax-api-1.0.jar libs/wstx-asl-3.0.0.jar libs/xercesImpl.jar libs/easymock.jar libs/easymockclassextension.jar libs/cglib-nodep-2.2.jar netinf_libs/netinf_common.jar" />
+			</manifest>
+			<fileset dir="${netinf.tools.logging.location}/bin" />
+		</jar>
+	</target>
+
+	<!-- netinf.tools.productlist targets -->
+	<target name="clean_tools_productlist">
+		<delete dir="${netinf.tools.productlist.location}/bin" />
+		<mkdir dir="${netinf.tools.productlist.location}/bin" />
+	</target>
+
+	<target name="copydata_tools_productlist">
+		<copy includeemptydirs="false" todir="${netinf.tools.productlist.location}/bin">
+			<fileset dir="${netinf.tools.productlist.location}/src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target depends="copydata_tools_productlist" name="build_tools_productlist">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.productlist.location}/bin" source="${source}" target="${target}">
+			<src path="${netinf.tools.productlist.location}/src" />
+			<classpath refid="netinf.tools.productlist.classpath" />
+		</javac>
+	</target>
+
+	<target depends="build_tools_productlist" name="jar_tools_productlist">
+		<jar destfile="${jar.location}/productlist.jar">
+			<manifest>
+				<attribute name="Main-Class" value="netinf.tools.productlist.StarterProductList" />
+				<attribute name="Class-Path" value=". libs/miglayout-3.7.2-swing.jar libs/log4j-1.2.15.jar libs/commons-io-1.4.jar libs/commons-lang-2.4.jar libs/aopalliance.jar libs/guice-2.0.jar libs/google-protobuf.jar libs/commons-codec-1.4.jar libs/junit.jar libs/org.hamcrest.core_1.1.0.v20090501071000.jar libs/jena.jar libs/arq.jar libs/arq-extra.jar libs/guice-2.0-src.zip libs/icu4j_3_4.jar libs/iri.jar libs/jenatest.jar libs/json.jar libs/junit-4.5.jar libs/lucene-core-2.3.1.jar libs/sdb.jar libs/slf4j-api-1.5.6.jar libs/slf4j-log4j12-1.5.6.jar libs/stax-api-1.0.jar libs/wstx-asl-3.0.0.jar libs/xercesImpl.jar libs/easymock.jar libs/easymockclassextension.jar libs/cglib-nodep-2.2.jar netinf_libs/netinf_common.jar" />
+			</manifest>
+			<fileset dir="${netinf.tools.productlist.location}/bin" />
+		</jar>
+	</target>
+
+	<!-- netinf.tools.shopping targets -->
+	<target name="clean_tools_shopping">
+		<delete dir="${netinf.tools.shopping.location}/bin" />
+		<mkdir dir="${netinf.tools.shopping.location}/bin" />
+	</target>
+
+	<target name="copydata_tools_shopping">
+		<copy includeemptydirs="false" todir="${netinf.tools.shopping.location}/bin">
+			<fileset dir="${netinf.tools.shopping.location}/src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target depends="copydata_tools_shopping" name="build_tools_shopping">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.shopping.location}/bin" source="${source}" target="${target}">
+			<src path="${netinf.tools.shopping.location}/src" />
+			<classpath refid="netinf.tools.shopping.classpath" />
+		</javac>
+	</target>
+
+	<target depends="build_tools_shopping" name="jar_tools_shopping">
+		<jar destfile="${jar.location}/shopping.jar">
+			<manifest>
+				<attribute name="Main-Class" value="netinf.tools.shopping.StarterShopping" />
+				<attribute name="Class-Path" value=". libs/log4j-1.2.15.jar libs/commons-io-1.4.jar libs/commons-lang-2.4.jar libs/aopalliance.jar libs/guice-2.0.jar libs/google-protobuf.jar libs/commons-codec-1.4.jar libs/junit.jar libs/org.hamcrest.core_1.1.0.v20090501071000.jar libs/jena.jar libs/arq.jar libs/arq-extra.jar libs/guice-2.0-src.zip libs/icu4j_3_4.jar libs/iri.jar libs/jenatest.jar libs/json.jar libs/junit-4.5.jar libs/lucene-core-2.3.1.jar libs/sdb.jar libs/slf4j-api-1.5.6.jar libs/slf4j-log4j12-1.5.6.jar libs/stax-api-1.0.jar libs/wstx-asl-3.0.0.jar libs/xercesImpl.jar libs/easymock.jar libs/easymockclassextension.jar libs/cglib-nodep-2.2.jar libs/swingx-1.6.jar libs/swingx-beaninfo-1.6.jar libs/swingx-ws-1.0.jar netinf_libs/netinf_common.jar" />
+			</manifest>
+			<fileset dir="${netinf.tools.shopping.location}/bin" />
+		</jar>
+	</target>
+
+	<!-- deployment targets -->
+	<target name="deploy" depends="create_archive">
+		<foreach list="1,2,3,4,5,9" target="deploy_to" param="param" parallel="true" />
+		<antcall target="move_images" />
+		<antcall target="set_inbird" />
+		<antcall target="cleanbuild" />
+		<antcall target="cleanarchive" />
+	</target>
+
+	<target name="deploy_to">
+		<echo message="Deploying to 10.10.10.${param}" />
+		<sshexec host="10.10.10.${param}" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="rm -rf build" />
+		<scp file="${build.location}/../deploy.tgz" todir="${user.name}@10.10.10.${param}:~" keyfile="${user.home}/.ssh/id_rsa" passphrase="" />
+		<sshexec host="10.10.10.${param}" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="tar xvzf deploy.tgz; rm -rf deploy.tgz" />
+	</target>
+
+	<target name="move_images">
+		<sshexec host="10.10.10.4" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="mv /home/demo/build/httpdata/image_not_ok.png /home/demo/build/httpdata/image.png" />
+		<sshexec host="10.10.10.5" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="mv /home/demo/build/httpdata/image_ok.png /home/demo/build/httpdata/image.png" />
+	</target>
+
+	<target name="set_inbird">
+		<sshexec host="10.10.10.1" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="sed -i 's|localhost|10.10.10.1|g' '/home/demo/build/inbird/defaults/preferences/prefs.js'" />
+		<sshexec host="10.10.10.2" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="sed -i 's|localhost|10.10.10.2|g' '/home/demo/build/inbird/defaults/preferences/prefs.js'" />
+		<sshexec host="10.10.10.1" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="sed -i 's|8080|9081|g' '/home/demo/build/inbird/defaults/preferences/prefs.js'" />
+		<sshexec host="10.10.10.2" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="sed -i 's|8080|9082|g' '/home/demo/build/inbird/defaults/preferences/prefs.js'" />
+	</target>
+
+	<target name="deploy_local" depends="create_archive">
+		<copy file="${build.location}/../deploy.tgz" todir="${user.home}" />
+		<exec command="tar xvzf deploy.tgz" dir="${user.home}" />
+		<exec command="rm -rf .netinf" dir="${user.home}" />
+		<exec command="ln -s build/netinf .netinf" dir="${user.home}" />
+		<delete file="${user.home}/deploy.tgz" />
+	</target>
+
+</project>
