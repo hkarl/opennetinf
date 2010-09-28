@@ -56,7 +56,7 @@ import com.google.inject.AbstractModule;
  */
 public class LogModule extends AbstractModule {
 
-   private static final String CONFIGS_FOLDER = "../configs/";
+   private static final String CONFIGS_FOLDER = "../configs_official/";
    private static final Logger LOG = Logger.getLogger(LogModule.class);
    private final Properties properties;
    private String xmlFile;

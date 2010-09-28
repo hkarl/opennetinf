@@ -67,7 +67,7 @@ public class ColoredDemoLayout extends PatternLayout {
     */
    public ColoredDemoLayout() {
       this.colorDefs = new HashMap<String, String>();
-      Properties prop = Utils.loadProperties("../configs/log4j/logging.properties");
+      Properties prop = Utils.loadProperties("../configs_official/log4j/logging.properties");
       this.color = !prop.containsKey("color") || Boolean.valueOf((String) prop.get("color"));
       if (this.color) {
          for (Object keyObject : prop.keySet()) {

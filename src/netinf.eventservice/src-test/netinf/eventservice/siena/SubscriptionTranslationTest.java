@@ -91,7 +91,7 @@ public class SubscriptionTranslationTest {
    private static final String PERSON_IDENTITY_OBJECT_ID_STRING = "HASH_OF_PK=123~HASH_OF_PK_IDENT=SHA1"
       + "~VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=personIdentityObject";
    private static final String SUBSCRIPTION_ID = "TestIdentification";
-   private static final String TESTING_PROPERTIES = "../configs/eventservicesiena_testing.properties";
+   private static final String TESTING_PROPERTIES = "../configs_official/eventservicesiena_testing.properties";
    private static Injector injector;
    private static EventServiceSiena eventServiceSiena;
    private static DatamodelFactory datamodelFactory;

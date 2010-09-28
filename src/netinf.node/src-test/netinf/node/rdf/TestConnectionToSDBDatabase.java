@@ -57,7 +57,7 @@ import com.hp.hpl.jena.sdb.sql.SDBConnection;
  */
 public class TestConnectionToSDBDatabase {
 
-   private static final String CONFIGS_TESTING_PROPERTIES = "../configs/testing.properties";
+   private static final String CONFIGS_TESTING_PROPERTIES = "../configs_official/testing.properties";
 
    @Test
    public void testConnection() {

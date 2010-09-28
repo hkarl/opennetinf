@@ -60,7 +60,7 @@ public class SearchControllerTest {
 
    private SearchController searchController;
 
-   private static final String CONFIGS_TESTING_PROPERTIES = "../configs/testing.properties";
+   private static final String CONFIGS_TESTING_PROPERTIES = "../configs_official/testing.properties";
 
    @Before
    public void setUp() {

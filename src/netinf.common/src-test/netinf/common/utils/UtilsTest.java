@@ -65,7 +65,7 @@ import com.google.inject.name.Names;
  * @author PG Augnet 2, University of Paderborn
  */
 public class UtilsTest {
-   public static final String NETINFNODE_PROPERTIES = "../configs/netinfnode_testing.properties";
+   public static final String NETINFNODE_PROPERTIES = "../configs_official/netinfnode_testing.properties";
    private DatamodelFactory factory;
 
    @Before

@@ -66,7 +66,7 @@ import com.google.inject.name.Names;
  */
 public class IdentityManagerTest {
 
-   public static final String NETINFNODE_PROPERTIES = "../configs/netinfnode_testing.properties";
+   public static final String NETINFNODE_PROPERTIES = "../configs_official/netinfnode_testing.properties";
 
    private IdentityManager identityManager;
 

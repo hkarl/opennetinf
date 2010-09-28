@@ -87,7 +87,7 @@ import com.google.inject.name.Names;
  */
 public class CryptographyTest {
 
-   public static final String NETINFNODE_PROPERTIES = "../configs/netinfnode_testing.properties";
+   public static final String NETINFNODE_PROPERTIES = "../configs_official/netinfnode_testing.properties";
 
    private static Cryptography crypto;
    private static CryptoAlgorithm algorithm = new CryptoAlgorithmImpl();

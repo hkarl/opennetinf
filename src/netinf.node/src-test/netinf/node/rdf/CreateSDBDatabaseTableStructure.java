@@ -51,13 +51,13 @@ import com.hp.hpl.jena.sdb.sql.SDBConnection;
  * This class can be used to create the tables and indices of the SDB database specified in testing.properties. As a prerequisite
  * the specified user and database (name) must already exist in the DB system.
  * <p>
- * One can also use the SQL script in /configs/netinf_node_data.sql to create everything needed for the SDB database from scratch
+ * One can also use the SQL script in /configs_official/netinf_node_data.sql to create everything needed for the SDB database from scratch
  * 
  * @author PG Augnet 2, University of Paderborn
  */
 public class CreateSDBDatabaseTableStructure {
 
-   private static final String CONFIGS_TESTING_PROPERTIES = "../configs/testing.properties";
+   private static final String CONFIGS_TESTING_PROPERTIES = "../configs_official/testing.properties";
 
    public static void main(final String[] args) {
 

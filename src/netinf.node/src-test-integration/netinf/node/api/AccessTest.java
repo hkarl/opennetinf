@@ -64,7 +64,7 @@ public class AccessTest {
 
    protected static InformationObjectHelper ioHelper;
 
-   private static final String CONFIGS_TESTING_PROPERTIES = "../configs/testing.properties";
+   private static final String CONFIGS_TESTING_PROPERTIES = "../configs_official/testing.properties";
    private static Injector injector;
    private static Communicator communicator;
 

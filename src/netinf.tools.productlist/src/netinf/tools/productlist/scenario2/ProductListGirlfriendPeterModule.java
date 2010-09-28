@@ -51,7 +51,7 @@ import com.google.inject.Singleton;
  */
 public class ProductListGirlfriendPeterModule extends SecuredApplicationModule {
 
-   public static final String PROPERTIES = "../configs/scenario2/productlistGirlfriendPeter.properties";
+   public static final String PROPERTIES = "../configs_official/scenario2/productlistGirlfriendPeter.properties";
 
    public ProductListGirlfriendPeterModule() {
       super(PROPERTIES);

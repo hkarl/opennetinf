@@ -88,7 +88,7 @@ import com.google.inject.name.Names;
  */
 public class SecurityManagerTest {
 
-   public static final String NETINFNODE_PROPERTIES = "../configs/netinfnode_testing.properties";
+   public static final String NETINFNODE_PROPERTIES = "../configs_official/netinfnode_testing.properties";
 
    private static IdentityManager identityManager;
    private static RemoteNodeConnection convenienceCommunicator;

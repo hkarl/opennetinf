@@ -67,7 +67,7 @@ public class LocalResolutionServiceTestModule extends AbstractModule {
    protected void configure() {
       Properties props = new Properties();
       try {
-         props.load(new FileInputStream("../configs/testing.properties"));
+         props.load(new FileInputStream("../configs_official/testing.properties"));
       } catch (FileNotFoundException e) {
 
       } catch (IOException e) {

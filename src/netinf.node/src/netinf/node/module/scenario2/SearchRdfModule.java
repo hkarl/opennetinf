@@ -64,7 +64,7 @@ import com.google.inject.Singleton;
  * @author PG Augnet 2, University of Paderborn
  */
 public class SearchRdfModule extends AbstractNodeModule {
-   public static final String NODE_PROPERTIES = "../configs/scenario2/searchRdfNode.properties";
+   public static final String NODE_PROPERTIES = "../configs_official/scenario2/searchRdfNode.properties";
 
    public SearchRdfModule() {
       super(Utils.loadProperties(NODE_PROPERTIES));

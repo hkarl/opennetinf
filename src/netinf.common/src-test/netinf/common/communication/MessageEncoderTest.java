@@ -87,7 +87,7 @@ import com.google.inject.Injector;
  * @author PG Augnet 2, University of Paderborn
  */
 public abstract class MessageEncoderTest {
-   private static final String PROPERTIES_PATH = "../configs/testing.properties";
+   private static final String PROPERTIES_PATH = "../configs_official/testing.properties";
    private Injector injector;
    private Properties properties;
 

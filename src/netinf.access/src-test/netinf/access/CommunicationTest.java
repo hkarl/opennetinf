@@ -62,7 +62,7 @@ import com.google.inject.Injector;
  * @author PG Augnet 2, University of Paderborn
  */
 public class CommunicationTest implements AsyncReceiveHandler {
-   private static final String PROPERTIES_PATH = "../configs/testing.properties";
+   private static final String PROPERTIES_PATH = "../configs_official/testing.properties";
    private static Injector injector;
    private static Properties properties;
 
