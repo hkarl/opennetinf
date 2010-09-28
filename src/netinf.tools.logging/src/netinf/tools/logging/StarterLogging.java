@@ -49,7 +49,7 @@ import java.io.IOException;
 public class StarterLogging {
 
    public static void main(String[] args) throws IOException {
-      LoggingServer loggingServer = new LoggingServer(LoggingConstants.LOGGING_PORT, "../configs_official/log4j/"
+      LoggingServer loggingServer = new LoggingServer(LoggingConstants.LOGGING_PORT, "../configs/log4j/"
             + (args.length == 0 ? "standardLogging.xml"
             : args[0]));
       loggingServer.start();

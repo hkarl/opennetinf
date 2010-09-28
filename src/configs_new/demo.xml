@@ -241,8 +241,8 @@
 		<copy todir="${build.location}/configs">
 			<fileset dir="${projects.location}/configs" />
 		</copy>
-		<delete file="${build.location}/configs/Identities/privateKeyFile.pkf" />
-		<copy tofile="${build.location}/configs/Identities/privateKeyFile.pkf" file="${build.location}/configs/Identities/privateKeyFile_orig.pkf" />
+		<delete file="${build.location}/configs_official/Identities/privateKeyFile.pkf" />
+		<copy tofile="${build.location}/configs_official/Identities/privateKeyFile.pkf" file="${build.location}/configs_official/Identities/privateKeyFile_orig.pkf" />
 		<replace dir="${build.location}/configs" value="10.10.10.3">
 			<include name="scenario2/productlistCheckout.properties" />
 			<include name="scenario2/productlistGirlfriendPeter.properties" />
@@ -276,8 +276,8 @@
 		<copy todir="${build.location}/mgmt2/jar/libs">
 			<fileset dir="${libs.location}" />
 		</copy>
-		<delete file="${build.location}/mgmt2/configs/Identities/privateKeyFile.pkf" />
-		<copy tofile="${build.location}/mgmt2/configs/Identities/privateKeyFile.pkf" file="${build.location}/mgmt2/configs/Identities/privateKeyFileIdentity2_orig.pkf" />
+		<delete file="${build.location}/mgmt2/configs_official/Identities/privateKeyFile.pkf" />
+		<copy tofile="${build.location}/mgmt2/configs_official/Identities/privateKeyFile.pkf" file="${build.location}/mgmt2/configs_official/Identities/privateKeyFileIdentity2_orig.pkf" />
 		<copy tofile="${build.location}/mgmt2/jar/mgmt.jar" file="${jar.location}/mgmt.jar" />
 	</target>
 
@@ -673,8 +673,8 @@
 	</target>
 
 	<target name="set_inbird">
-		<sshexec host="10.10.10.1" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="sed -i 's|localhost|10.10.10.1|g; s|8080|9081|g; s|privateKeyFile|/home/demo/build/configs/Identities/privateKeyFile|g' '/home/demo/build/inbird/defaults/preferences/prefs.js'" />
-		<sshexec host="10.10.10.2" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="sed -i 's|localhost|10.10.10.2|g; s|8080|9082|g; s|privateKeyFile|/home/demo/build/mgmt2/configs/Identities/privateKeyFile|g' '/home/demo/build/inbird/defaults/preferences/prefs.js'" />
+		<sshexec host="10.10.10.1" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="sed -i 's|localhost|10.10.10.1|g; s|8080|9081|g; s|privateKeyFile|/home/demo/build/configs_official/Identities/privateKeyFile|g' '/home/demo/build/inbird/defaults/preferences/prefs.js'" />
+		<sshexec host="10.10.10.2" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="sed -i 's|localhost|10.10.10.2|g; s|8080|9082|g; s|privateKeyFile|/home/demo/build/mgmt2/configs_official/Identities/privateKeyFile|g' '/home/demo/build/inbird/defaults/preferences/prefs.js'" />
 	</target>
 
 	<target name="deploy_local" depends="create_archive">

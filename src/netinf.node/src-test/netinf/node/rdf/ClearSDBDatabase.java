@@ -54,7 +54,7 @@ import com.hp.hpl.jena.sdb.sql.SDBConnection;
  */
 public class ClearSDBDatabase {
 
-   private static final String CONFIGS_TESTING_PROPERTIES = "../configs_official/testing.properties";
+   private static final String CONFIGS_TESTING_PROPERTIES = "../configs/testing.properties";
 
    public static void main(final String[] args) {
 

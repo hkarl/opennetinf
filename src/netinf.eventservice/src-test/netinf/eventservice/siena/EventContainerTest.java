@@ -69,7 +69,7 @@ import com.google.inject.Injector;
  */
 public class EventContainerTest {
 
-   private static final String CONFIGS_EVENTSERVICESIENA_TESTING_PROPERTIES = "../configs_official/eventservicesiena_testing.properties";
+   private static final String CONFIGS_EVENTSERVICESIENA_TESTING_PROPERTIES = "../configs/eventservicesiena_testing.properties";
    private static final String EVENT_CONTAINER_ID_STRING = "ni:HASH_OF_PK=123~HASH_OF_PK_IDENT=SHA1"
       + "~VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=eventContainer";
    private static final String PERSON_IDENTITY_OBJECT_ID_STRING = "ni:HASH_OF_PK=123~HASH_OF_PK_IDENT=SHA1"

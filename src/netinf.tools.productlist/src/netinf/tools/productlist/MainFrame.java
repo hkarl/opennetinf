@@ -162,7 +162,7 @@ public class MainFrame extends JFrame {
 
       this.datamodelFactory = datamodelFactory;
       this.idManager = idManager;
-      idManager.setFilePath("../configs_official/Identities/privateKeyFile.pkf");
+      idManager.setFilePath("../configs/Identities/privateKeyFile.pkf");
       this.esfConnector = esfConnector;
       this.msgProc = msgProc;
       this.applicationIdentity = applicationIdentity;

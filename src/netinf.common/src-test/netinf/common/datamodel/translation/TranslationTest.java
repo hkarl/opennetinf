@@ -71,7 +71,7 @@ public class TranslationTest extends DatamodelTest {
    private InformationObject informationObjectRdf;
    private InformationObject informationObjectImpl;
 
-   public static final String PROPERTIES = "../configs_official/testing.properties";
+   public static final String PROPERTIES = "../configs/testing.properties";
 
    @BeforeClass
    public static void setup() {

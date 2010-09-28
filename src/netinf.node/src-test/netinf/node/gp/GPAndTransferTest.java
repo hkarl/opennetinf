@@ -109,7 +109,7 @@ public class GPAndTransferTest {
 
    @BeforeClass
    public static void setup() throws IOException {
-      PropertyConfigurator.configure(Utils.loadProperties("../configs_official/testing.properties"));
+      PropertyConfigurator.configure(Utils.loadProperties("../configs/testing.properties"));
 
       final ServerSocket serverSocket = new ServerSocket(portNumber);
       Thread thread = new Thread() {

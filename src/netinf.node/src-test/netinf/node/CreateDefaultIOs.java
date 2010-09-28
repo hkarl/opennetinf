@@ -68,7 +68,7 @@ public class CreateDefaultIOs {
 
    private static final Logger LOG = Logger.getLogger(CreateDefaultIOs.class);
 
-   public static final String APPLICATION_PROPERTIES = "../configs_official/createIOs.properties";
+   public static final String APPLICATION_PROPERTIES = "../configs/createIOs.properties";
 
    private static Injector injector;
    private static RemoteNodeConnection remoteNodeConnection;
@@ -90,7 +90,7 @@ public class CreateDefaultIOs {
       remoteNodeConnection.setSerializeFormat(SerializeFormat.RDF);
       datamodelFactory = injector.getInstance(DatamodelFactory.class);
       identityManager = injector.getInstance(IdentityManager.class);
-      identityManager.setFilePath("../configs_official/Identities/privateKeyFile.pkf");
+      identityManager.setFilePath("../configs/Identities/privateKeyFile.pkf");
 
       // TODO: Ede: how about deleting optionally all the other stuff in our databases. Is this even possible somehow?
 

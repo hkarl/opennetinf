@@ -7,7 +7,7 @@
     <param name="Target" value="System.out"/> 
 	<param name="Threshold" value="trace"/>
     <layout class="org.apache.log4j.PatternLayout"> 
-      <param name="ConversionPattern" value="%X{application}(%-15X{host}): %6r %-5p [%t] %l - %m%n"/> 
+      <param name="ConversionPattern" value="%d{yyyy-MM-DD hh:mm:ss} %X{application}(%-15X{host}): %6r %-5p [%t] %l - %m%n"/> 
     </layout>
   </appender>
 
@@ -15,7 +15,7 @@
     <param name="Append" value="true"/>
     <param name="File" value="../logs/logging.log"/>
     <layout class="org.apache.log4j.PatternLayout"> 
-      <param name="ConversionPattern" value="%X{application}(%-15X{host}): %6r %-5p [%t] %c#%M - %m%n"/> 
+      <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}: %-4X{application}: %m%n"/> 
     </layout>
   </appender>
 

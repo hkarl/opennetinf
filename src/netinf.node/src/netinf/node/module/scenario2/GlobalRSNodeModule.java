@@ -63,7 +63,7 @@ import com.google.inject.internal.Nullable;
  * @author PG Augnet 2, University of Paderborn
  */
 public class GlobalRSNodeModule extends AbstractNodeModule {
-   public static final String NODE_PROPERTIES = "../configs_official/scenario2/globalRSNode.properties";
+   public static final String NODE_PROPERTIES = "../configs/scenario2/globalRSNode.properties";
 
    public GlobalRSNodeModule() {
       super(Utils.loadProperties(NODE_PROPERTIES));

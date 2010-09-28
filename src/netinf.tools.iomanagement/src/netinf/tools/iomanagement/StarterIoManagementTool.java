@@ -158,7 +158,7 @@ public class StarterIoManagementTool {
 
       JSAPResult result = parser.parse(args);
 
-      String logConf = "../configs_official/" + result.getString("logging");
+      String logConf = "../configs/" + result.getString("logging");
       System.out.println("Using logging configuration " + logConf);
       DOMConfigurator.configure(logConf);
 

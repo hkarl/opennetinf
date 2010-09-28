@@ -89,7 +89,7 @@ public class GPMockupTest {
       String netinfhost = properties.getProperty("cc.tcp.host");
 
       // Unfortunately, we have to give the GPNodeModule hiere
-      Injector injector = Guice.createInjector(new SecuredApplicationModule("../configs_official/createIOs.properties"));
+      Injector injector = Guice.createInjector(new SecuredApplicationModule("../configs/createIOs.properties"));
       datamodelFactory = injector.getInstance(DatamodelFactory.class);
 
       remoteNodeConnection = injector.getInstance(RemoteNodeConnection.class);

@@ -66,7 +66,7 @@ import com.google.inject.Singleton;
  * @author PG Augnet 2, University of Paderborn
  */
 public class GPNodeModule extends AbstractNodeModule {
-   public static final String NODE_PROPERTIES = "../configs_official/scenarioi/gpNode.properties";
+   public static final String NODE_PROPERTIES = "../configs/scenarioi/gpNode.properties";
 
    public GPNodeModule() {
       super(Utils.loadProperties(NODE_PROPERTIES));

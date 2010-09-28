@@ -66,7 +66,7 @@ import com.google.inject.Singleton;
  * @author PG Augnet 2, University of Paderborn
  */
 public class ANodeModule extends AbstractNodeModule {
-   public static final String NODE_PROPERTIES = "../configs_official/scenario1/netinfnode_a.properties";
+   public static final String NODE_PROPERTIES = "../configs/scenario1/netinfnode_a.properties";
 
    public ANodeModule() {
       super(Utils.loadProperties(NODE_PROPERTIES));

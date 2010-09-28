@@ -65,7 +65,7 @@ import com.google.inject.Injector;
  */
 public class SearchServiceRDFTest {
 
-   private static final String CONFIGS_TESTING_PROPERTIES = "../configs_official/testing.properties";
+   private static final String CONFIGS_TESTING_PROPERTIES = "../configs/testing.properties";
    private SearchController searchController;
    private SearchServiceRDF searchService;
    private RDFResolutionService rdfResolutionService;

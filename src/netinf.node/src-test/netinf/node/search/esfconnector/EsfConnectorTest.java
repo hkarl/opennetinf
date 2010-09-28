@@ -79,7 +79,7 @@ import com.google.inject.Provider;
  */
 public class EsfConnectorTest {
 
-   private static final String CONFIGS_TESTING_PROPERTIES = "../configs_official/testing.properties";
+   private static final String CONFIGS_TESTING_PROPERTIES = "../configs/testing.properties";
    private RDFResolutionService rdfResolutionService;
    private MessageReceiver messageReceiver;
    private SearchEsfMessageProcessor searchEsfMessageProcessor;

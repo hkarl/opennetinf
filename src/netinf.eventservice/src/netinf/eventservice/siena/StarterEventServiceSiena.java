@@ -56,7 +56,7 @@ import com.google.inject.Injector;
 public class StarterEventServiceSiena {
    private static final Logger LOG = Logger.getLogger(StarterEventServiceSiena.class);
 
-   public static final String EVENTSERVICE_SIENA_DEFAULT_PROPERTIES = "../configs_official/eventservicesiena.properties";
+   public static final String EVENTSERVICE_SIENA_DEFAULT_PROPERTIES = "../configs/eventservicesiena.properties";
 
    public static void main(String[] args) throws IOException {
 

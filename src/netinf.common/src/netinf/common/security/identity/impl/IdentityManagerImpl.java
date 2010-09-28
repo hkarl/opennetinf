@@ -94,7 +94,7 @@ public class IdentityManagerImpl implements netinf.common.security.identity.Iden
    /**
     * Default path to key store file
     */
-   private String defaultFilepath = "../configs_official/Identities/privateKeyFile.pkf";
+   private String defaultFilepath = "../configs/Identities/privateKeyFile.pkf";
    /**
     * Default algorithm used to encrypt Private Keys in key store file
     */

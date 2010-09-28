@@ -69,7 +69,7 @@ import com.google.inject.name.Names;
  */
 public class DatamodelTest {
 
-   public static final String PROPERTIES = "../configs_official/testing.properties";
+   public static final String PROPERTIES = "../configs/testing.properties";
 
    public static final String ATTRIBUTE_IDENTIFICATION = DefinedAttributeIdentification.DESCRIPTION.getURI();
    public static final String ATTRIBUTE_VALUE = "This is the first RDF Object";;

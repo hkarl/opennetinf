@@ -85,7 +85,7 @@ public class PastryTestModule extends AbstractModule {
       // TODO Integrate with other properties
       Properties props = new Properties();
       try {
-         props.load(new FileInputStream("../configs_official/testing.properties"));
+         props.load(new FileInputStream("../configs/testing.properties"));
       } catch (FileNotFoundException e) {
 
       } catch (IOException e) {

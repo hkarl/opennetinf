@@ -58,7 +58,7 @@ public class RemoteResolutionServiceTestModule extends AbstractModule {
    protected void configure() {
       Properties props = new Properties();
       try {
-         props.load(new FileInputStream("../configs_official/testing.properties"));
+         props.load(new FileInputStream("../configs/testing.properties"));
       } catch (FileNotFoundException e) {
 
       } catch (IOException e) {
