@@ -7,6 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/netinf.common"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/derby.jar"/>
-	<classpathentry kind="lib" path="lib/JSAP-2.1.jar" sourcepath="lib-source/JSAP-2.1-src.zip"/>
+	<classpathentry kind="lib" path="lib/JSAP-2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

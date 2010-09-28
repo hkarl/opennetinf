@@ -17,22 +17,14 @@
 	<classpathentry kind="lib" path="lib/xpp3-1.1.3.4d_b2.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.10-bin.jar"/>
 	<classpathentry kind="lib" path="/netinf.common/lib/arq-extra.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/arq.jar" sourcepath="/netinf.common/lib-source/arq-2.8.1-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/netinf.common/lib-source/arq_javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="/netinf.common/lib/arq.jar"/>
 	<classpathentry kind="lib" path="/netinf.common/lib/icu4j_3_4.jar"/>
 	<classpathentry kind="lib" path="/netinf.common/lib/iri.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/jena.jar" sourcepath="/netinf.common/lib-source/jena-2.6.2-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/netinf.common/lib-source/jena-2.6.2-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="/netinf.common/lib/jena.jar"/>
 	<classpathentry kind="lib" path="/netinf.common/lib/jenatest.jar"/>
 	<classpathentry kind="lib" path="/netinf.common/lib/json.jar"/>
 	<classpathentry kind="lib" path="/netinf.common/lib/junit-4.5.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/log4j-1.2.15.jar" sourcepath="/netinf.common/lib-source/log4j-1.2.15-sources.jar"/>
+	<classpathentry kind="lib" path="/netinf.common/lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="/netinf.common/lib/lucene-core-2.3.1.jar"/>
 	<classpathentry kind="lib" path="/netinf.common/lib/sdb.jar"/>
 	<classpathentry kind="lib" path="/netinf.common/lib/slf4j-api-1.5.6.jar"/>
@@ -43,6 +35,6 @@
 	<classpathentry kind="lib" path="/netinf.common/lib-test/cglib-nodep-2.2.jar"/>
 	<classpathentry kind="lib" path="/netinf.common/lib-test/easymock.jar"/>
 	<classpathentry kind="lib" path="/netinf.common/lib-test/easymockclassextension.jar"/>
-	<classpathentry kind="lib" path="lib/JSAP-2.1.jar" sourcepath="/netinf.tools.iomanagement/lib-source/JSAP-2.1-src.zip"/>
+	<classpathentry kind="lib" path="lib/JSAP-2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

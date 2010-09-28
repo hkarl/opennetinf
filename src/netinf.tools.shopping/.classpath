@@ -6,6 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/netinf.common"/>
 	<classpathentry kind="lib" path="lib/swingx-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-beaninfo-1.6.jar"/>
-	<classpathentry kind="lib" path="lib/swingx-ws-1.0.jar" sourcepath="lib-source/swingx-ws-1.0-src.zip"/>
+	<classpathentry kind="lib" path="lib/swingx-ws-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
