@@ -1,37 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ====================================================================== 
-     25.02.2010 20:55:11                                                        
-
-     NetInf    
-     This can build and deploy all possible components of NetInf
-     
-     IMPORTANT TARGETS:
-     clean 				cleans all .class-files, build-dir and archive
-     create_archive		creates deploy.tgz in demo
-     deploy				deploy to demo testbed 
-	 deploy_local		deploy to local machine, current user
-	                    
-     azamir                                                                
-     ====================================================================== -->
-<project name="NetInf" default="create_archive">
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
-
+<project name="NetInf" default="jar">
 	<!-- DESCRIPTION -->
 	<description>
-            This can build all possible components of NetInf
-    </description>
+            This builds OpenNetInf
+	</description>
 
 	<!-- ENVIRONMENT -->
 	<property environment="env" />
 
 	<!-- GENERAL LOCATIONS AND NAMES -->
-	<property name="projects.location" value=".." />
-	<property name="builddir.location" value="../../demo/builddir" />
-	<property name="build.location" value="../../demo/build" />
-	<property name="plugin.location" value="${builddir.location}/plugins" />
+	<property name="projects.location" value="../src" />
+	<property name="build.dirname" value="dist" />
+	<property name="build.location" value="./${build.dirname}" />
+	<property name="data.location" value="./data" />
+	<property name="plugin.location" value="${data.location}/plugins" />
 	<property name="jar.location" value="${build.location}/jar" />
 	<property name="nlibs.location" value="${jar.location}/netinf_libs" />
 	<property name="libs.location" value="${jar.location}/libs" />
+	<property name="archive.file" value="./deploy.tgz" />
 
 	<!-- PROJECT LOCATIONS -->
 	<property name="netinf.access.location" value="${projects.location}/netinf.access" />
@@ -183,7 +169,7 @@
 	</path>
 
 	<!-- meta-targets -->
-	<target name="jar" depends="newbuild,copyconfig,copystuff,jar_libs,jar_nlibs,jar_runner,mgmt2" />
+	<target name="jar" depends="newbuild,copyconfig,copystuff,jar_libs,jar_nlibs,jar_runner" />
 	<target name="jar_nlibs" depends="jar_access,jar_common,jar_database" />
 	<target name="jar_runner" depends="jar_eventservice,jar_node,jar_tools_iomanagement,jar_tools_logging,jar_tools_productlist,jar_tools_shopping,jar_createdefaultios" />
 	<target name="cleanprojects" depends="clean_access,clean_common,clean_database,clean_eventservice,clean_node,clean_tools_iomanagement,clean_tools_logging,clean_tools_productlist,clean_tools_shopping" />
@@ -202,7 +188,6 @@
 		<copy file="${netinf.common.location}/lib/jena.jar" todir="${libs.location}" />
 		<copy file="${netinf.common.location}/lib/arq.jar" todir="${libs.location}" />
 		<copy file="${netinf.common.location}/lib/arq-extra.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/guice-2.0-src.zip" todir="${libs.location}" />
 		<copy file="${netinf.common.location}/lib/icu4j_3_4.jar" todir="${libs.location}" />
 		<copy file="${netinf.common.location}/lib/iri.jar" todir="${libs.location}" />
 		<copy file="${netinf.common.location}/lib/jenatest.jar" todir="${libs.location}" />
@@ -241,44 +226,6 @@
 		<copy todir="${build.location}/configs">
 			<fileset dir="${projects.location}/configs" />
 		</copy>
-		<delete file="${build.location}/configs/Identities/privateKeyFile.pkf" />
-		<copy tofile="${build.location}/configs/Identities/privateKeyFile.pkf" file="${build.location}/configs/Identities/privateKeyFile_orig.pkf" />
-		<replace dir="${build.location}/configs" value="10.10.10.3">
-			<include name="scenario2/productlistCheckout.properties" />
-			<include name="scenario2/productlistGirlfriendPeter.properties" />
-			<include name="scenario2/shoppingJack.properties" />
-			<include name="scenario2/shoppingPeter.properties" />
-			<include name="scenario2/log4j/shoppingPeter.xml" />
-			<include name="scenario2/log4j/managementTool.xml" />
-			<include name="scenario2/log4j/shoppingJack.xml" />
-			<include name="scenario2/log4j/globalRSNode.xml" />
-			<include name="scenario2/log4j/searchRdfNode.xml" />
-			<include name="scenario2/log4j/eventServiceSiena.xml" />
-			<include name="scenario2/log4j/shopping.xml" />
-			<include name="scenario2/log4j/productlistGirlfriendPeter.xml" />
-			<include name="scenario2/log4j/productlistCheckout.xml" />
-			<include name="scenario2/log4j/productlist.xml" />
-			<replacetoken>localhost</replacetoken>
-		</replace>
-		<replace dir="${build.location}/configs" value="color=true">
-			<include name="log4j/logging.properties" />
-			<replacetoken>color=false</replacetoken>
-		</replace>
-	</target>
-
-	<target name="mgmt2">
-		<copy todir="${build.location}/mgmt2/configs">
-			<fileset dir="${build.location}/configs" />
-		</copy>
-		<copy todir="${build.location}/mgmt2/jar/netinf_libs/">
-			<fileset dir="${nlibs.location}" />
-		</copy>
-		<copy todir="${build.location}/mgmt2/jar/libs">
-			<fileset dir="${libs.location}" />
-		</copy>
-		<delete file="${build.location}/mgmt2/configs/Identities/privateKeyFile.pkf" />
-		<copy tofile="${build.location}/mgmt2/configs/Identities/privateKeyFile.pkf" file="${build.location}/mgmt2/configs/Identities/privateKeyFileIdentity2_orig.pkf" />
-		<copy tofile="${build.location}/mgmt2/jar/mgmt.jar" file="${jar.location}/mgmt.jar" />
 	</target>
 
 	<target name="copystuff">
@@ -288,28 +235,25 @@
 		<copy todir="${build.location}/inbird">
                         <fileset dir="${projects.location}/netinf.applications.mozilla/inbird" />
                 </copy>
-		<copy todir="${build.location}/netinf">
-			<fileset dir="${builddir.location}/netinf" />
-		</copy>
 		<copy todir="${build.location}/httpdata">
-			<fileset dir="${builddir.location}/httpdata" />
+			<fileset dir="${data.location}/httpdata" />
 		</copy>
 		<copy todir="${build.location}/sql">
-			<fileset dir="${builddir.location}/sql" />
+			<fileset dir="${data.location}/sql" />
 		</copy>
 		<copy todir="${build.location}/scripts">
-			<fileset dir="${builddir.location}/scripts" />
+			<fileset dir="${data.location}/scripts" />
 		</copy>
 	</target>
 
 	<target depends="cleanarchive,jar" name="create_archive">
-		<tar destfile="${build.location}/../deploy.tgz" compression="gzip">
+		<tar destfile="${archive.file}" compression="gzip">
 			<tarfileset dir="${build.location}/.." filemode="755">
-				<include name="build/scripts/**/*.sh" />
+				<include name="${build.dirname}/scripts/**/*.sh" />
 			</tarfileset>
 			<tarfileset dir="${build.location}/.." filemode="644">
-				<include name="build/**/*" />
-				<exclude name="build/scripts/**/*.sh" />
+				<include name="${build.dirname}/**/*" />
+				<exclude name="${build.dirname}/scripts/**/*.sh" />
 			</tarfileset>
 		</tar>
 		<antcall target="cleanbuild" />
@@ -320,7 +264,7 @@
 	</target>
 
 	<target name="cleanarchive">
-		<delete file="${build.location}../deploy.tgz" />
+		<delete file="${archive.file}" />
 	</target>
 
 	<target depends="cleanbuild" name="newbuild">
@@ -350,7 +294,7 @@
 	</target>
 
 	<target depends="build_common,copydata_access" name="build_access">
-		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.access.location}/bin" source="${source}" target="${target}">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.access.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.access.location}/src" />
 			<src path="${netinf.access.location}/src-test" />
 			<classpath refid="netinf.access.classpath" />
@@ -383,7 +327,7 @@
 	</target>
 
 	<target depends="copydata_common" name="build_common">
-		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.common.location}/bin" source="${source}" target="${target}">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.common.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.common.location}/src" />
 			<src path="${netinf.common.location}/src-test" />
 			<classpath refid="netinf.common.classpath" />
@@ -412,7 +356,7 @@
 	</target>
 
 	<target depends="build_common,copydata_database" name="build_database">
-		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.database.location}/bin" source="${source}" target="${target}">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.database.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.database.location}/src" />
 			<classpath refid="netinf.database.classpath" />
 		</javac>
@@ -444,7 +388,7 @@
 	</target>
 
 	<target depends="build_access,build_database,copydata_eventservice" name="build_eventservice">
-		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.eventservice.location}/bin" source="${source}" target="${target}">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.eventservice.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.eventservice.location}/src" />
 			<src path="${netinf.eventservice.location}/src-test" />
 			<classpath refid="netinf.eventservice.classpath" />
@@ -485,7 +429,7 @@
 	</target>
 
 	<target depends="build_access,build_database,copydata_node" name="build_node">
-		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.node.location}/bin" source="${source}" target="${target}">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.node.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.node.location}/src" />
 			<src path="${netinf.node.location}/src-test" />
 			<src path="${netinf.node.location}/src-test-integration" />
@@ -537,7 +481,7 @@
 	</target>
 
 	<target depends="copydata_tools_iomanagement" name="build_tools_iomanagement">
-		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.iomanagement.location}/bin" source="${source}" target="${target}">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.iomanagement.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.tools.iomanagement.location}/src" />
 			<src path="${netinf.tools.iomanagement.location}/src-test" />
 			<src path="${netinf.tools.iomanagement.location}/images" />
@@ -571,7 +515,7 @@
 	</target>
 
 	<target depends="copydata_tools_logging" name="build_tools_logging">
-		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.logging.location}/bin" source="${source}" target="${target}">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.logging.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.tools.logging.location}/src" />
 			<classpath refid="netinf.tools.logging.classpath" />
 		</javac>
@@ -603,7 +547,7 @@
 	</target>
 
 	<target depends="copydata_tools_productlist" name="build_tools_productlist">
-		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.productlist.location}/bin" source="${source}" target="${target}">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.productlist.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.tools.productlist.location}/src" />
 			<classpath refid="netinf.tools.productlist.classpath" />
 		</javac>
@@ -635,7 +579,7 @@
 	</target>
 
 	<target depends="copydata_tools_shopping" name="build_tools_shopping">
-		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.shopping.location}/bin" source="${source}" target="${target}">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.shopping.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.tools.shopping.location}/src" />
 			<classpath refid="netinf.tools.shopping.classpath" />
 		</javac>
@@ -649,40 +593,6 @@
 			</manifest>
 			<fileset dir="${netinf.tools.shopping.location}/bin" />
 		</jar>
-	</target>
-
-	<!-- deployment targets -->
-	<target name="deploy" depends="create_archive">
-		<foreach list="1,2,3,4,5,9" target="deploy_to" param="param" parallel="true" />
-		<antcall target="move_images" />
-		<antcall target="set_inbird" />
-		<antcall target="cleanbuild" />
-		<antcall target="cleanarchive" />
-	</target>
-
-	<target name="deploy_to">
-		<echo message="Deploying to 10.10.10.${param}" />
-		<sshexec host="10.10.10.${param}" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="rm -rf build" />
-		<scp file="${build.location}/../deploy.tgz" todir="${user.name}@10.10.10.${param}:~" keyfile="${user.home}/.ssh/id_rsa" passphrase="" />
-		<sshexec host="10.10.10.${param}" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="tar xvzf deploy.tgz; rm -rf deploy.tgz" />
-	</target>
-
-	<target name="move_images">
-		<sshexec host="10.10.10.4" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="mv /home/demo/build/httpdata/image_not_ok.png /home/demo/build/httpdata/image.png" />
-		<sshexec host="10.10.10.5" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="mv /home/demo/build/httpdata/image_ok.png /home/demo/build/httpdata/image.png" />
-	</target>
-
-	<target name="set_inbird">
-		<sshexec host="10.10.10.1" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="sed -i 's|localhost|10.10.10.1|g; s|8080|9081|g; s|privateKeyFile|/home/demo/build/configs/Identities/privateKeyFile|g' '/home/demo/build/inbird/defaults/preferences/prefs.js'" />
-		<sshexec host="10.10.10.2" username="${user.name}" keyfile="${user.home}/.ssh/id_rsa" passphrase="" command="sed -i 's|localhost|10.10.10.2|g; s|8080|9082|g; s|privateKeyFile|/home/demo/build/mgmt2/configs/Identities/privateKeyFile|g' '/home/demo/build/inbird/defaults/preferences/prefs.js'" />
-	</target>
-
-	<target name="deploy_local" depends="create_archive">
-		<copy file="${build.location}/../deploy.tgz" todir="${user.home}" />
-		<exec command="tar xvzf deploy.tgz" dir="${user.home}" />
-		<exec command="rm -rf .netinf" dir="${user.home}" />
-		<exec command="ln -s build/netinf .netinf" dir="${user.home}" />
-		<delete file="${user.home}/deploy.tgz" />
 	</target>
 
 </project>
