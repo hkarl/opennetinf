@@ -6,6 +6,9 @@ HM_LOC=/home/netinf
 # Location of OpenNetinf-Environment
 NI_LOC=${HM_LOC}/OpenNetinf
 
+# Location of Generic Path
+GP_LOC=${HM_LOC}/GenericPath
+
 # Location of OpenNetinf build directory
 BU_LOC=${NI_LOC}/opennetinf/build
 

@@ -13,3 +13,4 @@ syntax: glob
 # bins and dist
 syntax: regexp
 /bin/
+/dist/

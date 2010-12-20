@@ -1,4 +1,5 @@
 #!/bin/bash
+cd `dirname "$0"`
 ./killInfox.sh
 ./killInbird.sh
 ./killJava.sh
