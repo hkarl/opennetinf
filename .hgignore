@@ -1,0 +1,11 @@
+syntax: glob
+
+# backup files
+*.bak
+*.backup
+*~
+*.aux
+*.orig
+
+# bins
+/bin/
