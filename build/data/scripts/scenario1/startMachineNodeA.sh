@@ -6,7 +6,6 @@ cd `dirname "$0"`
 ./killGP.sh
 ./clearSDB.sh
 ./clearCache.sh
-./clearMgmt.sh
 ./clearLogs.sh
 ./startGP.sh &
 sleep 5
