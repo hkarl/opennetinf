@@ -279,7 +279,6 @@
 	<!-- netinf.access targets -->
 	<target name="clean_access">
 		<delete dir="${netinf.access.location}/bin" />
-		<mkdir dir="${netinf.access.location}/bin" />
 	</target>
 
 	<target name="copydata_access">
@@ -296,6 +295,7 @@
 	</target>
 
 	<target depends="build_common,copydata_access" name="build_access">
+		<mkdir dir="${netinf.access.location}/bin" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.access.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.access.location}/src" />
 			<src path="${netinf.access.location}/src-test" />
@@ -312,7 +312,6 @@
 	<!-- netinf.common targets -->
 	<target name="clean_common">
 		<delete dir="${netinf.common.location}/bin" />
-		<mkdir dir="${netinf.common.location}/bin" />
 	</target>
 
 	<target name="copydata_common">
@@ -329,6 +328,7 @@
 	</target>
 
 	<target depends="copydata_common" name="build_common">
+		<mkdir dir="${netinf.common.location}/bin" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.common.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.common.location}/src" />
 			<src path="${netinf.common.location}/src-test" />
@@ -345,7 +345,6 @@
 	<!-- netinf.database targets -->
 	<target name="clean_database">
 		<delete dir="${netinf.database.location}/bin" />
-		<mkdir dir="${netinf.database.location}/bin" />
 	</target>
 
 	<target name="copydata_database">
@@ -358,6 +357,7 @@
 	</target>
 
 	<target depends="build_common,copydata_database" name="build_database">
+		<mkdir dir="${netinf.database.location}/bin" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.database.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.database.location}/src" />
 			<classpath refid="netinf.database.classpath" />
@@ -373,7 +373,6 @@
 	<!-- netinf.eventservice targets -->
 	<target name="clean_eventservice">
 		<delete dir="${netinf.eventservice.location}/bin" />
-		<mkdir dir="${netinf.eventservice.location}/bin" />
 	</target>
 
 	<target name="copydata_eventservice">
@@ -390,6 +389,7 @@
 	</target>
 
 	<target depends="build_access,build_database,copydata_eventservice" name="build_eventservice">
+		<mkdir dir="${netinf.eventservice.location}/bin" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.eventservice.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.eventservice.location}/src" />
 			<src path="${netinf.eventservice.location}/src-test" />
@@ -410,7 +410,6 @@
 	<!-- netinf.node targets -->
 	<target name="clean_node">
 		<delete dir="${netinf.node.location}/bin" />
-		<mkdir dir="${netinf.node.location}/bin" />
 	</target>
 
 	<target name="copydata_node">
@@ -431,6 +430,7 @@
 	</target>
 
 	<target depends="build_access,build_database,copydata_node" name="build_node">
+		<mkdir dir="${netinf.node.location}/bin" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.node.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.node.location}/src" />
 			<src path="${netinf.node.location}/src-test" />
@@ -462,7 +462,6 @@
 	<!-- netinf.tools.iomanagement targets -->
 	<target name="clean_tools_iomanagement">
 		<delete dir="${netinf.tools.iomanagement.location}/bin" />
-		<mkdir dir="${netinf.tools.iomanagement.location}/bin" />
 	</target>
 
 	<target name="copydata_tools_iomanagement">
@@ -483,6 +482,7 @@
 	</target>
 
 	<target depends="copydata_tools_iomanagement" name="build_tools_iomanagement">
+		<mkdir dir="${netinf.tools.iomanagement.location}/bin" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.iomanagement.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.tools.iomanagement.location}/src" />
 			<src path="${netinf.tools.iomanagement.location}/src-test" />
@@ -504,7 +504,6 @@
 	<!-- netinf.tools.logging targets -->
 	<target name="clean_tools_logging">
 		<delete dir="${netinf.tools.logging.location}/bin" />
-		<mkdir dir="${netinf.tools.logging.location}/bin" />
 	</target>
 
 	<target name="copydata_tools_logging">
@@ -517,6 +516,7 @@
 	</target>
 
 	<target depends="copydata_tools_logging" name="build_tools_logging">
+		<mkdir dir="${netinf.tools.logging.location}/bin" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.logging.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.tools.logging.location}/src" />
 			<classpath refid="netinf.tools.logging.classpath" />
@@ -536,7 +536,6 @@
 	<!-- netinf.tools.productlist targets -->
 	<target name="clean_tools_productlist">
 		<delete dir="${netinf.tools.productlist.location}/bin" />
-		<mkdir dir="${netinf.tools.productlist.location}/bin" />
 	</target>
 
 	<target name="copydata_tools_productlist">
@@ -549,6 +548,7 @@
 	</target>
 
 	<target depends="copydata_tools_productlist" name="build_tools_productlist">
+		<mkdir dir="${netinf.tools.productlist.location}/bin" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.productlist.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.tools.productlist.location}/src" />
 			<classpath refid="netinf.tools.productlist.classpath" />
@@ -568,7 +568,6 @@
 	<!-- netinf.tools.shopping targets -->
 	<target name="clean_tools_shopping">
 		<delete dir="${netinf.tools.shopping.location}/bin" />
-		<mkdir dir="${netinf.tools.shopping.location}/bin" />
 	</target>
 
 	<target name="copydata_tools_shopping">
@@ -581,6 +580,7 @@
 	</target>
 
 	<target depends="copydata_tools_shopping" name="build_tools_shopping">
+		<mkdir dir="${netinf.tools.shopping.location}/bin" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${netinf.tools.shopping.location}/bin" source="${source}" target="${target}" includeantruntime='false'>
 			<src path="${netinf.tools.shopping.location}/src" />
 			<classpath refid="netinf.tools.shopping.classpath" />
