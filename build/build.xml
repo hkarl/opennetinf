@@ -244,6 +244,9 @@
 		<copy todir="${build.location}/scripts">
 			<fileset dir="${data.location}/scripts" />
 		</copy>
+		<copy todir="${build.location}/ManagementToolIdentifiers">
+			<fileset dir="${data.location}/ManagementToolIdentifiers" />
+		</copy>
 		<chmod dir="${build.location}/scripts" perm="750" includes="**/*.sh"/>
 
 	</target>
