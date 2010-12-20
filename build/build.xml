@@ -244,6 +244,8 @@
 		<copy todir="${build.location}/scripts">
 			<fileset dir="${data.location}/scripts" />
 		</copy>
+		<chmod dir="${build.location}/scripts" perm="750" includes="**/*.sh"/>
+
 	</target>
 
 	<target depends="cleanarchive,jar" name="create_archive">
