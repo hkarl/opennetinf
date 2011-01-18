@@ -52,8 +52,8 @@ import org.junit.Test;
  * @author PG Augnet 2, University of Paderborn
  */
 public class HashingTest {
-   public static final String TEST_FILE_PATH = "./data-test/GuiceDeps.png";
-   public static final String SHA1_HASH_OF_TEST_FILE = "05826e826675a731c76ab6cdd92edefc93f1f815";
+   public static final String TEST_FILE_PATH = "../configs/testing/testingFileForSHA1Hash.jpg";
+   public static final String SHA1_HASH_OF_TEST_FILE = "5ef6c6cc531f3755b303d3f6f966c6741e5b08ba"; 
 
    @Test
    public void testSHA1Hash() throws IOException {
