@@ -57,6 +57,8 @@ import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.NetInfObjectWrapper;
 import netinf.common.datamodel.identity.ResolutionServiceIdentityObject;
 import netinf.common.exceptions.NetInfUncheckedException;
+import netinf.common.messages.ESFFetchMissedEventsRequest;
+import netinf.common.messages.ESFFetchMissedEventsResponse;
 import netinf.common.messages.NetInfMessage;
 import netinf.common.messages.RSGetRequest;
 import netinf.common.messages.RSGetResponse;
@@ -151,6 +153,10 @@ public class MessageEncoderXML extends MessageEncoderAbstract {
          encodeTCStartTransferRequest(xml, (TCStartTransferRequest) m, serializeFormat);
       } else if (m instanceof TCStartTransferResponse) {
          encodeTCStartTransferResponse(xml, (TCStartTransferResponse) m, serializeFormat);
+      } else if (m instanceof ESFFetchMissedEventsRequest) {
+         encodeESFFetchMissedEventsRequest(xml, (ESFFetchMissedEventsRequest) m, serializeFormat);
+      } else if (m instanceof ESFFetchMissedEventsResponse) {
+         encodeESFFetchMissedEventsResponse(xml, (ESFFetchMissedEventsResponse) m, serializeFormat);
       } else {
          throw new NetInfUncheckedException("Don't know how to encode this NetInfMessage");
       }
@@ -158,7 +164,23 @@ public class MessageEncoderXML extends MessageEncoderAbstract {
       return buildString(xml);
    }
 
-   private void encodeRSGetRequest(Document xml, RSGetRequest m, SerializeFormat serializeFormat) {
+   private void encodeESFFetchMissedEventsResponse(Document xml,
+		ESFFetchMissedEventsResponse m, SerializeFormat serializeFormat) {
+	   appendElementWithValue(xml, xml.getFirstChild(), EL_PRIVATE_KEY, m.getPrivateKey().toString());
+		appendElementWithValue(xml, xml.getFirstChild(), EL_USER_NAME, m.getUserName().toString());
+		appendElementWithValue(xml, xml.getFirstChild(), EL_ERROR_MESSAGE, m.getErrorMessage().toString());
+	
+}
+
+private void encodeESFFetchMissedEventsRequest(Document xml,
+		ESFFetchMissedEventsRequest m, SerializeFormat serializeFormat) {
+	appendElementWithValue(xml, xml.getFirstChild(), EL_PRIVATE_KEY, m.getPrivateKey().toString());
+	appendElementWithValue(xml, xml.getFirstChild(), EL_USER_NAME, m.getUserName().toString());
+	appendElementWithValue(xml, xml.getFirstChild(), EL_ERROR_MESSAGE, m.getErrorMessage().toString());
+	
+}
+
+private void encodeRSGetRequest(Document xml, RSGetRequest m, SerializeFormat serializeFormat) {
       appendElementWithValue(xml, xml.getFirstChild(), EL_IDENTIFIER, m.getIdentifier().toString());
 
       if (m.isFetchAllVersions()) {
@@ -273,7 +295,12 @@ public class MessageEncoderXML extends MessageEncoderAbstract {
             message = decodeTCStartTransferRequest(documentElement, serializeFormat);
          } else if (messageName.equals(TCStartTransferResponse.class.getSimpleName())) {
             message = decodeTCStartTransferResponse(documentElement, serializeFormat);
-         } else {
+         } else if (messageName.equals(ESFFetchMissedEventsResponse.class.getSimpleName())) {
+            message = decodeESFFetchMissedEventsResponse(documentElement, serializeFormat);
+         } else if (messageName.equals(ESFFetchMissedEventsRequest.class.getSimpleName())) {
+            message = decodeESFFetchMissedEventsRequest(documentElement, serializeFormat);
+         } 
+         else {
             throw new NetInfUncheckedException("Don't know how to decode this NetInfMessage");
          }
 
@@ -307,7 +334,34 @@ public class MessageEncoderXML extends MessageEncoderAbstract {
       }
    }
 
-   private RSGetRequest decodeRSGetRequest(Node root, SerializeFormat serializeFormat) {
+   /**
+    * Method is not yet 100% checked and correct. Use at your own risk
+    * @param root
+    * @param serializeFormat
+    * @return Return ESFFetchMissedEventsRequest object decoded from the XML document
+    */
+   private ESFFetchMissedEventsRequest decodeESFFetchMissedEventsRequest(
+		Node root, SerializeFormat serializeFormat) {
+	   ESFFetchMissedEventsRequest decodedMsg = new ESFFetchMissedEventsRequest();
+	   Node sourceNode = getFirstElementByTagName(root, EL_PRIVATE_KEY);
+	   if (sourceNode == null) {
+	         throw new NetInfUncheckedException("ESFFetchMissedEventsRequest lacks required field: " + EL_PRIVATE_KEY);
+	   }
+	   decodedMsg.setPrivateKey(sourceNode.getTextContent());
+	   Node errorMsgNode = getFirstElementByTagName(root, EL_ERROR_MESSAGE);
+	   if (errorMsgNode != null) {
+	         decodedMsg.setErrorMessage(errorMsgNode.getTextContent());
+	   }
+	   
+	   Node idNode = getFirstElementByTagName(root, EL_IDENTITY);
+	   if (idNode != null) {
+	         decodedMsg.setErrorMessage(errorMsgNode.getTextContent());
+	   }
+	  
+	   return decodedMsg;	
+}
+
+private RSGetRequest decodeRSGetRequest(Node root, SerializeFormat serializeFormat) {
       Node identifierNode = getFirstElementByTagName(root, EL_IDENTIFIER);
       if (identifierNode == null) {
          throw new NetInfUncheckedException("RSGetRequest lacks required field: " + EL_IDENTIFIER);
@@ -450,6 +504,32 @@ public class MessageEncoderXML extends MessageEncoderAbstract {
       message.setJobId(jobIdNode.getTextContent());
 
       return message;
+   }
+   /**
+    * Method is not yet 100% checked and correct. Use at your own risk
+    * @param root Root element of the XML document
+    * @param serializeFormat 
+    * @return Returns an ESFFetchMissedEventsResponse object with the data read from the xml object
+    */
+   private ESFFetchMissedEventsResponse decodeESFFetchMissedEventsResponse(Node root, SerializeFormat serializeFormat)
+   {
+	   ESFFetchMissedEventsResponse decodedMsg = new ESFFetchMissedEventsResponse();
+	   Node sourceNode = getFirstElementByTagName(root, EL_PRIVATE_KEY);
+	   if (sourceNode == null) {
+	         throw new NetInfUncheckedException("ESFFetchMissedEventsResponse lacks required field: " + EL_PRIVATE_KEY);
+	   }
+	   decodedMsg.setPrivateKey(sourceNode.getTextContent());
+	   Node errorMsgNode = getFirstElementByTagName(root, EL_ERROR_MESSAGE);
+	   if (errorMsgNode != null) {
+	         decodedMsg.setErrorMessage(errorMsgNode.getTextContent());
+	   }
+	   
+	   Node idNode = getFirstElementByTagName(root, EL_IDENTITY);
+	   if (idNode != null) {
+	         decodedMsg.setErrorMessage(errorMsgNode.getTextContent());
+	   }
+	  
+	   return decodedMsg;
    }
 
    private Node getFirstElementByTagName(Node xml, String tagName) {
