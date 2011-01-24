@@ -64,12 +64,12 @@ public class DatamodelTranslator {
 
    public <T> T toRdf(T object) {
       LOG.trace(null);
-      return datamodelFactoryRdf.copyObject(object);
+      return getDatamodelFactoryRdf().copyObject(object);
    }
 
    public <T> T toImpl(T object) {
       LOG.trace(null);
-      return datamodelFactoryImpl.copyObject(object);
+      return getDatamodelFactoryImpl().copyObject(object);
    }
 
    public DatamodelFactoryRdf getDatamodelFactoryRdf() {

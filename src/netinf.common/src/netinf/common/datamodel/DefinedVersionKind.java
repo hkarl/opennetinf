@@ -43,7 +43,9 @@ package netinf.common.datamodel;
  * @author PG Augnet 2, University of Paderborn
  */
 public enum DefinedVersionKind {
-	UNVERSIONED("UNVERSIONED"), VERSIONED("VERSIONED"), UNKNOWN("UNKNOWN");
+	UNVERSIONED("UNVERSIONED"),
+	VERSIONED("VERSIONED"),
+	UNKNOWN("UNKNOWN");
 
 	private final String stringRepresentation;
 
@@ -59,7 +61,6 @@ public enum DefinedVersionKind {
 		for (DefinedVersionKind versionKind : DefinedVersionKind.values()) {
 			if (versionKind.getStringRepresentation().equals(stringRepresentation)) {
 				return versionKind;
-
 			}
 		}
 		return UNKNOWN;

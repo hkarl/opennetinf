@@ -72,7 +72,6 @@ public class ResolutionServiceIdentityObjectRdf extends IdentityObjectRdf implem
          return null;
       }
       return attribute.getValue(String.class);
-
    }
 
    @Override

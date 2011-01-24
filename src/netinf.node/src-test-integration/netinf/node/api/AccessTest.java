@@ -50,6 +50,7 @@ import netinf.common.utils.Utils;
 import netinf.node.resolution.InformationObjectHelper;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;

@@ -282,9 +282,7 @@ public class DatamodelFactoryRdf extends DatamodelFactoryAbstract {
    @Override
    public InformationObject createInformationObjectFromBytes(byte[] bytes) {
       LOG.trace(null);
-
       Model deserializedModel = ModelFactory.createDefaultModel().read(new ByteArrayInputStream(bytes), null);
-
       return createInformationObjectFromModel(deserializedModel);
    }
 

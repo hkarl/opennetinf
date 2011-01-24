@@ -89,7 +89,7 @@ public class IdentifierLabelImpl implements Serializable, IdentifierLabel {
 
    @Override
    public Object clone() {
-      return datamodelFactory.copyObject(this);
+      return getDatamodelFactory().copyObject(this);
    }
 
    @Override

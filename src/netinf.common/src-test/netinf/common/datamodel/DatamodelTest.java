@@ -44,9 +44,22 @@ import java.util.Properties;
 
 import netinf.common.communication.NetInfNodeConnection;
 import netinf.common.communication.RemoteNodeConnection;
+import netinf.common.communication.SerializeFormat;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
+import netinf.common.datamodel.identity.IdentityObject;
+import netinf.common.datamodel.identity.NodeIdentityObject;
+import netinf.common.datamodel.impl.DataObjectImpl;
+import netinf.common.datamodel.impl.identity.EventServiceIdentityObjectImpl;
+import netinf.common.datamodel.impl.identity.GroupIdentityObjectImpl;
+import netinf.common.datamodel.impl.identity.NodeIdentityObjectImpl;
+import netinf.common.datamodel.impl.identity.PersonIdentityObjectImpl;
+import netinf.common.datamodel.impl.identity.ResolutionServiceIdentityObjectImpl;
+import netinf.common.datamodel.impl.identity.SearchServiceIdentityObjectImpl;
 import netinf.common.datamodel.impl.module.DatamodelImplModule;
+import netinf.common.datamodel.rdf.DataObjectRdf;
+import netinf.common.datamodel.rdf.identity.EventServiceIdentityObjectRdf;
+import netinf.common.datamodel.rdf.identity.GroupIdentityObjectRdf;
 import netinf.common.log.module.LogModule;
 import netinf.common.security.impl.module.SecurityModule;
 import netinf.common.utils.DatamodelUtils;
@@ -55,6 +68,7 @@ import netinf.common.utils.Utils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.omg.CORBA.IdentifierHelper;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -84,6 +98,11 @@ public class DatamodelTest {
    public static final String IDENTIFIER_LABEL_2_NAME = DefinedLabelName.VERSION_KIND.getLabelName();
    public static final String IDENTIFIER_LABEL_1_VALUE = "1234321";
 
+   // DummyDataObject
+   public static final String DO_ATTRIBUTE_IDENTIFICATION = "testIdentification";
+   public static final String DO_ATTRIBUTE_VALUE = "testValue";
+   public static final String DO_ATTRIBUTE_PURPOSE = DefinedAttributePurpose.LOCATOR_ATTRIBUTE.getAttributePurpose();
+   
    private static DatamodelFactory datamodelFactory;
 
    @BeforeClass
@@ -121,6 +140,14 @@ public class DatamodelTest {
 
       Assert.assertEquals(informationObject, clonedInformationObject);
       Assert.assertEquals(informationObject.hashCode(), clonedInformationObject.hashCode());
+   }
+   
+   @Test
+   public void testCloneIdentifierLabel(){
+	   IdentifierLabel iLabel = getDatamodelFactory().createIdentifierLabel();
+	   IdentifierLabel clonediLabel = (IdentifierLabel) iLabel.clone();
+	   
+	   Assert.assertEquals(iLabel, clonediLabel);
    }
 
    @Test
@@ -198,6 +225,7 @@ public class DatamodelTest {
       Assert.assertEquals(property2.getInformationObject(), null);
    }
 
+   @Test
    public void testAddPropertyTwice() {
       InformationObject informationObject = getDatamodelFactory().createInformationObject();
       Attribute property = getDatamodelFactory().createAttribute(DefinedAttributeIdentification.E_MAIL_ADDRESS.getURI(),
@@ -206,7 +234,8 @@ public class DatamodelTest {
       informationObject.addAttribute(property);
       informationObject.addAttribute(property);
 
-      Assert.assertEquals(2, informationObject.getAttributes());
+      // attribute should be overwritten
+      Assert.assertEquals(1, informationObject.getAttributes().size());
    }
 
    @Test
@@ -221,17 +250,18 @@ public class DatamodelTest {
       Assert.assertEquals("something@somethingelse.de", value);
    }
 
-   @Test(expected = ClassCastException.class)
+   @Test(expected=ClassCastException.class)
    public void testSetAndGetPropertyValueWithError() {
       InformationObject informationObject = getDatamodelFactory().createInformationObject();
       Attribute property = getDatamodelFactory().createAttribute(DefinedAttributeIdentification.E_MAIL_ADDRESS.getURI(),
             "something@somethingelse.de");
 
       informationObject.addAttribute(property);
+      
       // This method should throw an exception
       Integer value = property.getValue(Integer.class);
 
-      Assert.assertEquals("something@somethingelse.de", value);
+      // Assert.assertEquals("something@somethingelse.de", value);
    }
 
    @Test
@@ -339,7 +369,191 @@ public class DatamodelTest {
       equalIdentifiers = DatamodelUtils.equalIdentifiers(first, second);
       Assert.assertFalse(equalIdentifiers);
    }
+   
+   @Test
+   public void testGetSerializeFormat(){
+	   Assert.assertEquals(SerializeFormat.JAVA, getDatamodelFactory().getSerializeFormat());
+   }
+   
+   @Test
+   public void testDifferentInformationObjectTypes() {
+      InformationObject object = getDatamodelFactory().createDataObject();
+      NetInfObjectWrapper desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
+      Assert.assertEquals(DataObjectImpl.class.getCanonicalName(), desObject.getClass().getCanonicalName());
+      
+      object = getDatamodelFactory().createEventServiceIdentityObject();
+      desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
+      Assert.assertEquals(EventServiceIdentityObjectImpl.class.getCanonicalName(), desObject.getClass().getCanonicalName());
 
+      object = getDatamodelFactory().createGroupIdentityObject();
+      desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
+      Assert.assertEquals(GroupIdentityObjectImpl.class.getCanonicalName(), desObject.getClass().getCanonicalName());
+      
+      object = getDatamodelFactory().createNodeIdentityObject();
+      desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
+      Assert.assertEquals(NodeIdentityObjectImpl.class.getCanonicalName(), desObject.getClass().getCanonicalName());
+      
+      object = getDatamodelFactory().createPersonIdentityObject();
+      desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
+      Assert.assertEquals(PersonIdentityObjectImpl.class.getCanonicalName(), desObject.getClass().getCanonicalName());
+      
+      object = getDatamodelFactory().createResolutionServiceIdentityObject();
+      desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
+      Assert.assertEquals(ResolutionServiceIdentityObjectImpl.class.getCanonicalName(), desObject.getClass().getCanonicalName());
+      
+      object = getDatamodelFactory().createSearchServiceIdentityObject();
+      desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
+      Assert.assertEquals(SearchServiceIdentityObjectImpl.class.getCanonicalName(), desObject.getClass().getCanonicalName());
+   }
+
+   @Test
+   public void testGetLocatorByLocatorType(){
+	   DataObject obj = createDummyDataObject(getDatamodelFactory());
+	   List<Attribute> attrs = obj.getLocatorByLocatorType(DO_ATTRIBUTE_IDENTIFICATION);
+	   
+	   // array should not be empty
+	   Assert.assertFalse(attrs.isEmpty());
+	   
+	   // all returned attributes should be of that type
+	   for(Attribute attr : attrs){
+		   Assert.assertEquals(attr.getIdentification(), DO_ATTRIBUTE_IDENTIFICATION);   
+	   }
+   }
+   
+   @Test
+   public void testRemoveIdentifierLabel(){
+	   Identifier identifier = datamodelFactory.createIdentifier();
+	   
+	   IdentifierLabel identifierLabel1 = datamodelFactory.createIdentifierLabel();
+	   identifierLabel1.setLabelName(IDENTIFIER_LABEL_1_NAME);
+	   identifierLabel1.setLabelValue(IDENTIFIER_LABEL_1_VALUE);
+	   identifier.addIdentifierLabel(identifierLabel1);
+	   
+	   // remove (previously) added label
+	   identifier.removeIdentifierLabel(IDENTIFIER_LABEL_1_NAME);
+	   
+	   // should be null
+	   Assert.assertNull(identifier.getIdentifierLabel(IDENTIFIER_LABEL_1_NAME));
+   }
+   
+   @Test
+   public void testSetPublicKeys(){
+	   IdentityObject identObj = getDatamodelFactory().createIdentityObject();
+	   Attribute attr = getDatamodelFactory().createAttribute(DefinedAttributeIdentification.PUBLIC_KEY.getURI(), "asdasdasd");
+	   identObj.setPublicKeys(attr);
+	   
+	   // should be the same
+	   Assert.assertEquals(identObj.getPublicKeys(), attr);
+   }
+   
+   @Test
+   public void testCreateIdentifierFromBytes(){
+	   // dummy
+	   Identifier identifier = datamodelFactory.createIdentifier();
+	  
+	   IdentifierLabel identifierLabel1 = datamodelFactory.createIdentifierLabel();
+	   identifierLabel1.setLabelName(IDENTIFIER_LABEL_1_NAME);
+	   identifierLabel1.setLabelValue(IDENTIFIER_LABEL_1_VALUE);
+	  
+	   identifier.addIdentifierLabel(identifierLabel1);
+	   
+	   NetInfObjectWrapper desIdent = getDatamodelFactory().createIdentifierFromBytes(identifier.serializeToBytes());
+	   
+	   // should be the same
+	   Assert.assertEquals(identifier, desIdent);
+   }
+   
+   @Test
+   public void testGetDefinedAttributePurpose(){
+	   String test = DefinedAttributePurpose.SYSTEM_ATTRIBUTE.toString();
+	   // what is this method good for?
+	   DefinedAttributePurpose purp = DefinedAttributePurpose.getDefinedAttributePurpose(test);
+	   // should be the same
+	   Assert.assertEquals(test, purp.toString());
+   }
+   
+   @Test
+   public void testgetVersionKind(){
+	   String test = DefinedVersionKind.VERSIONED.toString();
+	   // what is this method good for?
+	   DefinedVersionKind vers = DefinedVersionKind.getVersionKind(test);
+	   // should be the same
+	   Assert.assertEquals(test, vers.toString());
+	   //with error:
+	   vers = DefinedVersionKind.getVersionKind("wrongRepresenation");
+	   // should not be the same (UNKNOWN)
+	   Assert.assertNotSame(test, vers.toString());
+   }
+   
+   @Test
+   public void testgetDefinedAttributeIdentificationByURI(){
+	   String test = DefinedAttributeIdentification.getURIByAttributeIdentification(DefinedAttributeIdentification.AUTHORIZED_READERS);
+	   // what is this method good for?
+	   DefinedAttributeIdentification ident = DefinedAttributeIdentification.getDefinedAttributeIdentificationByURI(test);
+	   // should be the same
+	   Assert.assertEquals(test, ident.getURI());
+   }
+   
+   @Test
+   public void testGetSubattributesForPurpose(){
+	   InformationObject iObj = createDummyInformationObject(getDatamodelFactory());
+	   
+	   // Attributes should exist (dummy)
+	   if(iObj.getAttributes().size() > 0){
+		   // dummy contains only one attribute
+		   Attribute attr = iObj.getAttributes().get(0);
+		   if(attr.getSubattributes().size() > 0){
+			   List<Attribute> subAttrs = attr.getSubattributesForPurpose(SUBATTRIBUTE_PURPOSE);
+			   // should be one
+			   Assert.assertEquals(subAttrs.size(), 1);
+			   // and the same purpose
+			   Assert.assertEquals(subAttrs.get(0).getAttributePurpose(), SUBATTRIBUTE_PURPOSE);
+		   } else {
+			   Assert.fail("Dummy IO should contain Subattributes");
+		   }
+	   } else {
+		   Assert.fail("Dummy IO should contain Attributes");
+	   }
+   }
+   
+   @Test
+   public void testSetIdentificationTwice(){
+	   InformationObject iObj = createDummyInformationObject(getDatamodelFactory());
+	   String identif1 = DefinedAttributeIdentification.EVENT.getURI();
+	   String identif2 = DefinedAttributeIdentification.DESCRIPTION.getURI();
+	   List<Attribute> attrs = iObj.getAttribute(ATTRIBUTE_IDENTIFICATION);
+	   
+	   if(attrs.size() > 0){
+		   Attribute attr = attrs.get(0);
+		   attr.setIdentification(identif1);
+		   Assert.assertEquals(attr.getIdentification(), identif1);
+		   // now set again
+		   attr.setIdentification(identif2);
+		   Assert.assertEquals(attr.getIdentification(), identif2);
+	   } else {
+		   Assert.fail("IO should contain Attributes");
+	   }
+
+   }
+   
+   public static DataObject createDummyDataObject(DatamodelFactory datamodelFactory){
+	   DataObject object = getDatamodelFactory().createDataObject();
+	   Attribute attribute1 = datamodelFactory.createAttribute();
+	   Attribute attribute2 = datamodelFactory.createAttribute();
+	  
+	   attribute1.setIdentification(DO_ATTRIBUTE_IDENTIFICATION);
+	   attribute1.setValue(DO_ATTRIBUTE_VALUE);
+	   attribute1.setAttributePurpose(DO_ATTRIBUTE_PURPOSE);
+	   object.addAttribute(attribute1);
+	   
+	   attribute2.setIdentification(ATTRIBUTE_IDENTIFICATION);
+	   attribute2.setValue(ATTRIBUTE_VALUE);
+	   attribute2.setAttributePurpose(ATTRIBUTE_PURPOSE);
+	   object.addAttribute(attribute2);
+	      
+	   return object;
+   }
+   
    public static InformationObject createDummyInformationObject(DatamodelFactory datamodelFactory) {
       InformationObject informationObject = datamodelFactory.createInformationObject();
       Attribute attribute = datamodelFactory.createAttribute();

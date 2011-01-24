@@ -45,6 +45,7 @@ import netinf.node.resolution.impl.ResolutionControllerImpl;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -52,6 +53,7 @@ import org.junit.Test;
  * 
  * @author PG Augnet 2, University of Paderborn
  */
+@Ignore("Not Implemented")
 public class ResolutionControllerTest {
 
    ResolutionController resolutionController;

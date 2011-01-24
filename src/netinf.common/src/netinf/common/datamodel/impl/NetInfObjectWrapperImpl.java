@@ -117,7 +117,7 @@ public abstract class NetInfObjectWrapperImpl implements Serializable, NetInfObj
 
    @Override
    public Object clone() {
-      return datamodelFactory.copyObject(this);
+      return getDatamodelFactory().copyObject(this);
    }
 
    @Override

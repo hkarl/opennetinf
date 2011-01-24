@@ -114,11 +114,11 @@ public class IdentifierImpl extends NetInfObjectWrapperImpl implements Identifie
    public void removeIdentifierLabel(String labelName) {
       removeIdentifierLabel(this.identifierLabels.get(labelName));
    }
-
+   
    @Override
    @Deprecated
    public void initFromString(String string) {
-
+	   /*
       // First remove all identifierLabels
       Collection<IdentifierLabel> values = this.identifierLabels.values();
 
@@ -136,7 +136,7 @@ public class IdentifierImpl extends NetInfObjectWrapperImpl implements Identifie
       } catch (NetInfUncheckedException e) {
          LOG.error("Could not use given String '" + string + "' as identifier");
          throw new NetInfUncheckedException(e);
-      }
+      }*/
    }
 
    @Override

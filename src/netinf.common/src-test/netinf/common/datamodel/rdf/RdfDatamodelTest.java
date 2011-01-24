@@ -43,17 +43,27 @@ import java.util.Properties;
 import junit.framework.Assert;
 import netinf.common.communication.NetInfNodeConnection;
 import netinf.common.communication.RemoteNodeConnection;
+import netinf.common.communication.SerializeFormat;
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.DatamodelTest;
 import netinf.common.datamodel.DefinedLabelName;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
+import netinf.common.datamodel.NetInfObjectWrapper;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.datamodel.impl.DatamodelFactoryImpl;
 import netinf.common.datamodel.impl.InformationObjectImpl;
+import netinf.common.datamodel.impl.identity.NodeIdentityObjectImpl;
+import netinf.common.datamodel.impl.identity.PersonIdentityObjectImpl;
+import netinf.common.datamodel.impl.identity.ResolutionServiceIdentityObjectImpl;
+import netinf.common.datamodel.impl.identity.SearchServiceIdentityObjectImpl;
 import netinf.common.datamodel.rdf.attribute.AttributeRdf;
 import netinf.common.datamodel.rdf.identity.EventServiceIdentityObjectRdf;
 import netinf.common.datamodel.rdf.identity.GroupIdentityObjectRdf;
+import netinf.common.datamodel.rdf.identity.NodeIdentityObjectRdf;
+import netinf.common.datamodel.rdf.identity.PersonIdentityObjectRdf;
+import netinf.common.datamodel.rdf.identity.ResolutionServiceIdentityObjectRdf;
+import netinf.common.datamodel.rdf.identity.SearchServiceIdentityObjectRdf;
 import netinf.common.datamodel.rdf.module.DatamodelRdfModule;
 import netinf.common.exceptions.NetInfCheckedException;
 import netinf.common.log.module.LogModule;
@@ -392,18 +402,35 @@ public class RdfDatamodelTest extends DatamodelTest {
    }
 
    @Test
+   @Override
    public void testDifferentInformationObjectTypes() {
       InformationObject object = getDatamodelFactory().createDataObject();
-      InformationObject desObject = getDatamodelFactory().createInformationObjectFromBytes(object.serializeToBytes());
+      NetInfObjectWrapper desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
       Assert.assertEquals(DataObjectRdf.class.getCanonicalName(), desObject.getClass().getCanonicalName());
 
       object = getDatamodelFactory().createEventServiceIdentityObject();
-      desObject = getDatamodelFactory().createInformationObjectFromBytes(object.serializeToBytes());
+      desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
       Assert.assertEquals(EventServiceIdentityObjectRdf.class.getCanonicalName(), desObject.getClass().getCanonicalName());
 
       object = getDatamodelFactory().createGroupIdentityObject();
-      desObject = getDatamodelFactory().createInformationObjectFromBytes(object.serializeToBytes());
+      desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
       Assert.assertEquals(GroupIdentityObjectRdf.class.getCanonicalName(), desObject.getClass().getCanonicalName());
+   
+      object = getDatamodelFactory().createNodeIdentityObject();
+      desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
+      Assert.assertEquals(NodeIdentityObjectRdf.class.getCanonicalName(), desObject.getClass().getCanonicalName());
+      
+      object = getDatamodelFactory().createPersonIdentityObject();
+      desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
+      Assert.assertEquals(PersonIdentityObjectRdf.class.getCanonicalName(), desObject.getClass().getCanonicalName());
+      
+      object = getDatamodelFactory().createSearchServiceIdentityObject();
+      desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
+      Assert.assertEquals(SearchServiceIdentityObjectRdf.class.getCanonicalName(), desObject.getClass().getCanonicalName());
+   
+      object = getDatamodelFactory().createResolutionServiceIdentityObject();
+      desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
+      Assert.assertEquals(ResolutionServiceIdentityObjectRdf.class.getCanonicalName(), desObject.getClass().getCanonicalName());
    }
 
    @Test
@@ -412,7 +439,7 @@ public class RdfDatamodelTest extends DatamodelTest {
       Attribute attribute = informationObject.getSingleAttribute(ATTRIBUTE_IDENTIFICATION);
 
       byte[] serializeToBytes = attribute.serializeToBytes();
-      Attribute attributeFromBytes = getDatamodelFactory().createAttributeFromBytes(serializeToBytes);
+      NetInfObjectWrapper attributeFromBytes = getDatamodelFactory().createFromBytes(serializeToBytes);
 
       Assert.assertEquals(attribute, attributeFromBytes);
    }
@@ -423,7 +450,7 @@ public class RdfDatamodelTest extends DatamodelTest {
       Identifier identifier = informationObject.getIdentifier();
 
       byte[] serializeToBytes = identifier.serializeToBytes();
-      Identifier identifierFromBytes = getDatamodelFactory().createIdentifierFromBytes(serializeToBytes);
+      NetInfObjectWrapper identifierFromBytes = getDatamodelFactory().createFromBytes(serializeToBytes);
 
       Assert.assertEquals(identifier, identifierFromBytes);
    }
@@ -440,4 +467,10 @@ public class RdfDatamodelTest extends DatamodelTest {
 
       Assert.assertTrue(DatamodelUtils.equalInformationObjects(rdfIO1, rdfIO2));
    }
+   
+   @Test
+   @Override
+	public void testGetSerializeFormat() {
+	   Assert.assertEquals(SerializeFormat.RDF, getDatamodelFactory().getSerializeFormat());
+	}
 }

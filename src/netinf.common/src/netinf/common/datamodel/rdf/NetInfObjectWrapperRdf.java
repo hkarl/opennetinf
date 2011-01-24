@@ -94,7 +94,7 @@ public abstract class NetInfObjectWrapperRdf implements NetInfObjectWrapper {
    protected abstract void addToResource(Resource givenResource);
 
    /**
-    * Has to be overwriten
+    * Has to be overwritten
     * 
     * @param resource
     */

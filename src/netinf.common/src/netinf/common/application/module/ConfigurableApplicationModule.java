@@ -66,7 +66,7 @@ public class ConfigurableApplicationModule extends AbstractApplicationModule {
    @Override
    protected void configure() {
       super.configure();
-
+      
       if (this.properties != null) {
          Names.bindProperties(binder(), this.properties);
          install(new LogModule(this.properties));
