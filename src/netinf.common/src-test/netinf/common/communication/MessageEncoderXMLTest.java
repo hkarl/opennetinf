@@ -59,9 +59,13 @@ public class MessageEncoderXMLTest extends MessageEncoderTest {
 
    @Override
    @Test
-   @Ignore("Not Implemented")
+   //@Ignore("Not Implemented")
    public void testRSPutRequest() {
+	   
+	 super.testGetUniqueEncoderID();  
    }
+   
+   
 
    @Override
    @Test
