@@ -3,17 +3,26 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src-test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.15.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.15.jar" sourcepath="lib-source/log4j-1.2.15-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-lang-2.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/aopalliance.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/guice-2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-2.0.jar" sourcepath="lib/guice-2.0-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/google-protobuf.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/jena.jar"/>
-	<classpathentry kind="lib" path="lib/arq.jar"/>
+	<classpathentry kind="lib" path="lib/jena.jar" sourcepath="lib-source/jena-2.6.2-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/netinf.common/lib-source/jena-2.6.2-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/arq.jar" sourcepath="lib-source/arq-2.8.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/netinf.common/lib-source/arq_javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/arq-extra.jar"/>
+	<classpathentry kind="lib" path="lib/guice-2.0-src.zip"/>
 	<classpathentry kind="lib" path="lib/icu4j_3_4.jar"/>
 	<classpathentry kind="lib" path="lib/iri.jar"/>
 	<classpathentry kind="lib" path="lib/jenatest.jar"/>
