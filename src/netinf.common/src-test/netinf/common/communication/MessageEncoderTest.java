@@ -38,6 +38,9 @@
 package netinf.common.communication;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 
 import java.util.Properties;
 
@@ -45,38 +48,13 @@ import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.IdentifierLabel;
 import netinf.common.datamodel.InformationObject;
-import netinf.common.messages.ESFRegistrationRequest;
-import netinf.common.messages.ESFRegistrationResponse;
-import netinf.common.messages.ESFSubscriptionRequest;
-import netinf.common.messages.ESFSubscriptionResponse;
-import netinf.common.messages.ESFUnsubscriptionRequest;
-import netinf.common.messages.ESFUnsubscriptionResponse;
-import netinf.common.messages.NetInfMessage;
-import netinf.common.messages.RSGetNameRequest;
-import netinf.common.messages.RSGetNameResponse;
-import netinf.common.messages.RSGetPriorityRequest;
-import netinf.common.messages.RSGetPriorityResponse;
-import netinf.common.messages.RSGetRequest;
-import netinf.common.messages.RSGetResponse;
-import netinf.common.messages.RSGetServicesRequest;
-import netinf.common.messages.RSGetServicesResponse;
-import netinf.common.messages.RSPutRequest;
-import netinf.common.messages.RSPutResponse;
-import netinf.common.messages.SCGetByQueryTemplateRequest;
-import netinf.common.messages.SCGetBySPARQLRequest;
-import netinf.common.messages.SCGetTimeoutAndNewSearchIDRequest;
-import netinf.common.messages.SCGetTimeoutAndNewSearchIDResponse;
-import netinf.common.messages.SCSearchResponse;
-import netinf.common.messages.TCChangeTransferRequest;
-import netinf.common.messages.TCChangeTransferResponse;
-import netinf.common.messages.TCGetServicesRequest;
-import netinf.common.messages.TCGetServicesResponse;
-import netinf.common.messages.TCStartTransferRequest;
-import netinf.common.messages.TCStartTransferResponse;
+import netinf.common.messages.*;
 import netinf.common.utils.Utils;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.internal.runners.statements.Fail;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -94,8 +72,10 @@ public abstract class MessageEncoderTest {
    private MessageEncoder messageEncoder;
    private DatamodelFactory datamodelFactory;
    private Identifier testIdentifier;
+   private Identifier testIdentifier2;
    private Identifier testIdentity;
    private InformationObject testIO;
+   private InformationObject oldTestIO; //Only for the ESFEventMessage test
 
    @Before
    public void setup() {
@@ -110,6 +90,12 @@ public abstract class MessageEncoderTest {
       testIdentifierLabel.setLabelValue("Paderborn");
       this.testIdentifier = this.datamodelFactory.createIdentifier();
       this.testIdentifier.addIdentifierLabel(testIdentifierLabel);
+      
+      IdentifierLabel testIdentifierLabel2 = this.datamodelFactory.createIdentifierLabel();
+      testIdentifierLabel2.setLabelName("Universität");
+      testIdentifierLabel2.setLabelValue("Moscow");
+      this.testIdentifier2 = this.datamodelFactory.createIdentifier();
+      this.testIdentifier2.addIdentifierLabel(testIdentifierLabel2);
 
       IdentifierLabel testIdentityLabel = this.datamodelFactory.createIdentifierLabel();
       testIdentityLabel.setLabelName("Chuck");
@@ -119,6 +105,9 @@ public abstract class MessageEncoderTest {
 
       this.testIO = this.datamodelFactory.createInformationObject();
       this.testIO.setIdentifier(this.testIdentifier);
+      
+      this.oldTestIO = this.datamodelFactory.createInformationObject();
+      this.oldTestIO.setIdentifier(testIdentifier2);
    }
 
    protected Injector getInjector() {
@@ -136,6 +125,8 @@ public abstract class MessageEncoderTest {
       m.setErrorMessage("Fehler in Layer 8");
       m.setUserName("Chuck Norris");
       m.setPrivateKey("123");
+      //Added in NetInf 3
+      Assert.assertThat(m,is(notNullValue()));
    }
 
    @Test
@@ -238,7 +229,79 @@ public abstract class MessageEncoderTest {
       ESFUnsubscriptionResponse m = new ESFUnsubscriptionResponse();
       testEncoder(m);
    }
+   @Test
+   public void testESFFetchMissedEventsRequest()
+   {
+	   ESFFetchMissedEventsRequest m = new ESFFetchMissedEventsRequest();
+	   m.setPrivateKey("123");
+	   m.setUserName("Chuck Norris");
+	   m.setSerializeFormat(SerializeFormat.RDF);
+	   m.setErrorMessage("Success");
+	   testEncoder(m);
+   }
+   
+   @Test
+   public void testESFFetchMissedEventsResponse()
+   {
+	   ESFFetchMissedEventsResponse m = new ESFFetchMissedEventsResponse();
+	   ESFEventMessage eventm = new ESFEventMessage();
+	   eventm.setNewInformationObject(testIO);
+	   eventm.setOldInformationObject(oldTestIO);
+	   eventm.setUserName("Chuck Norris");
+	   eventm.setMatchedSubscriptionIdentification("sid:12345678");
+	   eventm.setSerializeFormat(SerializeFormat.RDF);
+	   m.addEventMessage(eventm);
+	   m.setPrivateKey("123");
+	   m.setUserName("Chuck Norris");
+	   m.setSerializeFormat(SerializeFormat.RDF);
+	   m.setErrorMessage("Success");
+	   testEncoder(m);
+   }
+   
+   @Test
+   public void testMessageDescription()
+   {
+	   ESFFetchMissedEventsRequest m = new ESFFetchMissedEventsRequest();
+	   m.setPrivateKey("123");
+	   m.setUserName("Chuck Norris");
+	   m.setSerializeFormat(SerializeFormat.RDF);
+	   
+	   assertEquals(m.describe(), "a message called "+ESFFetchMissedEventsRequest.class.getSimpleName());
+   }
 
+   @Test
+   public void testMessageDescriptionWithError()
+   {
+	   ESFFetchMissedEventsRequest m = new ESFFetchMissedEventsRequest();
+	   m.setPrivateKey("123");
+	   m.setUserName("Chuck Norris");
+	   m.setSerializeFormat(SerializeFormat.RDF);
+	   m.setErrorMessage("TERR");
+	   assertEquals(m.describe(), "a message called "+ESFFetchMissedEventsRequest.class.getSimpleName()+"; Error: "+"TERR");
+   }
+   
+   @Test
+   public void testMessageHashCode()
+   {
+	   ESFFetchMissedEventsRequest m = new ESFFetchMissedEventsRequest();
+	   m.setPrivateKey("123");
+	   m.setUserName("Chuck Norris");
+	   m.setSerializeFormat(SerializeFormat.RDF);
+	   m.setErrorMessage("TERR");
+	   int run1 = m.hashCode();
+	   int run2 = m.hashCode();
+	   ESFFetchMissedEventsRequest m2 = new ESFFetchMissedEventsRequest();
+	   m2.setPrivateKey("123");
+	   m2.setUserName("Chuck Norris");
+	   m2.setSerializeFormat(SerializeFormat.RDF);
+	   m2.setErrorMessage("TERR");
+	   
+	   assertEquals(run1,run2);
+	   if(m.equals(m2))
+			   {
+		   		assertEquals(m.hashCode(),m2.hashCode());
+			   }
+   }
    @Test
    public void testTCGetServicesRequest() {
       TCGetServicesRequest m = new TCGetServicesRequest();
@@ -318,8 +381,28 @@ public abstract class MessageEncoderTest {
       SCGetTimeoutAndNewSearchIDResponse m = new SCGetTimeoutAndNewSearchIDResponse(42, 21);
       testEncoder(m);
    }
-
+   @Test
+   public void testGetUniqueEncoderID(){
+	   /*See if encoder ID is always returned correctly.
+	    * XML Encoder has id 2
+	    * Protobuf Encoder has id 1 
+	    */
+	   if(messageEncoder.getClass() == MessageEncoderProtobuf.class)
+		   assertEquals(messageEncoder.getUniqueEncoderId(),1);
+	   else{
+		   if(messageEncoder.getClass() == MessageEncoderXML.class){
+			   assertEquals(messageEncoder.getUniqueEncoderId(),2);
+		   }
+		   else
+		   {
+			   //If none of the classes here match, then the MessageEncoder is unknown and the test fails
+			   fail();
+		   }
+	   }
+	   
+   }
    private void testEncoder(NetInfMessage message) {
+	  //TODO: Comparing a string created by the encoder with the same string decoded seems to not make sense. Use a set of fixed values 
       byte[] encodedMessage = this.messageEncoder.encodeMessage(message);
       NetInfMessage decodedMessage = this.messageEncoder.decodeMessage(encodedMessage);
       assertEquals(message, decodedMessage);
