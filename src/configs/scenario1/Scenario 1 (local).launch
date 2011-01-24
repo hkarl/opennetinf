@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.cdt.launch.launchGroup">
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.0.action" value="DELAY"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.0.actionParam" value="1"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.0.enabled" value="true"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.0.mode" value="run"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.0.name" value="Logging (DEMO)"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.1.action" value="DELAY"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.1.actionParam" value="3"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.1.enabled" value="true"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.1.mode" value="run"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.1.name" value="NetInf Node C (DEMO)"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.2.action" value="DELAY"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.2.actionParam" value="3"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.2.enabled" value="true"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.2.mode" value="run"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.2.name" value="NetInf Node A (DEMO)"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.3.action" value="DELAY"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.3.actionParam" value="3"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.3.enabled" value="true"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.3.mode" value="run"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.3.name" value="NetInf Node B (DEMO)"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.4.action" value="NONE"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.4.enabled" value="true"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.4.mode" value="run"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.4.name" value="Management Tool Local C-Node (DEMO)"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.5.action" value="NONE"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.5.enabled" value="true"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.5.mode" value="run"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.5.name" value="Management Tool Local A-Node (DEMO)"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.6.action" value="NONE"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.6.enabled" value="true"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.6.mode" value="run"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.6.name" value="Management Tool Local B-Node (DEMO)"/>
+</launchConfiguration>
