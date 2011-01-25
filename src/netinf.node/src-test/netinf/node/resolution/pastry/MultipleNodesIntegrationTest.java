@@ -45,7 +45,6 @@ import java.util.concurrent.TimeUnit;
 
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.InformationObject;
-import netinf.common.datamodel.impl.module.DatamodelImplModule;
 import netinf.common.exceptions.NetInfCheckedException;
 import netinf.common.exceptions.NetInfResolutionException;
 import netinf.node.resolution.AbstractResolutionService;

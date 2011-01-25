@@ -22,7 +22,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/arq-extra.jar"/>
-	<classpathentry kind="lib" path="lib/guice-2.0-src.zip"/>
 	<classpathentry kind="lib" path="lib/icu4j_3_4.jar"/>
 	<classpathentry kind="lib" path="lib/iri.jar"/>
 	<classpathentry kind="lib" path="lib/jenatest.jar"/>
