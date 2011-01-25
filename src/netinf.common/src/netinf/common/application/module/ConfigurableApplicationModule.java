@@ -67,7 +67,7 @@ public class ConfigurableApplicationModule extends AbstractApplicationModule {
    protected void configure() {
       super.configure();
       
-      if (this.properties != null) {
+      if (this.properties != null && !this.properties.isEmpty()) {
          Names.bindProperties(binder(), this.properties);
          install(new LogModule(this.properties));
       } else {
@@ -77,7 +77,7 @@ public class ConfigurableApplicationModule extends AbstractApplicationModule {
       if (this.properties.get("format").equals("RDF")) {
          install(new DatamodelRdfModule());
       }
-      if (this.properties.get("format").equals("JAVA")) {
+      else if (this.properties.get("format").equals("JAVA")) {
          install(new DatamodelImplModule());
       }
    }

@@ -35,7 +35,7 @@
         <pathelement location="lib/jena.jar"/>
         <pathelement location="lib/arq.jar"/>
         <pathelement location="lib/arq-extra.jar"/>
-        <pathelement location="lib/guice-2.0-src.zip"/>
+    	<!--<pathelement location="lib/guice-2.0-src.zip"/>-->
         <pathelement location="lib/icu4j_3_4.jar"/>
         <pathelement location="lib/iri.jar"/>
         <pathelement location="lib/jenatest.jar"/>

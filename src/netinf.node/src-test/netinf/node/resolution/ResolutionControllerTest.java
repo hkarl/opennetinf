@@ -38,7 +38,6 @@
 package netinf.node.resolution;
 
 import static org.junit.Assert.fail;
-import junit.framework.Assert;
 import netinf.common.security.SecurityManager;
 import netinf.node.resolution.impl.ResolutionControllerImpl;
 

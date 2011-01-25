@@ -48,7 +48,6 @@ import netinf.common.communication.SerializeFormat;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
 import netinf.common.datamodel.identity.IdentityObject;
-import netinf.common.datamodel.identity.NodeIdentityObject;
 import netinf.common.datamodel.impl.DataObjectImpl;
 import netinf.common.datamodel.impl.identity.EventServiceIdentityObjectImpl;
 import netinf.common.datamodel.impl.identity.GroupIdentityObjectImpl;
@@ -57,9 +56,7 @@ import netinf.common.datamodel.impl.identity.PersonIdentityObjectImpl;
 import netinf.common.datamodel.impl.identity.ResolutionServiceIdentityObjectImpl;
 import netinf.common.datamodel.impl.identity.SearchServiceIdentityObjectImpl;
 import netinf.common.datamodel.impl.module.DatamodelImplModule;
-import netinf.common.datamodel.rdf.DataObjectRdf;
-import netinf.common.datamodel.rdf.identity.EventServiceIdentityObjectRdf;
-import netinf.common.datamodel.rdf.identity.GroupIdentityObjectRdf;
+import netinf.common.exceptions.NetInfUncheckedException;
 import netinf.common.log.module.LogModule;
 import netinf.common.security.impl.module.SecurityModule;
 import netinf.common.utils.DatamodelUtils;
@@ -68,7 +65,6 @@ import netinf.common.utils.Utils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.omg.CORBA.IdentifierHelper;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -168,6 +164,12 @@ public class DatamodelTest {
       Identifier identifier = getDatamodelFactory()
             .createIdentifierFromString("ni:name1=value1~UNIQUE_LABEL=Foo~name2=value2~HASH_OF_PK=Bar");
       Assert.assertEquals("ni:HASH_OF_PK=Bar~UNIQUE_LABEL=Foo~name1=value1~name2=value2", identifier.toString());
+   }
+   
+   @Test(expected=NetInfUncheckedException.class)
+   public void testIdentifierFromStringWithError() {
+      Identifier identifier = getDatamodelFactory().createIdentifierFromString("schnubbedibu");
+      Assert.fail("Exception not thrown");
    }
 
    @Test
@@ -533,7 +535,12 @@ public class DatamodelTest {
 	   } else {
 		   Assert.fail("IO should contain Attributes");
 	   }
-
+   }
+   
+   @Test(expected=NetInfUncheckedException.class)
+   public void testCopyOjectWithError(){
+	   getDatamodelFactory().copyObject(this);
+	   Assert.fail("Exception not thrown");
    }
    
    public static DataObject createDummyDataObject(DatamodelFactory datamodelFactory){

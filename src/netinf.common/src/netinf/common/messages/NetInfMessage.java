@@ -39,7 +39,6 @@ package netinf.common.messages;
 
 import netinf.common.communication.SerializeFormat;
 import netinf.common.datamodel.InformationObject;
-import netinf.common.exceptions.NetInfCheckedException;
 import netinf.common.exceptions.NetInfUncheckedException;
 
 /**
