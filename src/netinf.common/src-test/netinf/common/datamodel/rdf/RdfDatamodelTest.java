@@ -46,11 +46,13 @@ import netinf.common.communication.RemoteNodeConnection;
 import netinf.common.communication.SerializeFormat;
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.DatamodelTest;
+import netinf.common.datamodel.DefinedAttributePurpose;
 import netinf.common.datamodel.DefinedLabelName;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.NetInfObjectWrapper;
 import netinf.common.datamodel.attribute.Attribute;
+import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
 import netinf.common.datamodel.impl.DatamodelFactoryImpl;
 import netinf.common.datamodel.impl.InformationObjectImpl;
 import netinf.common.datamodel.rdf.attribute.AttributeRdf;
@@ -469,4 +471,48 @@ public class RdfDatamodelTest extends DatamodelTest {
 	public void testGetSerializeFormat() {
 	   Assert.assertEquals(SerializeFormat.RDF, getDatamodelFactory().getSerializeFormat());
 	}
+   
+   @Test
+   public void testGetWriterPaths(){
+	   // dummy
+	   InformationObject iObj = createDummyInformationObject(getDatamodelFactory());
+	   
+	   // without writers -> should be empty
+	   Assert.assertTrue(iObj.getWriterPaths().isEmpty());
+	   
+	   Attribute attribute = getDatamodelFactory().createAttribute();
+	   Attribute subattribute = getDatamodelFactory().createAttribute();
+	   
+	   // writer
+	   subattribute.setIdentification(DefinedAttributeIdentification.WRITER.getURI());
+	   subattribute.setValue("test-writer-path");
+	   subattribute.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+
+	   // writers-list
+	   attribute.setIdentification(DefinedAttributeIdentification.AUTHORIZED_WRITERS.getURI());
+	   attribute.setValue("asd");
+	   attribute.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+	   attribute.addSubattribute(subattribute);
+	   iObj.addAttribute(attribute);
+	   
+	   // owner
+	   attribute = getDatamodelFactory().createAttribute();
+	   attribute.setIdentification(DefinedAttributeIdentification.OWNER.getURI());
+	   attribute.setValue("test-writer-path");
+	   attribute.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+
+	   iObj.addAttribute(attribute);
+	   
+	   // with writers -> should not be empty
+	   Assert.assertFalse(iObj.getWriterPaths().isEmpty());
+   }
+   
+   @Test
+   @Override
+   public void testDescribeServiceIdentityObject(){
+	   // not implemented in RDF
+	   Assert.assertTrue(true);
+   }
+  
+
 }

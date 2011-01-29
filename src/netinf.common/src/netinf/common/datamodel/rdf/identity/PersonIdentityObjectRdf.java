@@ -94,7 +94,12 @@ public class PersonIdentityObjectRdf extends IdentityObjectRdf implements Person
    @Override
    public String describe() {
       StringBuffer buf = new StringBuffer("a Person Identity Object that ");
-      buf.append(getIdentifier().describe());
+      if(getIdentifier() != null)
+    	  buf.append(getIdentifier().describe());
+      else {
+    	  // TODO: What to do then? (eddy)
+      }
+      
       return buf.toString();
    }
 }

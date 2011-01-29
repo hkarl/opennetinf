@@ -252,7 +252,7 @@ public class InformationObjectRdf extends NetInfObjectWrapperRdf implements Info
    @Override
    public List<Identifier> getReaderIdentifiers() {
 
-      List<Attribute> readerListProperties = getAttribute(DefinedAttributeIdentification.AUTHORIZED_READERS.getURI());
+      List<Attribute> readerListProperties = this.getAttribute(DefinedAttributeIdentification.AUTHORIZED_READERS.getURI());
       List<Identifier> identifierList = new ArrayList<Identifier>();
 
       for (Attribute readerList : readerListProperties) {
@@ -278,11 +278,11 @@ public class InformationObjectRdf extends NetInfObjectWrapperRdf implements Info
 
    @Override
    public List<String> getWriterPaths() {
-      List<Attribute> writerProperties = getAttribute(DefinedAttributeIdentification.AUTHORIZED_WRITERS.getURI());
+      List<Attribute> writerProperties = this.getAttribute(DefinedAttributeIdentification.AUTHORIZED_WRITERS.getURI());
 
       List<String> pathList = new ArrayList<String>();
 
-      Attribute owner = getSingleAttribute(DefinedAttributeIdentification.OWNER.getURI());
+      Attribute owner = this.getSingleAttribute(DefinedAttributeIdentification.OWNER.getURI());
       if (owner == null) {
          LOG.warn("No owner for IO. Thus, Authorized Writers can't be verified");
          return pathList;
@@ -486,8 +486,13 @@ public class InformationObjectRdf extends NetInfObjectWrapperRdf implements Info
 
    @Override
    public String describe() {
-      StringBuffer buf = new StringBuffer("an Information Object that ");
-      buf.append(getIdentifier().describe());
+      StringBuffer buf = new StringBuffer("a (general) Information Object that ");
+      if(getIdentifier() != null)
+    	  buf.append(getIdentifier().describe());
+      else {
+    	  // TODO: What to do then? (eddy)
+      }
+      
       return buf.toString();
    }
 

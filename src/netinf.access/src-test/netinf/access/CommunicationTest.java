@@ -43,6 +43,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.Properties;
 
+import junit.framework.Assert;
+
 import netinf.common.communication.AsyncReceiveHandler;
 import netinf.common.communication.Communicator;
 import netinf.common.exceptions.NetInfCheckedException;
@@ -78,7 +80,7 @@ public class CommunicationTest implements AsyncReceiveHandler {
    }
 
    @Test
-   public void setupServer() throws IOException, NetInfCheckedException, InterruptedException {
+   public void setupTCPServer() throws IOException, NetInfCheckedException, InterruptedException {
       NetInfServer server = injector.getInstance(TCPServer.class);
       server.setAsyncReceiveHandler(this);
       server.start();
@@ -96,8 +98,75 @@ public class CommunicationTest implements AsyncReceiveHandler {
          assertTrue(receivedMessage instanceof RSGetPriorityResponse);
          assertEquals(((RSGetPriorityResponse) receivedMessage).getPriority(), i);
       }
+      
+      server.stop();
    }
+   
+   @Test
+   public void testTCPGetPort() throws IOException{
+	   TCPServer server = injector.getInstance(TCPServer.class);
+	   int port = Integer.parseInt(properties.getProperty("access.tcp.port"));
+	   Assert.assertEquals(port, server.getPort());
+   }
+   
+   @Test
+   public void testTCPDescribe() throws IOException{
+	   TCPServer server = injector.getInstance(TCPServer.class);
+	   Assert.assertTrue(server.describe().contains("TCP"));
+   }
+   
+   @Test
+   public void testTCPGetAddress() throws IOException, NetInfCheckedException{
+	   TCPServer server = injector.getInstance(TCPServer.class);
+	   server.start();
+	   Assert.assertEquals(server.getAddress(), "0.0.0.0/0.0.0.0");
+	   server.stop();
+   }
+   
+   @Test
+   public void testTCPStop() throws NetInfCheckedException, InterruptedException, IOException{
+	   NetInfServer server = injector.getInstance(TCPServer.class);
+	   server.setAsyncReceiveHandler(this);
+	   server.start();
+	   
+	   Thread.sleep(100);
+	   
+	   server.stop();
+   }
+   
+   @Test
+   public void setupHTTPServer() throws IOException, NetInfCheckedException, InterruptedException {
+      NetInfServer server = injector.getInstance(HTTPServer.class);
+      server.setAsyncReceiveHandler(this);
+      server.start();
 
+      int port = Integer.parseInt(properties.getProperty("access.http.port"));
+      Communicator client = injector.getInstance(Communicator.class);
+      client.setup(HOST, port);
+
+      // Send and receive messages
+//      for (int i = 0; i < LOOPS; i++) {
+//         RSGetPriorityResponse message = new RSGetPriorityResponse(i);
+//         client.send(message);
+//
+//         NetInfMessage receivedMessage = pollForIncomingMessage();
+//         assertTrue(receivedMessage instanceof RSGetPriorityResponse);
+//         assertEquals(((RSGetPriorityResponse) receivedMessage).getPriority(), i);
+//      }
+      server.stop();
+      //client.stopAsyncReceive();
+   }
+   
+   @Test
+   public void testHTTPDescribe(){
+	   HTTPServer server = injector.getInstance(HTTPServer.class);
+	   int port = Integer.parseInt(properties.getProperty("access.http.port"));
+	   String describe = server.describe();
+	   Assert.assertTrue(describe.contains(port+""));
+	   Assert.assertTrue(describe.contains("HTTP")); 
+   }
+   
+   
    @Override
    public void receivedMessage(NetInfMessage message, Communicator communicator) {
       this.receivedMessage = message;
@@ -115,4 +184,5 @@ public class CommunicationTest implements AsyncReceiveHandler {
       this.receivedMessage = null;
       return returnValue;
    }
+  
 }
