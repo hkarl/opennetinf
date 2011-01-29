@@ -49,7 +49,9 @@ import netinf.common.messages.RSPutResponse;
 import netinf.common.utils.Utils;
 import netinf.node.resolution.InformationObjectHelper;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -77,7 +79,7 @@ public class AccessTest {
       communicator = injector.getInstance(Communicator.class);
       communicator.setup("localhost", Integer.parseInt(properties.getProperty("access.tcp.port")));
    }
-
+   
    @Test
    public void testCreateInformationObject() throws NetInfCheckedException {
       InformationObject informationObject = ioHelper.createUniqueVersionedIO();
@@ -90,11 +92,13 @@ public class AccessTest {
    }
 
    @Test
+   @Ignore
    public void testGetInformationObject() {
       // TODO Implement
    }
 
    @Test
+   @Ignore
    public void testDeleteInformationObject() {
       // TODO Implement
    }

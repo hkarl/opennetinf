@@ -57,7 +57,12 @@ public class NodeIdentityObjectRdf extends IdentityObjectRdf implements NodeIden
    @Override
    public String describe() {
       StringBuffer buf = new StringBuffer("a Node Identity Object that ");
-      buf.append(getIdentifier().describe());
+      if(getIdentifier() != null)
+    	  buf.append(getIdentifier().describe());
+      else {
+    	  // TODO: What to do then? (eddy)
+      }
+      
       return buf.toString();
    }
 

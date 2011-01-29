@@ -98,7 +98,8 @@ public class TCPServer extends NetInfServer {
 
       this.connectionListener.interrupt();
       try {
-         this.serverSocket.close();
+    	  if(this.serverSocket != null)
+    		  this.serverSocket.close();
       } catch (IOException e) {
          throw e;
       }
