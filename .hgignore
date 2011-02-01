@@ -1,0 +1,16 @@
+syntax: glob
+
+# backup files
+*.bak
+*.backup
+*~
+*.aux
+*.orig
+
+# libraries
+*.jar
+
+# bins and dist
+syntax: regexp
+/bin/
+/dist/
