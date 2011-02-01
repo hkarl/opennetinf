@@ -331,7 +331,11 @@ public class InformationObjectImpl extends NetInfObjectWrapperImpl implements In
    @Override
    public String describe() {
       StringBuffer buf = new StringBuffer("a (general) Information Object that ");
-      buf.append(getIdentifier().describe());
+      if(getIdentifier() != null)
+    	  buf.append(getIdentifier().describe());
+      else {
+    	  // TODO: What to do then? (eddy)
+      }
       return buf.toString();
    }
 }

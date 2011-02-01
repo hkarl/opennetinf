@@ -45,7 +45,8 @@ package netinf.common.datamodel;
  * @author PG Augnet 2, University of Paderborn
  */
 public enum DeleteMode {
-   MARK_DELETED("mark_deleted"), DELETE_DATA("delete_data");
+   MARK_DELETED("mark_deleted"),
+   DELETE_DATA("delete_data");
 
    private String mode;
 

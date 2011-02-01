@@ -38,7 +38,6 @@
 package netinf.common.datamodel.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
@@ -47,7 +46,6 @@ import netinf.common.datamodel.DefinedLabelName;
 import netinf.common.datamodel.DefinedVersionKind;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.IdentifierLabel;
-import netinf.common.exceptions.NetInfUncheckedException;
 import netinf.common.utils.DatamodelUtils;
 
 import org.apache.log4j.Logger;
