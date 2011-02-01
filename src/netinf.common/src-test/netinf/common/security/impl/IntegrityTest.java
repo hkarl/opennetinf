@@ -42,6 +42,7 @@ import static netinf.common.datamodel.attribute.DefinedAttributeIdentification.S
 import static netinf.common.datamodel.attribute.DefinedAttributeIdentification.SIGNATURE_IDENTIFICATION;
 import static netinf.common.datamodel.attribute.DefinedAttributeIdentification.WRITER;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -57,6 +58,7 @@ import netinf.common.datamodel.IdentifierLabel;
 import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
+import netinf.common.datamodel.creator.ValidCreator;
 import netinf.common.datamodel.identity.IdentityObject;
 import netinf.common.datamodel.impl.module.DatamodelImplModule;
 import netinf.common.exceptions.NetInfCheckedException;
@@ -156,7 +158,6 @@ public class IntegrityTest {
       EasyMock.expectLastCall().anyTimes();
       EasyMock.expect(this.convenienceCommunicator.getIO((Identifier) EasyMock.anyObject())).andReturn(identityObject).anyTimes();
       EasyMock.replay(this.convenienceCommunicator);
-
    }
 
    @Test
@@ -243,6 +244,19 @@ public class IntegrityTest {
       assertNotNull(this.singleSignedAttribute.getSingleSubattribute(SIGNATURE.getURI()).getValue(String.class));
       assertNotNull(this.singleSignedAttribute.getSingleSubattribute(WRITER.getURI()));
       assertNotNull(this.singleSignedAttribute.getSingleSubattribute(WRITER.getURI()).getValue(String.class));
+      
+      //-> ValidCreator.isAttributeSigned
+      // first branch
+      assertTrue(ValidCreator.isAttributeSigned(singleSignedAttribute));
+      assertFalse(ValidCreator.isAttributeSignedIncorrectly(singleSignedAttribute));
+      // second branch
+      InformationObject iObj = dmFactory.createInformationObject();
+      Attribute attr = (Attribute)singleSignedAttribute.clone();
+      iObj.addAttribute(attr);
+      ValidCreator.secureAttributeInOverall(attr, "testPathToKey");
+      
+      assertTrue(ValidCreator.isAttributeSigned(attr));
+      assertTrue(ValidCreator.isAttributeSignedIncorrectly(attr));
    }
 
    @Test

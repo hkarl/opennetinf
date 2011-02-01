@@ -683,8 +683,6 @@ public class DatamodelUtils {
    }
 
    public static String toStringAttribute(Attribute attribute, String indent) {
-      if (attribute != null) {
-
          String realIdent = indent;
 
          if (realIdent == null) {
@@ -704,9 +702,6 @@ public class DatamodelUtils {
          }
 
          return stringBuilder.toString();
-      } else {
-         return null;
-      }
    }
 
    public static String toStringIdentifier(Identifier identifier) {

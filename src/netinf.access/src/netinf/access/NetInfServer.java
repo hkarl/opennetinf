@@ -70,6 +70,8 @@ public abstract class NetInfServer {
     */
    public abstract String describe();
 
+   public abstract boolean isRunning();
+   
    protected void startCommunicator(final Communicator communicator, boolean loop) {
       LOG.trace(null);
       communicator.startAsyncReceive(this.asyncReceiver, loop);

@@ -109,7 +109,21 @@ public class TranslationTest extends DatamodelTest {
 
       Assert.assertEquals(informationObjectImpl, rdf);
       Assert.assertEquals(informationObjectRdf, rdf);
+   }
 
+   @Override
+   public void testSecureAttributeInOverall() {
+      // this test does not run here
+   }
+
+   @Override
+   public void testAddAuthorizedReader() {
+      // this test does not run here
+   }
+
+   @Override
+   public void testaddAuthorizedWriterToIO() {
+      // this test does not run here
    }
 
 }

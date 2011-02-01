@@ -71,6 +71,6 @@ public class AccessTestModule extends AbstractModule {
       install(new SecurityModule());
       bind(NetInfNodeConnection.class).annotatedWith(SecurityModule.Security.class).to(RemoteNodeConnection.class);
 
-      bind(AsyncReceiveHandler.class).to(CommunicationTest.class);
+      //????bind(AsyncReceiveHandler.class).to(CommunicationTest.class);
    }
 }
