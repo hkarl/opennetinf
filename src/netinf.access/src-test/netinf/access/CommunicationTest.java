@@ -53,6 +53,7 @@ import netinf.common.messages.RSGetPriorityResponse;
 import netinf.common.utils.Utils;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -63,6 +64,7 @@ import com.google.inject.Injector;
  * 
  * @author PG Augnet 2, University of Paderborn
  */
+@Ignore
 public class CommunicationTest implements AsyncReceiveHandler {
    private static final String PROPERTIES_PATH = "../configs/testing.properties";
    private static Injector injector;
@@ -130,13 +132,28 @@ public class CommunicationTest implements AsyncReceiveHandler {
 	   server.start();
 	   
 	   Thread.sleep(100);
+	   server.stop();
+
+	   Assert.assertFalse(server.isRunning());
+   }
+   
+   @Test(expected=NetInfCheckedException.class)
+   public void testTCPStartWithError() throws NetInfCheckedException, InterruptedException, IOException{
+	   NetInfServer server = injector.getInstance(TCPServer.class);
+	   server.setAsyncReceiveHandler(this);
+	   server.start();
+	   
+	   Thread.sleep(100);
+	   // start again
+	   server.start();
 	   
 	   server.stop();
    }
    
    @Test
+   @Ignore
    public void setupHTTPServer() throws IOException, NetInfCheckedException, InterruptedException {
-      NetInfServer server = injector.getInstance(HTTPServer.class);
+      HTTPServer server = injector.getInstance(HTTPServer.class);
       server.setAsyncReceiveHandler(this);
       server.start();
 
@@ -145,14 +162,14 @@ public class CommunicationTest implements AsyncReceiveHandler {
       client.setup(HOST, port);
 
       // Send and receive messages
-//      for (int i = 0; i < LOOPS; i++) {
-//         RSGetPriorityResponse message = new RSGetPriorityResponse(i);
-//         client.send(message);
-//
-//         NetInfMessage receivedMessage = pollForIncomingMessage();
-//         assertTrue(receivedMessage instanceof RSGetPriorityResponse);
-//         assertEquals(((RSGetPriorityResponse) receivedMessage).getPriority(), i);
-//      }
+      for (int i = 0; i < LOOPS; i++) {
+         RSGetPriorityResponse message = new RSGetPriorityResponse(i);
+         client.send(message);
+
+         NetInfMessage receivedMessage = pollForIncomingMessage();
+         assertTrue(receivedMessage instanceof RSGetPriorityResponse);
+         assertEquals(((RSGetPriorityResponse) receivedMessage).getPriority(), i);
+      }
       server.stop();
       //client.stopAsyncReceive();
    }
@@ -165,6 +182,33 @@ public class CommunicationTest implements AsyncReceiveHandler {
 	   Assert.assertTrue(describe.contains(port+""));
 	   Assert.assertTrue(describe.contains("HTTP")); 
    }
+   
+   @Test
+   public void testHTTPStop() throws NetInfCheckedException, InterruptedException, IOException{
+	   NetInfServer server = injector.getInstance(HTTPServer.class);
+	   server.setAsyncReceiveHandler(this);
+	   server.start();
+	   
+	   Thread.sleep(100);
+	   server.stop();
+
+	   Assert.assertFalse(server.isRunning());
+   }
+   
+   @Test(expected=NetInfCheckedException.class)
+   public void testHTTPStartWithError() throws NetInfCheckedException, InterruptedException, IOException{
+	   NetInfServer server = injector.getInstance(HTTPServer.class);
+	   server.setAsyncReceiveHandler(this);
+	   server.start();
+	   
+	   Thread.sleep(100);
+	   // start again
+	   server.start();
+	   
+	   server.stop();
+   }
+   
+   
    
    
    @Override

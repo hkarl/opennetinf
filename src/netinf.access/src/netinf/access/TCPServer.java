@@ -96,7 +96,9 @@ public class TCPServer extends NetInfServer {
    public void stop() throws IOException {
       LOG.trace(null);
 
-      this.connectionListener.interrupt();
+      if(this.connectionListener != null)
+    	  this.connectionListener.interrupt();
+      
       try {
     	  if(this.serverSocket != null)
     		  this.serverSocket.close();
@@ -108,7 +110,22 @@ public class TCPServer extends NetInfServer {
    public int getPort() {
       return this.port;
    }
+   
+   public String getAddress() {
+	   return this.serverSocket.getInetAddress().toString();
+   }
+   
+   @Override
+   public boolean isRunning(){
+	   return this.connectionListener.isRunning();
+   }
 
+   @Override
+   public String describe() {
+	   return "TCP on port " + this.port;
+   }
+
+   
    /**
     * The listener interface for receiving connection events. The class that is interested in processing a connection event
     * implements this interface, and the object created with that class is registered with a component using the component's
@@ -146,13 +163,15 @@ public class TCPServer extends NetInfServer {
             }
          } catch (IOException e) {
             LOG.error("The TCP Server encountered an error", e);
-         } finally {
-            try {
-               TCPServer.this.serverSocket.close();
-            } catch (IOException e) {
-               LOG.error("The TCP Server encountered an error while closing", e);
-            }
          }
+         // dont know, if this is really neccessary: stop() in TCPServer is already closing the socket
+//         finally {
+//            try {
+//               TCPServer.this.serverSocket.close();
+//            } catch (IOException e) {
+//               LOG.error("The TCP Server encountered an error while closing", e);
+//            }
+//         }
       }
 
       @Override
@@ -162,14 +181,10 @@ public class TCPServer extends NetInfServer {
          this.running = false;
          super.interrupt();
       }
+      
+      public boolean isRunning(){
+   	   return this.running;
+      }
    }
-
-   public String getAddress() {
-      return this.serverSocket.getInetAddress().toString();
-   }
-
-   @Override
-   public String describe() {
-      return "TCP on port " + this.port;
-   }
+   
 }

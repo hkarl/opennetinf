@@ -78,6 +78,7 @@ import com.google.inject.Injector;
 import com.google.inject.name.Names;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
@@ -513,6 +514,11 @@ public class RdfDatamodelTest extends DatamodelTest {
 	   // not implemented in RDF
 	   Assert.assertTrue(true);
    }
-  
 
+   @Test
+   public void testFactoryGetProperty(){
+	   // implies correctness of getProperty(uri)
+	   Assert.assertEquals(DatamodelFactoryRdf.getProperty(DefinedAttributeIdentification.DESCRIPTION),
+			   DatamodelFactoryRdf.getProperty(DefinedAttributeIdentification.DESCRIPTION.getURI()));
+   }
 }
