@@ -226,13 +226,10 @@ public class ValidCreator {
    }
 
    public static boolean isAttributeSigned(Attribute attribute) {
-
-      if (isAttributeSignedItself(attribute) || isAttributeSignedInOverall(attribute)) {
+      if (isAttributeSignedInOverall(attribute) || isAttributeSignedItself(attribute)) {
          return true;
       }
-
       return false;
-
    }
 
    private static boolean isAttributeSignedItself(Attribute attribute) {
@@ -242,7 +239,6 @@ public class ValidCreator {
             && (attribute.getSingleSubattribute(DefinedAttributeIdentification.IDENTITY_VERIFICATION_FAILED.getURI()) == null)) {
          return true;
       }
-
       return false;
    }
 
@@ -252,11 +248,10 @@ public class ValidCreator {
             && (attribute.getInformationObject().getSingleAttribute(DefinedAttributeIdentification.SIGNATURE.getURI()) != null)
             && (attribute.getInformationObject().getSingleAttribute(
                   DefinedAttributeIdentification.SIGNATURE_VERIFICATION_FAILED.getURI()) == null)
-                  && (attribute.getInformationObject().getSingleAttribute(
-                        DefinedAttributeIdentification.IDENTITY_VERIFICATION_FAILED.getURI()) == null)) {
+            && (attribute.getInformationObject().getSingleAttribute(
+                  DefinedAttributeIdentification.IDENTITY_VERIFICATION_FAILED.getURI()) == null)) {
          return true;
       }
-
       return false;
    }
 
@@ -326,7 +321,6 @@ public class ValidCreator {
    private static Attribute createAuthorizedReaderAttribute(String readerPath) {
       return createValidAttribute(DefinedAttributeIdentification.AUTHORIZED_READERS, readerPath,
             DefinedAttributePurpose.SYSTEM_ATTRIBUTE);
-
    }
 
    public static Attribute createValidAttribute(DefinedAttributeIdentification defAttrIdent, Object value,
