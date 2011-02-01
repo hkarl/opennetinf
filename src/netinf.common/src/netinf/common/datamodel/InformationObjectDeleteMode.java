@@ -46,7 +46,8 @@ package netinf.common.datamodel;
  */
 public enum InformationObjectDeleteMode {
 
-   MARK_DELETED("mark_deleted"), DELETE_DATA("delete_data");
+   MARK_DELETED("mark_deleted"),
+   DELETE_DATA("delete_data");
 
    private String deleteMode;
 

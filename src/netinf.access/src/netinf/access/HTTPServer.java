@@ -102,6 +102,7 @@ public class HTTPServer extends NetInfServer {
     * @author PG Augnet 2, University of Paderborn
     */
    private class HTTPNetInfHandler implements HttpHandler {
+	   
       @Override
       public void handle(HttpExchange httpExchange) throws IOException {
          LOG.trace(null);

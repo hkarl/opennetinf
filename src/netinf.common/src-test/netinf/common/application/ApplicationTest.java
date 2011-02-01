@@ -37,25 +37,17 @@
  */
 package netinf.common.application;
 
-import java.util.Properties;
-
-import netinf.common.application.module.ConfigurableApplicationModule;
 import netinf.common.application.module.SecuredApplicationModule;
 import netinf.common.datamodel.impl.module.DatamodelImplModule;
 import netinf.common.datamodel.rdf.module.DatamodelRdfModule;
-import netinf.common.utils.Utils;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.inject.CreationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-/**
- * 
- */
 
 /**
  * Test for the application module
@@ -64,27 +56,27 @@ import com.google.inject.Injector;
  */
 public class ApplicationTest {
 
-	public static final String PROPERTIES = "../configs/testing.properties";
+	public static final String PROPERTIES_JAVA = "../configs/testing/testing_common.application_JAVA.properties";
+	public static final String PROPERTIES_RDF = "../configs/testing/testing_common.application_RDF.properties";
+	public static final String PROPERTIES_EMPTY = "../configs/testing/testing_common.application_EMPTY.properties";
 	public static Injector injector; 
-	private Properties properties;
 	
-	@Before
-	public void setUp(){
-		properties = Utils.loadProperties(PROPERTIES);
-	    injector = Guice.createInjector(new SecuredApplicationModule(PROPERTIES));
+	@Test
+	public void testApplicationModuleJava(){
+		injector = Guice.createInjector(new SecuredApplicationModule(PROPERTIES_JAVA));
+		Assert.assertNotNull(injector.getInstance(DatamodelImplModule.class));
 	}
 	
 	@Test
-	public void testApplicationModule(){
-		if(properties.get("format").equals("JAVA")){
-			Assert.assertNotNull(injector.getInstance(DatamodelImplModule.class));
-		}
-		else if(properties.get("format").equals("RDF")){
-			Assert.assertNotNull(injector.getInstance(DatamodelRdfModule.class));
-		}
-		else {
-			Assert.fail("Modul loading failed");
-		}
+	public void testApplicationModuleRdf(){
+		injector = Guice.createInjector(new SecuredApplicationModule(PROPERTIES_RDF));
+		Assert.assertNotNull(injector.getInstance(DatamodelRdfModule.class));
+	}
+	
+	@Test(expected=CreationException.class)
+	public void testEmptyProperties(){
+		injector = Guice.createInjector(new SecuredApplicationModule(PROPERTIES_EMPTY));
+		Assert.fail("Exception not thrown");
 	}
 
 }

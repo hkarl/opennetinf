@@ -38,6 +38,10 @@
 package netinf.common.datamodel;
 
 import java.io.IOException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -47,19 +51,25 @@ import netinf.common.communication.RemoteNodeConnection;
 import netinf.common.communication.SerializeFormat;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
+import netinf.common.datamodel.identity.EventServiceIdentityObject;
+import netinf.common.datamodel.identity.GroupIdentityObject;
 import netinf.common.datamodel.identity.IdentityObject;
 import netinf.common.datamodel.identity.NodeIdentityObject;
+import netinf.common.datamodel.identity.PersonIdentityObject;
+import netinf.common.datamodel.identity.ResolutionServiceIdentityObject;
+import netinf.common.datamodel.identity.SearchServiceIdentityObject;
+import netinf.common.datamodel.identity.ServiceIdentityObject;
 import netinf.common.datamodel.impl.DataObjectImpl;
+import netinf.common.datamodel.impl.DatamodelFactoryImpl;
 import netinf.common.datamodel.impl.identity.EventServiceIdentityObjectImpl;
 import netinf.common.datamodel.impl.identity.GroupIdentityObjectImpl;
 import netinf.common.datamodel.impl.identity.NodeIdentityObjectImpl;
 import netinf.common.datamodel.impl.identity.PersonIdentityObjectImpl;
 import netinf.common.datamodel.impl.identity.ResolutionServiceIdentityObjectImpl;
 import netinf.common.datamodel.impl.identity.SearchServiceIdentityObjectImpl;
+import netinf.common.datamodel.impl.identity.ServiceIdentityObjectImpl;
 import netinf.common.datamodel.impl.module.DatamodelImplModule;
-import netinf.common.datamodel.rdf.DataObjectRdf;
-import netinf.common.datamodel.rdf.identity.EventServiceIdentityObjectRdf;
-import netinf.common.datamodel.rdf.identity.GroupIdentityObjectRdf;
+import netinf.common.exceptions.NetInfUncheckedException;
 import netinf.common.log.module.LogModule;
 import netinf.common.security.impl.module.SecurityModule;
 import netinf.common.utils.DatamodelUtils;
@@ -68,7 +78,6 @@ import netinf.common.utils.Utils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.omg.CORBA.IdentifierHelper;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -168,6 +177,12 @@ public class DatamodelTest {
       Identifier identifier = getDatamodelFactory()
             .createIdentifierFromString("ni:name1=value1~UNIQUE_LABEL=Foo~name2=value2~HASH_OF_PK=Bar");
       Assert.assertEquals("ni:HASH_OF_PK=Bar~UNIQUE_LABEL=Foo~name1=value1~name2=value2", identifier.toString());
+   }
+   
+   @Test(expected=NetInfUncheckedException.class)
+   public void testIdentifierFromStringWithError() {
+      Identifier identifier = getDatamodelFactory().createIdentifierFromString("schnubbedibu");
+      Assert.fail("Exception not thrown " + identifier.toString());
    }
 
    @Test
@@ -533,7 +548,249 @@ public class DatamodelTest {
 	   } else {
 		   Assert.fail("IO should contain Attributes");
 	   }
+   }
+   
+   @Test(expected=NetInfUncheckedException.class)
+   public void testCopyOjectWithError(){
+	   getDatamodelFactory().copyObject(this);
+	   Assert.fail("Exception not thrown");
+   }
+   
+   @Test
+   public void testGetReaderIdentifiers(){
+	   // dummy
+	   InformationObject iObj = createDummyInformationObject(getDatamodelFactory());
+	   
+	   // without readers -> should be empty
+	   Assert.assertTrue(iObj.getReaderIdentifiers().isEmpty());
+	   
+	   Attribute attribute = getDatamodelFactory().createAttribute();
+	   Attribute subattribute = getDatamodelFactory().createAttribute();
+	   
+	   // reader - subattribute
+	   subattribute.setIdentification(DefinedAttributeIdentification.READER.getURI());
+	   subattribute.setValue("ni:HASH_OF_PK=560822d0da71369f1efe70fb96c7a9aa586b9836~HASH_OF_PK_IDENT=SHA1~VERSION_KIND=UNVERSIONED?http://rdf.netinf.org/2009/netinf-rdf/1.0/#public_key");
+	   subattribute.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
 
+	   // readers-list - attribute
+	   attribute.setIdentification(DefinedAttributeIdentification.AUTHORIZED_READERS.getURI());
+	   attribute.setValue("asd");
+	   attribute.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+	   attribute.addSubattribute(subattribute);
+	   iObj.addAttribute(attribute);
+	   
+	   // with readers -> should not be empty
+	   Assert.assertFalse(iObj.getReaderIdentifiers().isEmpty());
+   }
+   
+   @Test
+   public void testDescribeIO(){
+	   InformationObject iObj = getDatamodelFactory().createInformationObject();
+	   String testEmpty = "a (general) Information Object that ";
+	   
+	   // empty description
+	   Assert.assertEquals(testEmpty, iObj.describe());
+	   
+	   // The identifier
+	   Identifier identifier = datamodelFactory.createIdentifier();
+	   iObj.setIdentifier(identifier);
+	   
+	   // still empty
+	   Assert.assertEquals(testEmpty, iObj.describe());
+	   
+	   // The label
+	   IdentifierLabel identLab = datamodelFactory.createIdentifierLabel();
+	   identLab.setLabelName(DefinedLabelName.VERSION_KIND.getLabelName());
+	   identifier.addIdentifierLabel(identLab);
+
+	   // label UNVERSIONED
+	   identLab.setLabelValue(DefinedVersionKind.UNVERSIONED.getStringRepresentation());
+	   // marked unversioned
+	   Assert.assertTrue(iObj.describe().contains("unversioned"));
+	   
+	   // label UNKNOWN
+	   identLab.setLabelValue(DefinedVersionKind.UNKNOWN.getStringRepresentation());
+	   // marked unknown
+	   Assert.assertTrue(iObj.describe().contains("versioned or not"));
+	   
+	   // label VERSIONED
+	   identLab.setLabelValue(DefinedVersionKind.VERSIONED.getStringRepresentation());
+	   // marked versioned
+	   Assert.assertTrue(iObj.describe().contains("is versioned"));
+	   
+	   // label Version Number
+	   IdentifierLabel versionNumber = getDatamodelFactory().createIdentifierLabel();
+	   versionNumber.setLabelName(DefinedLabelName.VERSION_NUMBER.getLabelName());
+	   versionNumber.setLabelValue("42");
+	   identifier.addIdentifierLabel(versionNumber);
+	   
+	   Assert.assertTrue(iObj.describe().contains("42"));
+	   
+	   // label Hash_of_PK
+	   IdentifierLabel hashOfPk = getDatamodelFactory().createIdentifierLabel();
+	   hashOfPk.setLabelName(DefinedLabelName.HASH_OF_PK.getLabelName());
+	   hashOfPk.setLabelValue("560822d0da71369f1efe70fb96c7a9aa586b9836");
+	   identifier.addIdentifierLabel(hashOfPk);
+	   
+	   Assert.assertTrue(iObj.describe().contains("56082..."));
+	   
+	   // label Hash_of_PK_Ident
+	   IdentifierLabel hashOfPkIdent = getDatamodelFactory().createIdentifierLabel();
+	   hashOfPkIdent.setLabelName(DefinedLabelName.HASH_OF_PK_IDENT.getLabelName());
+	   hashOfPkIdent.setLabelValue("SHA1");
+	   identifier.addIdentifierLabel(hashOfPkIdent);
+	   
+	   Assert.assertTrue(iObj.describe().contains("SHA1"));
+	   
+	   // label Unique_Label
+	   IdentifierLabel unique = getDatamodelFactory().createIdentifierLabel();
+	   unique.setLabelName(DefinedLabelName.UNIQUE_LABEL.getLabelName());
+	   unique.setLabelValue("un!qu314831");
+	   identifier.addIdentifierLabel(unique);
+	   
+	   Assert.assertTrue(iObj.describe().contains("un!qu314831"));
+	   
+	   // label UNDEFINED_LABEL
+	   IdentifierLabel undefined = getDatamodelFactory().createIdentifierLabel();
+	   undefined.setLabelName("UNDEFINED_LABEL");
+	   undefined.setLabelValue("undefined");
+	   identifier.addIdentifierLabel(undefined);
+	   
+	   Assert.assertTrue(iObj.describe().contains("undefined"));
+   }
+   
+   @Test
+   public void testDescribeOtherIOs(){
+	   // Identifier
+	   Identifier identifier = datamodelFactory.createIdentifier();
+	   
+	   //-> PersonIdentity
+	   InformationObject pers = getDatamodelFactory().createPersonIdentityObject();
+	   pers.setIdentifier(identifier);
+	   Assert.assertTrue(pers.describe().contains("Person Identity Object"));
+	
+	   //-> NodeIdentityObject
+	   NodeIdentityObject nodeId = getDatamodelFactory().createNodeIdentityObject();
+	   nodeId.setIdentifier(identifier);
+	   Assert.assertTrue(nodeId.describe().contains("Node Identity Object"));
+	   
+	   //-> EventServiceIdentity
+	   EventServiceIdentityObject event = getDatamodelFactory().createEventServiceIdentityObject();
+	   event.setIdentifier(identifier);
+	   Assert.assertTrue(event.describe().contains("Event Service Identity Object"));
+	   
+	   //-> GroupIdentity
+	   GroupIdentityObject group = getDatamodelFactory().createGroupIdentityObject();
+	   group.setIdentifier(identifier);
+	   Assert.assertTrue(group.describe().contains("Group Identity Object"));
+	   
+	   //-> SearchServiceIdentity
+	   SearchServiceIdentityObject search = getDatamodelFactory().createSearchServiceIdentityObject();
+	   search.setIdentifier(identifier);
+	   Assert.assertTrue(search.describe().contains("Search Service Identity Object"));
+	   
+	   //-> ResolutionServiceIdentity
+	   ResolutionServiceIdentityObject reso = getDatamodelFactory().createResolutionServiceIdentityObject();
+	   reso.setIdentifier(identifier);
+	   Assert.assertTrue(reso.describe().contains("Resolution Service Identity Object"));
+	   
+	   //-> IdentityObject
+	   IdentityObject identObj = getDatamodelFactory().createIdentityObject();
+	   identObj.setIdentifier(identifier);
+	   Assert.assertTrue(identObj.describe().contains("(general) Identity Object"));
+	   
+	   
+	   DataObject dataObj = getDatamodelFactory().createDataObject();
+	   dataObj.setIdentifier(identifier);
+	   Assert.assertTrue(dataObj.describe().contains("Data Object"));
+   }
+   
+   @Test
+   public void testDescribeServiceIdentityObject(){
+	   // Identifier
+	   Identifier identifier = datamodelFactory.createIdentifier();
+	   
+	   ServiceIdentityObject servId = new ServiceIdentityObjectImpl((DatamodelFactoryImpl)getDatamodelFactory());
+	   servId.setIdentifier(identifier);
+	   Assert.assertTrue(servId.describe().contains("Service Identity Object"));
+   }
+   
+   @Test
+   public void testGetAndSetOfDifferentIOs(){
+	   //-> PersonIdentity
+	   PersonIdentityObject pers = getDatamodelFactory().createPersonIdentityObject();
+	   
+	   // should be null here
+	   Assert.assertNull(pers.getName());
+	   Assert.assertNull(pers.getMailAddress());
+	   
+	   pers.setName("Chuck Norris");
+	   Assert.assertEquals("Chuck Norris", pers.getName());
+	   
+	   pers.setMailAddress("chuck@norris.de");
+	   Assert.assertEquals("chuck@norris.de", pers.getMailAddress());
+	   
+	   //-> GroupIdentity
+	   GroupIdentityObject group = getDatamodelFactory().createGroupIdentityObject();
+	   Attribute attr = getDatamodelFactory().createAttribute(DefinedAttributeIdentification.ENCRYPTED_GROUP_KEYS.getURI(), "test767678");
+	   
+	   Assert.assertNull(group.getEncryptedGroupKeys());
+	   group.setEncryptedGroupKeys(attr);
+	   Assert.assertEquals(group.getEncryptedGroupKeys(), attr);
+	   
+	   Attribute attr2 = getDatamodelFactory().createAttribute(DefinedAttributeIdentification.MEMBERS_OF_GROUP.getURI(), "test124");
+	   
+	   Assert.assertNull(group.getMembers());
+	   group.setMembers(attr2);
+	   Assert.assertEquals(group.getMembers(), attr2);
+	   
+	   //-> SearchServiceIdentity
+	   SearchServiceIdentityObject search = getDatamodelFactory().createSearchServiceIdentityObject();
+	   
+	   Assert.assertNull(search.getName());
+	   search.setName("chuck");
+	   Assert.assertEquals(search.getName(), "chuck");
+	   
+	   Assert.assertNull(search.getDescription());
+	   search.setDescription("desc...");
+	   Assert.assertEquals(search.getDescription(), "desc...");
+	   
+	   //-> ResolutionServiceIdentity
+	   ResolutionServiceIdentityObject reso = getDatamodelFactory().createResolutionServiceIdentityObject();
+	   
+	   Assert.assertNull(reso.getName());
+	   reso.setName("chuck");
+	   Assert.assertEquals(reso.getName(), "chuck");
+	   
+	   Assert.assertNull(reso.getDescription());
+	   reso.setDescription("desc...");
+	   Assert.assertEquals(reso.getDescription(), "desc...");
+	   
+	   Assert.assertNull(reso.getDefaultPriority());
+	   reso.setDefaultPriority(42);
+	   Assert.assertEquals(reso.getDefaultPriority().toString(), "42");
+	   
+	   //-> IdentityObject
+	   IdentityObject identObj = getDatamodelFactory().createIdentityObject();
+
+	   PublicKey key = getPublicKey();
+	   identObj.setPublicMasterKey(key);
+	   Assert.assertEquals(identObj.getPublicMasterKey(), key);
+	   
+   }
+   
+   private PublicKey getPublicKey(){
+	   KeyPairGenerator keyPairGenerator;
+	   try {
+		   keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+
+		   keyPairGenerator.initialize(1024);
+		   KeyPair pair = keyPairGenerator.generateKeyPair();
+
+		   return pair.getPublic();
+	   } catch (NoSuchAlgorithmException e) {
+		   return null;
+	   }
    }
    
    public static DataObject createDummyDataObject(DatamodelFactory datamodelFactory){
