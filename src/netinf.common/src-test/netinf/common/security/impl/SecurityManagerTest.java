@@ -196,7 +196,8 @@ public class SecurityManagerTest {
       InformationObject informationObject = createTestInformationObject();
       Assert.assertNotSame(informationObject, securityManager.checkOutgoingInformationObject(informationObject, true));
    }
-
+   
+  
    @Test
    public void testOutgoingIoUntrustedSender() throws NetInfCheckedException, NoSuchAlgorithmException {
       InformationObject informationObject = createTestInformationObject();

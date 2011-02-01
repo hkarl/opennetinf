@@ -48,8 +48,9 @@ import java.util.List;
  */
 public class ESFFetchMissedEventsResponse extends NetInfMessage {
    private final List<ESFEventMessage> eventMessages = new ArrayList<ESFEventMessage>();
+   private transient final int prime = 31;
 
-   public void addEventMessage(ESFEventMessage eventMessage) {
+   public void addEventMessage(final ESFEventMessage eventMessage) {
       this.eventMessages.add(eventMessage);
    }
 
@@ -59,7 +60,6 @@ public class ESFFetchMissedEventsResponse extends NetInfMessage {
 
    @Override
    public int hashCode() {
-      final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((this.eventMessages == null) ? 0 : this.eventMessages.hashCode());
       return result;
@@ -89,7 +89,7 @@ public class ESFFetchMissedEventsResponse extends NetInfMessage {
 
    @Override
    public String toString() {
-      String superString = super.toString();
+      final String superString = super.toString();
       StringBuilder stringBuilder = new StringBuilder();
       stringBuilder.append(superString);
 

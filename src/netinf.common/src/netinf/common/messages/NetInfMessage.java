@@ -138,6 +138,9 @@ public abstract class NetInfMessage {
     * **/
    @Override
    public boolean equals(Object obj) {
+       
+       if(this == obj)
+	   return true;
       
       if (obj == null) {
          return false;
@@ -148,7 +151,7 @@ public abstract class NetInfMessage {
       boolean bSameUser = false;
       boolean bSameKey = false;
       boolean bSameError = false;
-      if(obj != null && (obj.getClass().equals(NetInfMessage.class)))
+      if(obj != null && /*(obj.getClass().equals(NetInfMessage.class))*/obj instanceof NetInfMessage)
       {
     	  NetInfMessage other = (NetInfMessage) obj;
     	  if(this.userName != null && other.userName != null)
@@ -156,20 +159,28 @@ public abstract class NetInfMessage {
     		  if(this.userName.equalsIgnoreCase(other.userName))
     			  bSameUser = true;
     	  }
+    	  if(this.userName == null && other.userName == null){
+    	      bSameUser = true;
+    	  }
     	  if(this.privateKey != null && other.privateKey != null)
     	  {
     		  if(this.privateKey.equalsIgnoreCase(other.privateKey))
     			  bSameKey = true;
+    	  }
+    	  if(this.privateKey == null && other.privateKey ==null ){
+    	      bSameKey = true;
     	  }
     	  if(this.errorMessage != null && other.errorMessage != null)
     	  {
     		  if(this.errorMessage.equalsIgnoreCase(other.errorMessage))
     			  bSameError = true;
     	  }
-    	  return (bSameUser && bSameKey && bSameError);
+    	  if(this.errorMessage == null && other.errorMessage == null ){
+  	      bSameError = true;
+  	  }
     		   
       }
-      
+      return (bSameUser && bSameKey && bSameError);
       
       /*if (this.errorMessage == null) {
          if (other.errorMessage != null) {
@@ -193,7 +204,6 @@ public abstract class NetInfMessage {
       } else if (!this.userName.equals(other.userName)) {
          return false;
       }*/
-      return true;
    }
 
    /*

@@ -71,6 +71,7 @@ public class MessageEncoderXMLTest extends MessageEncoderTest {
    @Test
    @Ignore("Not Implemented")
    public void testRSPutResponse() {
+
    }
 
    @Override

@@ -111,12 +111,12 @@ public class RemoteNodeConnection implements NetInfNodeConnection {
       this.communicatorProvider = communicatorProvider;
    }
 
-   /**
-    * Initiates the connection to a NetInf Node
-    * 
-    * @return true if successful, false otherwise
-    * @throws NetInfCheckedException
-    */
+    /**
+     * Initiates the connection to a NetInf Node If connection fails an
+     * exception will be thrown
+     * 
+     * @throws NetInfCheckedException
+     */
    private void setupCommunicator() throws NetInfCheckedException {
       LOG.trace(null);
 

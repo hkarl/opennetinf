@@ -37,10 +37,10 @@
  */
 package netinf.common.communication;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Properties;
 
@@ -48,13 +48,42 @@ import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.IdentifierLabel;
 import netinf.common.datamodel.InformationObject;
-import netinf.common.messages.*;
+import netinf.common.messages.ESFEventMessage;
+import netinf.common.messages.ESFFetchMissedEventsRequest;
+import netinf.common.messages.ESFFetchMissedEventsResponse;
+import netinf.common.messages.ESFRegistrationRequest;
+import netinf.common.messages.ESFRegistrationResponse;
+import netinf.common.messages.ESFSubscriptionRequest;
+import netinf.common.messages.ESFSubscriptionResponse;
+import netinf.common.messages.ESFUnsubscriptionRequest;
+import netinf.common.messages.ESFUnsubscriptionResponse;
+import netinf.common.messages.NetInfMessage;
+import netinf.common.messages.RSGetNameRequest;
+import netinf.common.messages.RSGetNameResponse;
+import netinf.common.messages.RSGetPriorityRequest;
+import netinf.common.messages.RSGetPriorityResponse;
+import netinf.common.messages.RSGetRequest;
+import netinf.common.messages.RSGetResponse;
+import netinf.common.messages.RSGetServicesRequest;
+import netinf.common.messages.RSGetServicesResponse;
+import netinf.common.messages.RSPutRequest;
+import netinf.common.messages.RSPutResponse;
+import netinf.common.messages.SCGetByQueryTemplateRequest;
+import netinf.common.messages.SCGetBySPARQLRequest;
+import netinf.common.messages.SCGetTimeoutAndNewSearchIDRequest;
+import netinf.common.messages.SCGetTimeoutAndNewSearchIDResponse;
+import netinf.common.messages.SCSearchResponse;
+import netinf.common.messages.TCChangeTransferRequest;
+import netinf.common.messages.TCChangeTransferResponse;
+import netinf.common.messages.TCGetServicesRequest;
+import netinf.common.messages.TCGetServicesResponse;
+import netinf.common.messages.TCStartTransferRequest;
+import netinf.common.messages.TCStartTransferResponse;
 import netinf.common.utils.Utils;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.runners.statements.Fail;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -81,6 +110,7 @@ public abstract class MessageEncoderTest {
    public void setup() {
       this.properties = Utils.loadProperties(PROPERTIES_PATH);
       this.injector = Guice.createInjector(new CommonTestModule(this.properties));
+
 
       this.messageEncoder = this.injector.getInstance(MessageEncoderProtobuf.class);
       this.datamodelFactory = this.injector.getInstance(DatamodelFactory.class);
@@ -249,11 +279,11 @@ public abstract class MessageEncoderTest {
 	   eventm.setOldInformationObject(oldTestIO);
 	   eventm.setUserName("Chuck Norris");
 	   eventm.setMatchedSubscriptionIdentification("sid:12345678");
-	   eventm.setSerializeFormat(SerializeFormat.RDF);
+	  // eventm.setSerializeFormat(SerializeFormat.RDF);
 	   m.addEventMessage(eventm);
 	   m.setPrivateKey("123");
 	   m.setUserName("Chuck Norris");
-	   m.setSerializeFormat(SerializeFormat.RDF);
+	  // m.setSerializeFormat(SerializeFormat.RDF);
 	   m.setErrorMessage("Success");
 	   testEncoder(m);
    }

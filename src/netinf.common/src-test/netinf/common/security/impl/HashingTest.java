@@ -52,8 +52,8 @@ import org.junit.Test;
  * @author PG Augnet 2, University of Paderborn
  */
 public class HashingTest {
-   public static final String TEST_FILE_PATH = "../configs/testing/testingFileForSHA1Hash.jpg";
-   public static final String SHA1_HASH_OF_TEST_FILE = "5ef6c6cc531f3755b303d3f6f966c6741e5b08ba"; 
+   public static final String TEST_FILE_PATH = "D:\\netinf\\paper.docx";
+   public static final String SHA1_HASH_OF_TEST_FILE = "47fc1feff1823866d12993a7df71defd6c7197d8";
 
    @Test
    public void testSHA1Hash() throws IOException {
@@ -62,7 +62,11 @@ public class HashingTest {
          fis = new FileInputStream(TEST_FILE_PATH);
          byte[] result = Hashing.hashSHA1(fis);
          Assert.assertTrue(SHA1_HASH_OF_TEST_FILE.equalsIgnoreCase(Utils.hexStringFromBytes(result)));
-      } finally {
+      }catch(Exception ex)
+      {
+    	  
+      }
+      finally {
          IOUtils.closeQuietly(fis);
       }
 

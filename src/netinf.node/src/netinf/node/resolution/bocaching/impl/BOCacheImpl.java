@@ -132,7 +132,10 @@ public class BOCacheImpl implements BOCache {
                LOG.warn("Error downloading:" + url);
             } catch (IOException e) {
                LOG.warn("Error hashing:" + url);
-            } finally {
+            } catch (Exception e) {
+		LOG.warn("Error hashing, but file was OK: " + url);
+//		e.printStackTrace();
+	    } finally {
                IOUtils.closeQuietly(fis);
                rebuildCache();
             }

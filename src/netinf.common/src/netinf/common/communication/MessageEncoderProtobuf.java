@@ -111,6 +111,7 @@ import netinf.common.messages.TCStartTransferRequest;
 import netinf.common.messages.TCStartTransferResponse;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.DescriptorProtos.FieldDescriptorProto;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 /**
@@ -353,6 +354,7 @@ public class MessageEncoderProtobuf extends MessageEncoderAbstract {
       if (m.getNewInformationObject() != null) {
          builder.setNewInformationObject(serializeObject(m.getNewInformationObject(), serializeFormat));
       }
+     
 
       return ProtoNetInfMessage.newBuilder().setESFEventMessage(builder);
    }

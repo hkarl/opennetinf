@@ -137,9 +137,7 @@ public class RSGetRequest extends NetInfMessage {
       if (this == obj) {
          return true;
       }
-      if (!super.equals(obj)) {
-         return false;
-      }
+      
       if (getClass() != obj.getClass()) {
          return false;
       }
@@ -164,6 +162,9 @@ public class RSGetRequest extends NetInfMessage {
       } else if (!this.resolutionServicesToUse.equals(other.resolutionServicesToUse)) {
          return false;
       }
+      if (!super.equals(obj)) {
+	         return false;
+	      }
       return true;
    }
 
