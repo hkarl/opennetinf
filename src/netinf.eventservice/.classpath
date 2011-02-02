@@ -3,17 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src-test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=ivy.xml&amp;confs=*"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/netinf.access"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/netinf.common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/netinf.database"/>
 	<classpathentry kind="lib" path="lib/siena.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/netinf.access"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/jena.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/arq.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/junit-4.5.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/icu4j_3_4.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/iri.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/slf4j-api-1.5.6.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/slf4j-log4j12-1.5.6.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/xercesImpl.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
