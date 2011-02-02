@@ -37,15 +37,25 @@
  */
 package netinf.common.utils;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Properties;
 import java.util.Random;
 
+import netinf.common.application.module.SecuredApplicationModule;
 import netinf.common.communication.NetInfNodeConnection;
 import netinf.common.communication.RemoteNodeConnection;
+import netinf.common.communication.SerializeFormat;
 import netinf.common.datamodel.DatamodelFactory;
+import netinf.common.datamodel.DefinedAttributePurpose;
+import netinf.common.datamodel.DefinedLabelName;
+import netinf.common.datamodel.DefinedVersionKind;
+import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.attribute.Attribute;
+import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
 import netinf.common.datamodel.impl.module.DatamodelImplModule;
 import netinf.common.log.module.LogModule;
+import netinf.common.security.identity.IdentityManager;
 import netinf.common.security.impl.module.SecurityModule;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -58,6 +68,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
+import com.hp.hpl.jena.sparql.util.Base64;
 
 /**
  * The Class UtilsTest.
@@ -68,6 +79,8 @@ public class UtilsTest {
    public static final String NETINFNODE_PROPERTIES = "../configs/netinfnode_testing.properties";
    private DatamodelFactory factory;
 
+   
+   
    @Before
    public void setUp() throws Exception {
       final Properties properties = Utils.loadProperties(NETINFNODE_PROPERTIES);
@@ -81,6 +94,7 @@ public class UtilsTest {
          }
       });
       factory = createInjector.getInstance(DatamodelFactory.class);
+      
    }
 
    @Test
@@ -103,12 +117,93 @@ public class UtilsTest {
       Assert.assertEquals(property.getIdentification(), deserialisedProperty.getIdentification());
       Assert.assertEquals(property.getValueRaw(), deserialisedProperty.getValueRaw());
    }
+ 
+   @Test
+   public void testStringToPublicAndPrivateKey(){
+	  
+	    String APPLICATION_PROPERTIES = "../configs/createIOs.properties";
+		
+	    Injector injector;
+	    IdentityManager identityManager;
+	    
+	  
+	    SecuredApplicationModule createIOsModule = new SecuredApplicationModule(APPLICATION_PROPERTIES);
+	    injector = Guice.createInjector(createIOsModule);
+	    final Properties properties = Utils.loadProperties(APPLICATION_PROPERTIES);
 
+	    identityManager = injector.getInstance(IdentityManager.class);
+	    identityManager.setFilePath("../configs/Identities/publicKeyFile.pkf");
+	
+	    
+	    PublicKey pk = Utils.stringToPublicKey(
+	    		properties.getProperty("publicKeyIdentity2"));
+	    
+	    String pkString = Utils.objectToString(pk);
+	    PublicKey pk2 = Utils.stringToPublicKey(pkString);
+	    
+	    Assert.assertEquals(pk, pk2);
+	    
+	    identityManager.setFilePath("../configs/Identities/privateKeyFile.pkf");
+
+	    
+	    PrivateKey pvk = Utils.stringToPrivateKey(
+	    		properties.getProperty("privateKeyIdentity2"));
+	    String pvkString = Utils.objectToString(pvk);
+	    
+        PrivateKey pvk2 = Utils.stringToPrivateKey(pvkString);
+	    
+	    Assert.assertEquals(pvk, pvk2);
+   }
+   
+   @Test
+   public void testGetObjectFromRaw(){
+	       
+	   String    testType = "Boolean";
+	   String    testEncoded = "true";	    
+	    
+	    Assert.assertEquals(true, ValueUtils.getObjectFromRaw(testType, testEncoded));
+   
+	    testEncoded = "2";
+        testType = "Byte";
+        byte b = 2 ;
+	    Assert.assertEquals(b, ValueUtils.getObjectFromRaw(testType, testEncoded) );
+
+	    testEncoded = "123.123";
+	    testType = "Float";
+	    float f = (float) 123.123;
+	    Assert.assertEquals(f, ValueUtils.getObjectFromRaw(testType, testEncoded));
+
+	    testEncoded = "123.12345678";
+	    testType = "Double";
+	    double d = 123.12345678 ;
+	    Assert.assertEquals(d, ValueUtils.getObjectFromRaw(testType, testEncoded));
+
+
+	    testEncoded = "abcdv";
+	    testType = "Character";
+	    Character c = 'a' ;
+	    Assert.assertEquals(c, ValueUtils.getObjectFromRaw(testType, testEncoded));
+
+	    testEncoded = "1234567890";
+	    testType = "Long";
+	    long l = 1234567890 ;
+	    Assert.assertEquals(l, ValueUtils.getObjectFromRaw(testType, testEncoded));
+
+	    testEncoded = "123";
+	    testType = "Short";
+	    short s = 123 ;
+	    Assert.assertEquals(s, ValueUtils.getObjectFromRaw(testType, testEncoded));
+
+	    
+	    
+   }
+   
    @After
    public void tearDown() throws Exception {
    }
 
-   private Attribute createTestProperty() {
+
+   public Attribute createTestProperty() {
       String name = "Test-Property";
       String content = RandomStringUtils.random(500);
 
@@ -116,4 +211,6 @@ public class UtilsTest {
 
       return property;
    }
-}
+   
+}   
+  
