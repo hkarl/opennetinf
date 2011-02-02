@@ -4,37 +4,10 @@
 	<classpathentry kind="src" path="src-test"/>
 	<classpathentry kind="src" path="src-test-integration"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/netinf.common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/netinf.database"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/netinf.access"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/bouncycastle.jar"/>
-	<classpathentry kind="lib" path="lib/commons-jxpath-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/FreePastry-2.1.jar" sourcepath="C:/Users/Mario/Downloads/pastry-2.1/src"/>
-	<classpathentry kind="lib" path="lib/sbbi-upnplib-1.0.4.jar"/>
-	<classpathentry kind="lib" path="lib/xmlpull_1_1_3_4a.jar"/>
-	<classpathentry kind="lib" path="lib/xpp3-1.1.3.4d_b2.jar"/>
-	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.10-bin.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/arq-extra.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/arq.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/icu4j_3_4.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/iri.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/jena.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/jenatest.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/json.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/junit-4.5.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/lucene-core-2.3.1.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/sdb.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/slf4j-api-1.5.6.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/slf4j-log4j12-1.5.6.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/stax-api-1.0.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/wstx-asl-3.0.0.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib-test/cglib-nodep-2.2.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib-test/easymock.jar"/>
-	<classpathentry kind="lib" path="/netinf.common/lib-test/easymockclassextension.jar"/>
-	<classpathentry kind="lib" path="lib/JSAP-2.1.jar"/>
+	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=ivy.xml&amp;confs=*"/>
+	<classpathentry kind="lib" path="lib/FreePastry-2.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/netinf.common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/netinf.access"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
