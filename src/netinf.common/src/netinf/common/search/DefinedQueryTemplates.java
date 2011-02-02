@@ -80,4 +80,10 @@ public enum DefinedQueryTemplates {
       return result;
    }
 
+/*public static DefinedQueryTemplates getDefinedQueryTemplatesByQueryTemplatesString(
+		String string) {
+	// TODO Auto-generated method stub
+	return null;
+}*/
+
 }
