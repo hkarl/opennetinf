@@ -99,7 +99,7 @@ public abstract class AbstractEsfConnector extends Thread {
       this.procHandler = procHandler;
       this.host = host;
       this.port = Integer.valueOf(port);
-
+      
       this.messageQueue = new LinkedBlockingQueue<ESFEventMessage>();
    }
 
