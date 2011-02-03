@@ -47,7 +47,7 @@
     <dependency
         org="com.hp.hpl.jena"
         name="jena"
-        rev="2.6.0" />
+        rev="2.6.2" />
     <dependency
         org="commons-lang"
         name="commons-lang"
