@@ -47,7 +47,7 @@
     <dependency
         org="com.hp.hpl.jena"
         name="jena"
-        rev="2.6.0" />
+        rev="2.6.2" />
     <dependency
         org="com.hp.hpl.jena"
         name="sdb"
@@ -56,5 +56,12 @@
         org="org.easymock"
         name="easymock"
         rev="2.5.2" />
-    
+    <dependency
+        org="mysql"
+        name="mysql-connector-java"
+        rev="5.1.14" />
+    <dependency
+        org="xpp3"
+        name="xpp3"
+        rev="1.1.4c" />
 </ivy-module>

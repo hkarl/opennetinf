@@ -32,4 +32,8 @@
         org="com.google.inject"
         name="guice"
         rev="2.0" />
+    <dependency
+        org="mysql"
+        name="mysql-connector-java"
+        rev="5.1.14" />
 </ivy-module>
