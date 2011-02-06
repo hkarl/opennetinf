@@ -39,7 +39,6 @@ package netinf.access;
 
 import java.util.Properties;
 
-import netinf.common.communication.AsyncReceiveHandler;
 import netinf.common.communication.NetInfNodeConnection;
 import netinf.common.communication.RemoteNodeConnection;
 import netinf.common.datamodel.impl.module.DatamodelImplModule;
@@ -63,14 +62,15 @@ public class AccessTestModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      Names.bindProperties(binder(), this.properties);
+      Names.bindProperties(binder(), properties);
 
-      install(new LogModule(this.properties));
+      install(new LogModule(properties));
       install(new DatamodelImplModule());
 
       install(new SecurityModule());
       bind(NetInfNodeConnection.class).annotatedWith(SecurityModule.Security.class).to(RemoteNodeConnection.class);
 
-      //????bind(AsyncReceiveHandler.class).to(CommunicationTest.class);
+      // bind(AsyncReceiveHandler.class).to(CommunicationTest.class);
+      // bind(AsyncReceiveHandler.class).to(HTTPServerCommunicationTest.class); // eddy
    }
 }
