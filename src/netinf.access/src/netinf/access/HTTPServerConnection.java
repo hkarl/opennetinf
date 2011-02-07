@@ -66,7 +66,6 @@ public class HTTPServerConnection implements Connection {
 
    @Override
    public void close() throws IOException {
-      LOG.trace(null);
       this.httpExchange.close();
    }
 
