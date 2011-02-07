@@ -39,8 +39,6 @@ package netinf.common.datamodel.creator;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.List;
 
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.DefinedAttributePurpose;
@@ -156,8 +154,8 @@ public class ValidCreator {
       identifier.addIdentifierLabel(label);
       io.setIdentifier(identifier);
 
-      Attribute attribute = dmFactory.createAttribute(DefinedAttributeIdentification.PUBLIC_KEY.getURI(), Utils
-            .objectToString(owner.getPublicMasterKey()));
+      Attribute attribute = dmFactory.createAttribute(DefinedAttributeIdentification.PUBLIC_KEY.getURI(),
+            Utils.objectToString(owner.getPublicMasterKey()));
       attribute.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
       io.addAttribute(attribute);
 
@@ -182,23 +180,24 @@ public class ValidCreator {
             uniqueLabelValue);
    }
 
-   /**
-    * Appends a new Authorized Writers List to IO. Authorized Writers List contains owner from the beginning.
-    * 
-    * @param io
-    *           IO to add authorized writers list to.
-    * @param owner
-    *           Owner of the IO
-    */
-   private static void appendAuthorizedWritersListToIO(InformationObject io, String ownerPath) {
-      List<String> writersList = new ArrayList<String>();
-      writersList.add(ownerPath);
-
-      Attribute authorizedWritersList = dmFactory.createAttribute(DefinedAttributeIdentification.AUTHORIZED_WRITERS.getURI(),
-            Utils.objectToString(writersList));
-      authorizedWritersList.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
-      secureAttributeItself(authorizedWritersList, ownerPath);
-   }
+   // eddy: seems to be not used anywhere
+   // /**
+   // * Appends a new Authorized Writers List to IO. Authorized Writers List contains owner from the beginning.
+   // *
+   // * @param io
+   // * IO to add authorized writers list to.
+   // * @param owner
+   // * Owner of the IO
+   // */
+   // private static void appendAuthorizedWritersListToIO(InformationObject io, String ownerPath) {
+   // List<String> writersList = new ArrayList<String>();
+   // writersList.add(ownerPath);
+   //
+   // Attribute authorizedWritersList = dmFactory.createAttribute(DefinedAttributeIdentification.AUTHORIZED_WRITERS.getURI(),
+   // Utils.objectToString(writersList));
+   // authorizedWritersList.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+   // secureAttributeItself(authorizedWritersList, ownerPath);
+   // }
 
    private static String getIdentityPath(IdentityObject ido) {
       return ido.getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI();
@@ -212,7 +211,7 @@ public class ValidCreator {
 
    public static void secureAttributeInOverall(Attribute attribute, String pathToKey) {
       Attribute subattribute = dmFactory
-      .createAttribute(DefinedAttributeIdentification.SECURED_IN_OVERALL.getURI(), Boolean.TRUE);
+            .createAttribute(DefinedAttributeIdentification.SECURED_IN_OVERALL.getURI(), Boolean.TRUE);
       subattribute.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
       attribute.getInformationObject().removeAttribute(DefinedAttributeIdentification.WRITER.getURI());
       secureIO(attribute.getInformationObject(), pathToKey);

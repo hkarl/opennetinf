@@ -59,9 +59,8 @@ public class SecuredApplicationModule extends ConfigurableApplicationModule {
       super.configure();
       install(new SecurityModule());
 
-      bind(NetInfNodeConnection.class).annotatedWith(SecurityModule.Security.class).to(RemoteNodeConnection.class).in(
-            Singleton.class);
-
+      bind(NetInfNodeConnection.class).annotatedWith(SecurityModule.Security.class).to(RemoteNodeConnection.class)
+            .in(Singleton.class);
    }
 
 }
