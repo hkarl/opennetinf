@@ -39,9 +39,13 @@
     <dependency
         org="com.hp.hpl.jena"
         name="arq"
-        rev="2.3" />
+        rev="2.8.2" />
     <dependency
         org="junit"
         name="junit"
         rev="4.8.2" />
+    <dependency
+        org="siena"
+        name="siena"
+        rev="1.5.5" />
 </ivy-module>
