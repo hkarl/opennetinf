@@ -251,4 +251,10 @@ public class IdentityVerificationTest {
    public void tearDown() throws Exception {
    }
 
+public static Object[] getIdentityVerificationResultByVerificationResultString(
+		String string) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
 }
