@@ -66,18 +66,17 @@ public class ConfigurableApplicationModule extends AbstractApplicationModule {
    @Override
    protected void configure() {
       super.configure();
-      
-      if (this.properties != null && !this.properties.isEmpty()) {
-         Names.bindProperties(binder(), this.properties);
-         install(new LogModule(this.properties));
+
+      if (properties != null && !properties.isEmpty()) {
+         Names.bindProperties(binder(), properties);
+         install(new LogModule(properties));
       } else {
          throw new NetInfUncheckedException("Could not bind properties");
       }
 
-      if (this.properties.get("format").equals("RDF")) {
+      if (properties.get("format").equals("RDF")) {
          install(new DatamodelRdfModule());
-      }
-      else if (this.properties.get("format").equals("JAVA")) {
+      } else if (properties.get("format").equals("JAVA")) {
          install(new DatamodelImplModule());
       }
    }

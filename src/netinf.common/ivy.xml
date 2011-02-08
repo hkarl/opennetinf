@@ -47,7 +47,7 @@
     <dependency
         org="com.hp.hpl.jena"
         name="jena"
-        rev="2.6.2" />
+        rev="2.6.0" />
     <dependency
         org="commons-lang"
         name="commons-lang"
@@ -67,5 +67,5 @@
     <dependency
         org="com.hp.hpl.jena"
         name="arq"
-        rev="2.3" />
+        rev="2.8.2" />
 </ivy-module>
