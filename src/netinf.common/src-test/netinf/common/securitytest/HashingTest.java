@@ -1,6 +1,6 @@
 package netinf.common.securitytest;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -15,11 +15,12 @@ public class HashingTest {
 
 	@Test
 	public void testHashing(){
-		String s = "Hello";
-		InputStream input = new ByteArrayInputStream(s.getBytes());
-		byte[] result = {1,2,3,4};
+		byte[] bytes = new byte[1];
+		bytes[0] = 65;
+		
+		InputStream input = new ByteArrayInputStream(bytes);
 		try {
-			assertArrayEquals(result, Hashing.hashSHA1(input));
+			assertEquals("A", new String(Hashing.hashSHA1(input)));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
