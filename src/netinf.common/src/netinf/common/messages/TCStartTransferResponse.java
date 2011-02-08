@@ -100,15 +100,10 @@ public class TCStartTransferResponse extends NetInfMessage {
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj) {
-         return true;
-      }
-      if (obj == null) {
-         return false;
-      }
-      if (getClass() != obj.getClass()) {
-         return false;
-      }
+      
+      if (!super.equals(obj)) {
+	         return false;
+	      }
       TCStartTransferResponse other = (TCStartTransferResponse) obj;
       if (destination == null) {
          if (other.destination != null) {

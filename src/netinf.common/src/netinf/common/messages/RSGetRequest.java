@@ -60,10 +60,11 @@ public class RSGetRequest extends NetInfMessage {
     */
    private Identifier identifier;
 
-   /**
-    * If the client wants to fetch all versions (and not just the most recent one) of the request {@link InformationObject} then
-    * this flag has to be set to <code>true</code>.
-    */
+    /**
+     * If the client wants to fetch all versions (and not just the most recent
+     * one) of the request {@link InformationObject} then this flag has to be
+     * set to <code>true</code>. The default is <code>false</code>
+     */
    private boolean fetchAllVersions;
 
    /**
@@ -83,10 +84,12 @@ public class RSGetRequest extends NetInfMessage {
       super();
       this.identifier = identifier;
       this.resolutionServicesToUse = resolutionServicesToUse;
+	this.fetchAllVersions = false;
    }
 
    public RSGetRequest(Identifier identifier) {
       this.identifier = identifier;
+	this.fetchAllVersions = false;
    }
 
    public void setIdentifier(Identifier identifier) {
@@ -134,6 +137,8 @@ public class RSGetRequest extends NetInfMessage {
 
    @Override
    public boolean equals(Object obj) {
+	if (obj == null)
+	    return false;
       if (this == obj) {
          return true;
       }

@@ -73,15 +73,16 @@ public class SCSearchResponse extends NetInfMessage {
       return result;
    }
 
+   /**
+    * The overridden equals method. It generally holds: For any non-null reference value x, x.equals(null) should return false.
+    * That check is implemented in the NetInfMessage class
+    * @param obj The object comparing the message to. If it's not of the same type, the superclass method will take care of it
+    * @see NetInfMessage
+    */
    @Override
    public boolean equals(Object obj) {
-      if (this == obj) {
-         return true;
-      }
+
       if (!super.equals(obj)) {
-         return false;
-      }
-      if (getClass() != obj.getClass()) {
          return false;
       }
       SCSearchResponse other = (SCSearchResponse) obj;

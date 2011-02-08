@@ -76,13 +76,8 @@ public class SCGetTimeoutAndNewSearchIDRequest extends NetInfMessage {
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj) {
-         return true;
-      }
+
       if (!super.equals(obj)) {
-         return false;
-      }
-      if (getClass() != obj.getClass()) {
          return false;
       }
       SCGetTimeoutAndNewSearchIDRequest other = (SCGetTimeoutAndNewSearchIDRequest) obj;

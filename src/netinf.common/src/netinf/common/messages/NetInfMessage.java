@@ -39,6 +39,7 @@ package netinf.common.messages;
 
 import netinf.common.communication.SerializeFormat;
 import netinf.common.datamodel.InformationObject;
+import netinf.common.exceptions.NetInfCheckedException;
 import netinf.common.exceptions.NetInfUncheckedException;
 
 /**
@@ -138,12 +139,13 @@ public abstract class NetInfMessage {
    @Override
    public boolean equals(Object obj) {
        
+       if (obj == null) {
+	         return false;
+	      }
        if(this == obj)
 	   return true;
       
-      if (obj == null) {
-         return false;
-      }
+      
       if (getClass() != obj.getClass()) {
          return false;
       }
