@@ -32,5 +32,8 @@
         org="com.google.inject"
         name="guice"
         rev="2.0" />
-    
+    <dependency
+        org="com.miglayout"
+        name="miglayout"
+        rev="3.7.4" />
 </ivy-module>

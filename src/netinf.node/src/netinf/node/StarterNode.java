@@ -127,7 +127,6 @@ public class StarterNode {
    private NetInfNode netInfNode;
 
    public StarterNode(Module module) throws IOException {
-
       this.injector = Guice.createInjector(module);
    }
 
@@ -231,4 +230,5 @@ public class StarterNode {
       }
       return success;
    }
+
 }

@@ -74,7 +74,7 @@ public class TCPServer extends NetInfServer {
 
    @Inject
    public void injectProviderCommunicator(Provider<Communicator> provider) {
-      this.communicatorProvider = provider;
+      communicatorProvider = provider;
    }
 
    @Override
@@ -82,50 +82,51 @@ public class TCPServer extends NetInfServer {
       LOG.trace(null);
 
       try {
-         this.serverSocket = new ServerSocket(this.port);
+         serverSocket = new ServerSocket(port);
       } catch (IOException e) {
-         LOG.error("Error encountered while initializing the TCPServer on port: " + this.port, e);
+         LOG.error("Error encountered while initializing the TCPServer on port: " + port, e);
          throw new NetInfCheckedException(e);
       }
 
-      this.connectionListener = new ConnectionListener();
-      this.connectionListener.start();
+      connectionListener = new ConnectionListener();
+      connectionListener.start();
    }
 
    @Override
    public void stop() throws IOException {
       LOG.trace(null);
 
-      if(this.connectionListener != null)
-    	  this.connectionListener.interrupt();
-      
+      if (connectionListener != null) {
+         connectionListener.interrupt();
+      }
+
       try {
-    	  if(this.serverSocket != null)
-    		  this.serverSocket.close();
+         if (serverSocket != null) {
+            serverSocket.close();
+         }
       } catch (IOException e) {
          throw e;
       }
    }
 
    public int getPort() {
-      return this.port;
+      return port;
    }
-   
+
    public String getAddress() {
-	   return this.serverSocket.getInetAddress().toString();
+      return serverSocket.getInetAddress().toString();
    }
-   
+
    @Override
-   public boolean isRunning(){
-	   return this.connectionListener.isRunning();
+   public boolean isRunning() {
+      return connectionListener.isRunning();
    }
 
    @Override
    public String describe() {
-	   return "TCP on port " + this.port;
+      return "TCP on port " + port;
    }
 
-   
    /**
     * The listener interface for receiving connection events. The class that is interested in processing a connection event
     * implements this interface, and the object created with that class is registered with a component using the component's
@@ -140,7 +141,7 @@ public class TCPServer extends NetInfServer {
       private boolean running;
 
       public ConnectionListener() {
-         this.running = true;
+         running = true;
       }
 
       @Override
@@ -148,15 +149,14 @@ public class TCPServer extends NetInfServer {
          LOG.trace(null);
 
          try {
-            LOG.debug("Starting to listen for new connection within the TCPServer on port "
-                  + TCPServer.this.serverSocket.getLocalPort());
+            LOG.debug("Starting to listen for new connection within the TCPServer on port " + serverSocket.getLocalPort());
 
-            while (this.running) {
+            while (running) {
                LOG.debug("In listen loop");
-               Socket socket = TCPServer.this.serverSocket.accept();
+               Socket socket = serverSocket.accept();
                LOG.debug("Accepted new connection.");
                TCPConnection newConnection = new TCPConnection(socket);
-               Communicator newCommunicator = TCPServer.this.communicatorProvider.get();
+               Communicator newCommunicator = communicatorProvider.get();
                newCommunicator.setConnection(newConnection);
 
                startCommunicator(newCommunicator, true);
@@ -165,26 +165,27 @@ public class TCPServer extends NetInfServer {
             LOG.error("The TCP Server encountered an error", e);
          }
          // dont know, if this is really neccessary: stop() in TCPServer is already closing the socket
-//         finally {
-//            try {
-//               TCPServer.this.serverSocket.close();
-//            } catch (IOException e) {
-//               LOG.error("The TCP Server encountered an error while closing", e);
-//            }
-//         }
+         // TODO: eddy - observe if this is causing any problems
+         // finally {
+         // try {
+         // TCPServer.this.serverSocket.close();
+         // } catch (IOException e) {
+         // LOG.error("The TCP Server encountered an error while closing", e);
+         // }
+         // }
       }
 
       @Override
       public void interrupt() {
          LOG.trace(null);
 
-         this.running = false;
+         running = false;
          super.interrupt();
       }
-      
-      public boolean isRunning(){
-   	   return this.running;
+
+      public boolean isRunning() {
+         return running;
       }
    }
-   
+
 }

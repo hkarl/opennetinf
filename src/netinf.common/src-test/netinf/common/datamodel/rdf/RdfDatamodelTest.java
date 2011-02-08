@@ -78,7 +78,6 @@ import com.google.inject.Injector;
 import com.google.inject.name.Names;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
@@ -116,13 +115,13 @@ public class RdfDatamodelTest extends DatamodelTest {
       Resource subattributeResource = ((AttributeRdf) subattribute).getResource();
 
       // Check whether pointer was set correctly
-      List<Statement> pointerToIOList = ioResource.getModel().listStatements(null,
-            DatamodelFactoryRdf.getProperty(DefinedRdfNames.POINTER_TO_IO), ioResource).toList();
+      List<Statement> pointerToIOList = ioResource.getModel()
+            .listStatements(null, DatamodelFactoryRdf.getProperty(DefinedRdfNames.POINTER_TO_IO), ioResource).toList();
       Assert.assertEquals(1, pointerToIOList.size());
 
       // Check whether attribute was bound correctly
-      List<Statement> attributeList = ioResource.getModel().listStatements(ioResource,
-            DatamodelFactoryRdf.getProperty(ATTRIBUTE_IDENTIFICATION), attributeResource).toList();
+      List<Statement> attributeList = ioResource.getModel()
+            .listStatements(ioResource, DatamodelFactoryRdf.getProperty(ATTRIBUTE_IDENTIFICATION), attributeResource).toList();
 
       Assert.assertEquals(1, attributeList.size());
 
@@ -142,8 +141,10 @@ public class RdfDatamodelTest extends DatamodelTest {
       Assert.assertEquals(attribute.getValueRaw(), ((Literal) attributeValueList.get(0).getObject()).getString());
 
       // Check whether subattribute was bould correctly
-      List<Statement> subattributeList = attributeResource.getModel().listStatements(attributeResource,
-            DatamodelFactoryRdf.getProperty(SUBATTRIBUTE_IDENTIFICATION), subattributeResource).toList();
+      List<Statement> subattributeList = attributeResource
+            .getModel()
+            .listStatements(attributeResource, DatamodelFactoryRdf.getProperty(SUBATTRIBUTE_IDENTIFICATION), subattributeResource)
+            .toList();
 
       Assert.assertEquals(1, subattributeList.size());
 
@@ -219,13 +220,13 @@ public class RdfDatamodelTest extends DatamodelTest {
       Resource subattributeResource = ((AttributeRdf) subattribute).getResource();
 
       // Check whether pointer was set correctly
-      List<Statement> pointerToIOList = ioResource.getModel().listStatements(null,
-            DatamodelFactoryRdf.getProperty(DefinedRdfNames.POINTER_TO_IO), ioResource).toList();
+      List<Statement> pointerToIOList = ioResource.getModel()
+            .listStatements(null, DatamodelFactoryRdf.getProperty(DefinedRdfNames.POINTER_TO_IO), ioResource).toList();
       Assert.assertEquals(1, pointerToIOList.size());
 
       // Check whether attribute was bound correctly
-      List<Statement> attributeList = ioResource.getModel().listStatements(ioResource,
-            DatamodelFactoryRdf.getProperty(ATTRIBUTE_IDENTIFICATION), attributeResource).toList();
+      List<Statement> attributeList = ioResource.getModel()
+            .listStatements(ioResource, DatamodelFactoryRdf.getProperty(ATTRIBUTE_IDENTIFICATION), attributeResource).toList();
 
       Assert.assertEquals(1, attributeList.size());
 
@@ -245,8 +246,10 @@ public class RdfDatamodelTest extends DatamodelTest {
       Assert.assertEquals(attribute.getValueRaw(), ((Literal) attributeValueList.get(0).getObject()).getString());
 
       // Check whether subattribute was bould correctly
-      List<Statement> subattributeList = attributeResource.getModel().listStatements(attributeResource,
-            DatamodelFactoryRdf.getProperty(SUBATTRIBUTE_IDENTIFICATION), subattributeResource).toList();
+      List<Statement> subattributeList = attributeResource
+            .getModel()
+            .listStatements(attributeResource, DatamodelFactoryRdf.getProperty(SUBATTRIBUTE_IDENTIFICATION), subattributeResource)
+            .toList();
 
       Assert.assertEquals(1, subattributeList.size());
 
@@ -414,19 +417,19 @@ public class RdfDatamodelTest extends DatamodelTest {
       object = getDatamodelFactory().createGroupIdentityObject();
       desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
       Assert.assertEquals(GroupIdentityObjectRdf.class.getCanonicalName(), desObject.getClass().getCanonicalName());
-   
+
       object = getDatamodelFactory().createNodeIdentityObject();
       desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
       Assert.assertEquals(NodeIdentityObjectRdf.class.getCanonicalName(), desObject.getClass().getCanonicalName());
-      
+
       object = getDatamodelFactory().createPersonIdentityObject();
       desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
       Assert.assertEquals(PersonIdentityObjectRdf.class.getCanonicalName(), desObject.getClass().getCanonicalName());
-      
+
       object = getDatamodelFactory().createSearchServiceIdentityObject();
       desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
       Assert.assertEquals(SearchServiceIdentityObjectRdf.class.getCanonicalName(), desObject.getClass().getCanonicalName());
-   
+
       object = getDatamodelFactory().createResolutionServiceIdentityObject();
       desObject = getDatamodelFactory().createFromBytes(object.serializeToBytes());
       Assert.assertEquals(ResolutionServiceIdentityObjectRdf.class.getCanonicalName(), desObject.getClass().getCanonicalName());
@@ -466,59 +469,59 @@ public class RdfDatamodelTest extends DatamodelTest {
 
       Assert.assertTrue(DatamodelUtils.equalInformationObjects(rdfIO1, rdfIO2));
    }
-   
+
    @Test
    @Override
-	public void testGetSerializeFormat() {
-	   Assert.assertEquals(SerializeFormat.RDF, getDatamodelFactory().getSerializeFormat());
-	}
-   
-   @Test
-   public void testGetWriterPaths(){
-	   // dummy
-	   InformationObject iObj = createDummyInformationObject(getDatamodelFactory());
-	   
-	   // without writers -> should be empty
-	   Assert.assertTrue(iObj.getWriterPaths().isEmpty());
-	   
-	   Attribute attribute = getDatamodelFactory().createAttribute();
-	   Attribute subattribute = getDatamodelFactory().createAttribute();
-	   
-	   // writer
-	   subattribute.setIdentification(DefinedAttributeIdentification.WRITER.getURI());
-	   subattribute.setValue("test-writer-path");
-	   subattribute.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
-
-	   // writers-list
-	   attribute.setIdentification(DefinedAttributeIdentification.AUTHORIZED_WRITERS.getURI());
-	   attribute.setValue("asd");
-	   attribute.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
-	   attribute.addSubattribute(subattribute);
-	   iObj.addAttribute(attribute);
-	   
-	   // owner
-	   attribute = getDatamodelFactory().createAttribute();
-	   attribute.setIdentification(DefinedAttributeIdentification.OWNER.getURI());
-	   attribute.setValue("test-writer-path");
-	   attribute.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
-
-	   iObj.addAttribute(attribute);
-	   
-	   // with writers -> should not be empty
-	   Assert.assertFalse(iObj.getWriterPaths().isEmpty());
-   }
-   
-   @Test
-   @Override
-   public void testDescribeServiceIdentityObject(){
-	   // not implemented in RDF
-	   Assert.assertTrue(true);
+   public void testGetSerializeFormat() {
+      Assert.assertEquals(SerializeFormat.RDF, getDatamodelFactory().getSerializeFormat());
    }
 
    @Test
-   public void testFactoryGetProperty(){
-	   // implies correctness of getProperty(uri)
-	   Assert.assertEquals(DatamodelFactoryRdf.getProperty(DefinedAttributeIdentification.DESCRIPTION),
-			   DatamodelFactoryRdf.getProperty(DefinedAttributeIdentification.DESCRIPTION.getURI()));
+   public void testGetWriterPaths() {
+      // dummy
+      InformationObject iObj = createDummyInformationObject(getDatamodelFactory());
+
+      // without writers -> should be empty
+      Assert.assertTrue(iObj.getWriterPaths().isEmpty());
+
+      Attribute attribute = getDatamodelFactory().createAttribute();
+      Attribute subattribute = getDatamodelFactory().createAttribute();
+
+      // writer
+      subattribute.setIdentification(DefinedAttributeIdentification.WRITER.getURI());
+      subattribute.setValue("test-writer-path");
+      subattribute.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+
+      // writers-list
+      attribute.setIdentification(DefinedAttributeIdentification.AUTHORIZED_WRITERS.getURI());
+      attribute.setValue("asd");
+      attribute.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+      attribute.addSubattribute(subattribute);
+      iObj.addAttribute(attribute);
+
+      // owner
+      attribute = getDatamodelFactory().createAttribute();
+      attribute.setIdentification(DefinedAttributeIdentification.OWNER.getURI());
+      attribute.setValue("test-writer-path");
+      attribute.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+
+      iObj.addAttribute(attribute);
+
+      // with writers -> should not be empty
+      Assert.assertFalse(iObj.getWriterPaths().isEmpty());
+   }
+
+   @Test
+   @Override
+   public void testDescribeServiceIdentityObject() {
+      // not implemented in RDF
+      Assert.assertTrue(true);
+   }
+
+   @Test
+   public void testFactoryGetProperty() {
+      // implies correctness of getProperty(uri)
+      Assert.assertEquals(DatamodelFactoryRdf.getProperty(DefinedAttributeIdentification.DESCRIPTION),
+            DatamodelFactoryRdf.getProperty(DefinedAttributeIdentification.DESCRIPTION.getURI()));
    }
 }

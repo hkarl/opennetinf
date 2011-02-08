@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<packager-module version="1.0"> 
+    <property name="name" value="${ivy.packager.module}" /> 
+    <property name="revision" value="${ivy.packager.revision}" /> 
+    
+    <resource
+      url="http://www.freepastry.org/${name}/${name}-${revision}.jar"
+      sha1="1c3e748d05f64f29df8003a29e28eedad2e4ab45"
+      tofile="artifacts/jars/${name}.jar" />
+</packager-module> 

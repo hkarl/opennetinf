@@ -274,8 +274,7 @@ public class DatamodelTest {
 
       // This method should throw an exception
       Integer value = property.getValue(Integer.class);
-
-      // Assert.assertEquals("something@somethingelse.de", value);
+      Assert.fail("error not thrown: value" + value);
    }
 
    @Test
@@ -839,13 +838,9 @@ public class DatamodelTest {
       Attribute otherAttr = getDatamodelFactory().createAttribute(DefinedAttributeIdentification.DESCRIPTION.getURI(), "test2");
       attr.addSubattribute(otherAttr);
 
-      // now add to the IO
-      InformationObject iObj = getDatamodelFactory().createInformationObject();
       Attribute anOtherAttr = getDatamodelFactory().createAttribute(DefinedAttributeIdentification.DESCRIPTION.getURI(), "test3");
       anOtherAttr.addSubattribute(otherAttr);
-      // iObj.addAttribute(otherAttr);
 
-      // Assert.assertEquals(null, otherAttr.getParentAttribute());
       Assert.assertEquals(anOtherAttr, otherAttr.getParentAttribute());
    }
 
@@ -874,12 +869,6 @@ public class DatamodelTest {
       // implies correctness ofisSyntacticallyValidIdentifier
       Identifier ifier = ValidCreator.createValidIdentifier(DefinedVersionKind.VERSIONED, getPublicKey(), "42");
       Assert.assertTrue(DatamodelUtils.isSyntacticallyValidIdentifier(ifier));
-   }
-
-   @Test
-   public void testAppendAuthorizedWritersListToIO() {
-      InformationObject iObj = getDatamodelFactory().createInformationObject();
-      // ?????
    }
 
    @Test

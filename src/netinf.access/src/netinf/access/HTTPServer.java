@@ -64,7 +64,7 @@ public class HTTPServer extends NetInfServer {
    private int port;
    private HttpServer server;
    private boolean running;
-   
+
    @Inject
    public HTTPServer(@Named("access.http.port") int port) throws IOException {
       this.port = port;
@@ -95,11 +95,12 @@ public class HTTPServer extends NetInfServer {
 
    @Override
    public void stop() {
-	   if(this.server != null)
-		   this.server.stop(0);
+      if (this.server != null) {
+         this.server.stop(0);
+      }
       this.running = false;
    }
-   
+
    @Override
    public String describe() {
       return "HTTP on port " + this.port;
@@ -107,7 +108,7 @@ public class HTTPServer extends NetInfServer {
 
    @Override
    public boolean isRunning() {
-	   return this.running;
+      return this.running;
    }
 
    /**
@@ -116,7 +117,7 @@ public class HTTPServer extends NetInfServer {
     * @author PG Augnet 2, University of Paderborn
     */
    private class HTTPNetInfHandler implements HttpHandler {
-	   
+
       @Override
       public void handle(HttpExchange httpExchange) throws IOException {
          LOG.trace(null);
