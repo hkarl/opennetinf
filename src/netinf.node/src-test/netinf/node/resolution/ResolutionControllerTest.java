@@ -43,7 +43,7 @@ import netinf.node.resolution.impl.ResolutionControllerImpl;
 
 import org.easymock.EasyMock;
 import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -52,24 +52,21 @@ import org.junit.Test;
  * 
  * @author PG Augnet 2, University of Paderborn
  */
-@Ignore("Not Implemented")
+@Ignore
 public class ResolutionControllerTest {
 
-   ResolutionController resolutionController;
+   private static ResolutionController resolutionController;
+   private static ResolutionService localRsMock;
+   private static ResolutionService remoteRsMock;
 
-   ResolutionService localRsMock;
-   ResolutionService remoteRsMock;
-
-   @Before
-   public void setUp() throws Exception {
+   @BeforeClass
+   public static void setUp() throws Exception {
       ResolutionServiceSelector selector = EasyMock.createMock(ResolutionServiceSelector.class);
       SecurityManager securityManager = EasyMock.createMock(SecurityManager.class);
+
       resolutionController = new ResolutionControllerImpl(selector, securityManager);
-
       remoteRsMock = EasyMock.createMock(ResolutionService.class);
-
       localRsMock = EasyMock.createMock(ResolutionService.class);
-
    }
 
    @After
@@ -125,5 +122,4 @@ public class ResolutionControllerTest {
    public void testProcessNetInfMessage() {
       fail("Not yet implemented");
    }
-
 }
