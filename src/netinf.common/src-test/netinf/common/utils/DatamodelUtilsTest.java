@@ -198,20 +198,19 @@ public class DatamodelUtilsTest {
 
 	@Test
 	public void testIsSyntacticallyValidAttribute() {
-  
-	    
-	    
+  	    
 		Attribute property = null;
 		Attribute subProperty = null;
 		InformationObject testIO = this.datamodelFactory.createInformationObject();
-//		testIO = null;
 		
 		Boolean attributeNull = DatamodelUtils.isSyntacticallyValidAttribute(subProperty, property,  testIO);
 		Assert.assertEquals(false, attributeNull);
-		 
-	    property = datamodelFactory.createAttribute(null, ATTRIBUTE_VALUE);
-		subProperty = datamodelFactory.createAttribute(null, SUBATTRIBUTE_VALUE);
-	    
+		
+
+		property = datamodelFactory.createAttribute(
+				SUBSUBATTRIBUTE_IDENTIFICATION, ATTRIBUTE_VALUE);
+		subProperty = datamodelFactory.createAttribute(
+				SUBSUBATTRIBUTE_IDENTIFICATION, SUBATTRIBUTE_VALUE);  
 	    
 	    Boolean purposeNull = DatamodelUtils.isSyntacticallyValidAttribute(subProperty, property,  testIO);
 		Assert.assertEquals(false, purposeNull);
@@ -221,7 +220,7 @@ public class DatamodelUtilsTest {
 		
 		Boolean valueNull = DatamodelUtils.isSyntacticallyValidAttribute(subProperty, property,  testIO);
 		Assert.assertEquals(false, valueNull);
-		 
+		
 		property.setValue(ATTRIBUTE_VALUE);
 		subProperty.setValue(SUBATTRIBUTE_VALUE);
 		
@@ -231,12 +230,20 @@ public class DatamodelUtilsTest {
 		property.setIdentification(ATTRIBUTE_IDENTIFICATION);
 		subProperty.setIdentification(SUBATTRIBUTE_IDENTIFICATION);
 		
+		
 		Boolean parentNull = DatamodelUtils.isSyntacticallyValidAttribute(subProperty, property,  testIO);
 		Assert.assertEquals(false, parentNull);
 		
 		property.addSubattribute(subProperty);
+		testIO = null ;
+		
+		Boolean right = DatamodelUtils.isSyntacticallyValidAttribute(subProperty, property,  testIO);
+		Assert.assertEquals(true, right);
+		  
 		Attribute subSubProperty = datamodelFactory.createAttribute(
 				SUBSUBATTRIBUTE_IDENTIFICATION, SUBSUBATTRIBUTE_VALUE);
+		
+		
 		subProperty.addSubattribute(subSubProperty);
     	subSubProperty = null; 
 		
@@ -246,19 +253,37 @@ public class DatamodelUtilsTest {
 		subSubProperty = datamodelFactory.createAttribute(
 	    		DefinedAttributeIdentification.DESCRIPTION.getURI(), SUBATTRIBUTE_VALUE);
 		
+		
 		Boolean subSubPropertyValid = DatamodelUtils.isSyntacticallyValidAttribute(subProperty, property,  testIO);
 		Assert.assertEquals(false, subSubPropertyValid);
-		
+		 
 		subSubProperty.setIdentification(SUBSUBATTRIBUTE_IDENTIFICATION);
 		subSubProperty.setValue(SUBSUBATTRIBUTE_VALUE);
 		subSubProperty.setAttributePurpose(SUBSUBATTRIBUTE_PURPOSE);
 		
+		testIO = this.datamodelFactory.createInformationObject();
 		testIO.addAttribute(subProperty);
+		testIO.addAttribute(property);
+		
+		property = datamodelFactory.createAttribute(
+				SUBSUBATTRIBUTE_IDENTIFICATION, ATTRIBUTE_VALUE);
+		subProperty = datamodelFactory.createAttribute(
+				SUBSUBATTRIBUTE_IDENTIFICATION, SUBATTRIBUTE_VALUE);
+		subSubProperty = datamodelFactory.createAttribute(
+				SUBSUBATTRIBUTE_IDENTIFICATION, SUBSUBATTRIBUTE_VALUE);
+		
+		subSubProperty.setValue(SUBSUBATTRIBUTE_VALUE);
+		subSubProperty.setAttributePurpose(SUBSUBATTRIBUTE_PURPOSE);
+		subSubProperty.setIdentification(SUBSUBATTRIBUTE_IDENTIFICATION);
+		
+		
+		subProperty.addSubattribute(subSubProperty);
+		property.addSubattribute(subProperty); 
+		testIO.addAttribute(subSubProperty);
 		
 		Boolean expectedResult = DatamodelUtils.isSyntacticallyValidAttribute(subProperty, property,  testIO);
 		Assert.assertEquals(false, expectedResult);
 	     
-		
 	}
 
 	@Test

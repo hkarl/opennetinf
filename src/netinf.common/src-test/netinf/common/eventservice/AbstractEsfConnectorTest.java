@@ -14,8 +14,12 @@ import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
 import netinf.common.datamodel.creator.ValidCreator;
 import netinf.common.datamodel.impl.module.DatamodelImplModule;
+import netinf.common.exceptions.NetInfCheckedException;
 import netinf.common.log.module.LogModule;
 import netinf.common.messages.ESFEventMessage;
+import netinf.common.messages.ESFFetchMissedEventsResponse;
+import netinf.common.messages.ESFSubscriptionResponse;
+import netinf.common.messages.ESFUnsubscriptionResponse;
 import netinf.common.security.SignatureAlgorithm;
 import netinf.common.security.impl.module.SecurityModule;
 import netinf.common.utils.Utils;
@@ -32,6 +36,8 @@ import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
+
+
 public class AbstractEsfConnectorTest {
 
 
@@ -47,12 +53,15 @@ public class AbstractEsfConnectorTest {
      private Properties properties;
      private Communicator comm;
      private DatamodelFactory dmFactory;
+     private Provider<MockErrorCommunicator> mockErrorProvider;
      private Provider<Communicator> provider;
+     
 	 private Injector injector;
 
-	 String port = "5000";
+	 String port = "5002";
 	 String host = "127.0.0.1";
 	 AbstractEsfConnectorImp esfConnector;
+
 	
 	@Before
 	public void setUp() throws Exception {
@@ -60,8 +69,9 @@ public class AbstractEsfConnectorTest {
 		 PropertyConfigurator.configure(Utils.loadProperties(CONFIGS_TESTING_PROPERTIES));
 		
 	      this.properties = Utils.loadProperties(CONFIGS_TESTING_PROPERTIES);
-	          
-	      injector = Guice.createInjector(new LogModule(properties), new SecurityModule(), new DatamodelImplModule(),
+	      
+	      injector = Guice.createInjector( new LogModule(properties), new SecurityModule(), 
+	    		  new DatamodelImplModule(), new TestModule(),
 		            new AbstractModule() {
 
 		               @Override
@@ -69,21 +79,21 @@ public class AbstractEsfConnectorTest {
 		                  Names.bindProperties(binder(), properties);
 		                  bind(NetInfNodeConnection.class).annotatedWith(SecurityModule.Security.class).to(RemoteNodeConnection.class);
 		               }
-		            });
+		            }
+	     
 	      
-	           
+	      );
+	      
 	      this.messageReceiver = this.injector.getInstance(MessageReceiver.class);
 	      this.messageProcessor = this.injector.getInstance(MessageProcessorImp.class);
 	      this.dmFactory = this.injector.getInstance(DatamodelFactory.class);
 	      this.provider = this.injector.getProvider(Communicator.class);
-	     
+//	      this.mockErrorProvider = this.injector.getProvider(MockErrorCommunicator.class);
+	      
 	      this.messageQueue = new LinkedBlockingQueue<ESFEventMessage>();
-	     
-	      ValidCreator.setDatamodelFactory(this.injector.getInstance(DatamodelFactory.class));
-	      ValidCreator.setSignatureAlgorithm(this.injector.getInstance(SignatureAlgorithm.class));
-	        
+	    
 	      esfConnector = new AbstractEsfConnectorImp(dmFactory,
-					messageReceiver, messageProcessor, host, port		
+					messageReceiver, messageProcessor, host,port		
 			);
 		
 	}
@@ -94,15 +104,55 @@ public class AbstractEsfConnectorTest {
 
 	
 	@Test
-	@Ignore
+	
 	public void testRun() {
-		// the running is not yet successful.
-		esfConnector.run();
 		
+		
+	//	esfConnector.setProvider(mockErrorProvider);
+		
+	//	Assert.assertEquals(provider.get(), null);
+		
+		Identifier identifier = dmFactory.createIdentifierFromString(
+        "ni:HASH_OF_PK=a294ac791b2cc6ccb6e2554324d787b775448a78~HASH_OF_PK_IDENT=SHA1~VERSION_KIND=UNVERSIONED");	
+        	esfConnector.setId(identifier);
+		
+		//set message queue
+		ESFEventMessage msg1 = new ESFEventMessage();
+		ESFEventMessage msg2 = new ESFEventMessage();
+		
+		messageQueue.add(msg1);
+		messageQueue.add(msg2);
+		
+		messageReceiver.setMessageQueue(messageQueue);
+		messageProcessor.setMessageQueue(messageQueue);
+		/*
+		ESFEventMessage msg3 = new ESFEventMessage();
+		messageReceiver.receivedMessage(msg3, comm);
+		*/
+		ESFFetchMissedEventsResponse msg4 = new ESFFetchMissedEventsResponse();
+		messageReceiver.receivedMessage(msg4, comm);
+		
+		ESFSubscriptionResponse msg5 = new ESFSubscriptionResponse();
+		messageReceiver.receivedMessage(msg5, comm);
+		
+		ESFUnsubscriptionResponse msg6 = new ESFUnsubscriptionResponse();
+		messageReceiver.receivedMessage(msg6, comm);
+		
+		
+		esfConnector = new AbstractEsfConnectorImp(dmFactory,
+					messageReceiver, messageProcessor, host, port		
+			);
+		
+	  
+		
+		esfConnector.start();
+	//	Assert.assertEquals(esfConnector.isAlive(), true);
 	}
 
 	@Test
 	public void testSetCommunicatorProvider() {
+ // set communicator provider
+		
 		esfConnector.setCommunicatorProvider(provider);
 	}
 
@@ -112,7 +162,7 @@ public class AbstractEsfConnectorTest {
     	Identifier identifier = dmFactory.createIdentifierFromString(
              "ni:HASH_OF_PK=a294ac791b2cc6ccb6e2554324d787b775448a78~HASH_OF_PK_IDENT=SHA1~VERSION_KIND=UNVERSIONED");	
 		esfConnector.setIdentityIdentifier(identifier);
-		
+		esfConnector.setId(identifier);
 	}
 
 	@Test
@@ -144,29 +194,30 @@ public class AbstractEsfConnectorTest {
 	@Test
 	public void testSystemReadyToHandleReceivedMessage() {
 		
-		
+		esfConnector.systemReadyToHandleReceivedMessage();
 	}
 
 	@Test
 	public void testSendSubscription() {
 		
-		//esfConnector.sendSubscription(IDENTIFICATION_1, "query_1", 5000);
+		esfConnector.sendSubscription("MyID", "query_1", 5000);
 		
 	}
 
 	@Test
 	public void testSendUnsubscription() {
 		
-		//esfConnector.sendUnsubscription(IDENTIFICATION_1);
+		 esfConnector = new AbstractEsfConnectorImp(dmFactory,
+					messageReceiver, messageProcessor, host, port		
+			);
+		
+		
+		esfConnector.sendUnsubscription("MyID");
 	}
 	
 	@Test
 	public void testSetMessageQueue(){
-		
-		messageReceiver.setMessageQueue(messageQueue);
-		ESFEventMessage msg1 = new ESFEventMessage();
 
-		messageReceiver.receivedMessage(msg1, comm);
 	}
 	
 	@Test
@@ -177,7 +228,39 @@ public class AbstractEsfConnectorTest {
 		messageQueue.add(msg1);
 		messageQueue.add(msg2);
 		messageProcessor.setMessageQueue(messageQueue);
-		Assert.assertEquals(true, messageProcessor.isWaiting());
+        Assert.assertTrue(messageProcessor.isWaiting());
 	//	messageProcessor.run();
+	//	messageProcessor.stop();
+	}
+	
+	@Test
+	
+	public void testReceiveMessage(){
+		
+		ESFEventMessage msg1 = new ESFEventMessage();
+		ESFEventMessage msg2 = new ESFEventMessage();
+		
+		messageQueue.add(msg1);
+		messageQueue.add(msg2);
+		
+		messageReceiver.setMessageQueue(messageQueue);
+		messageProcessor.setMessageQueue(messageQueue);
+		
+		ESFEventMessage msg3 = new ESFEventMessage();		
+		ESFFetchMissedEventsResponse msg4 = new ESFFetchMissedEventsResponse();				
+		ESFSubscriptionResponse msg5 = new ESFSubscriptionResponse();				
+		ESFUnsubscriptionResponse msg6 = new ESFUnsubscriptionResponse();
+		
+		messageQueue.add(msg3);
+	//	messageQueue.add(msg4);
+	//	messageQueue.add(msg5);
+	//	messageQueue.add(msg6);
+		
+		messageReceiver.receivedMessage(msg3, comm);
+		messageReceiver.receivedMessage(msg4, comm);
+		messageReceiver.receivedMessage(msg5, comm);
+		messageReceiver.receivedMessage(msg6, comm);
+		
+		
 	}
 }
