@@ -49,7 +49,6 @@ import netinf.common.messages.RSPutResponse;
 import netinf.common.utils.Utils;
 import netinf.node.resolution.InformationObjectHelper;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -69,19 +68,21 @@ public class AccessTest {
    private static final String CONFIGS_TESTING_PROPERTIES = "../configs/testing.properties";
    private static Injector injector;
    private static Communicator communicator;
+   private static Properties properties;
 
    @BeforeClass
    public static void configure() throws IOException {
-      Properties properties = Utils.loadProperties(CONFIGS_TESTING_PROPERTIES);
+      properties = Utils.loadProperties(CONFIGS_TESTING_PROPERTIES);
       injector = Guice.createInjector(new AccessTestModule(properties));
       ioHelper = injector.getInstance(InformationObjectHelper.class);
 
       communicator = injector.getInstance(Communicator.class);
       communicator.setup("localhost", Integer.parseInt(properties.getProperty("access.tcp.port")));
    }
-   
+
    @Test
    public void testCreateInformationObject() throws NetInfCheckedException {
+
       InformationObject informationObject = ioHelper.createUniqueVersionedIO();
 
       RSPutRequest putRequest = new RSPutRequest(informationObject);

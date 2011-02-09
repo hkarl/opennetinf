@@ -409,7 +409,8 @@ public class SearchServiceRDF implements SearchService {
       // add further products to query in case they exist
       if (products.length > 1) {
          int i = 0;
-         for (int productCount = 1; productCount < products.length; productCount++) {
+         // eddy: was productCount = 1 ^^
+         for (int productCount = 0; productCount < products.length; productCount++) {
             constructedQuery += " UNION { ?identifier <" + DefinedAttributeIdentification.REPRESENTS.getURI() + "> ?blank_" + i
                   + ". ?blank_" + i + " <" + DefinedRdfNames.ATTRIBUTE_VALUE + "> 'String:Shop'.";
             i++;
@@ -471,7 +472,7 @@ public class SearchServiceRDF implements SearchService {
                solution.add(idStr);
                node = qs.get("lat");
                latStr = node.toString();
-                solution.add(latStr);
+               solution.add(latStr);
                node = qs.get("long");
                longStr = node.toString();
                solution.add(longStr);
@@ -534,7 +535,6 @@ public class SearchServiceRDF implements SearchService {
       LOG.debug("finished search (id: " + searchID + "), handing over result to calling search controller");
       callback.handleSearchEvent(new SearchServiceResultEvent("search result of " + getIdentityObject().getName(), searchID,
             searchServiceIdO, resultSet));
-
    }
 
    /**

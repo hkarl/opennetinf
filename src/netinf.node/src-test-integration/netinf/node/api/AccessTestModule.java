@@ -66,9 +66,10 @@ public class AccessTestModule extends AbstractModule {
       Names.bindProperties(binder(), properties);
 
       install(new LogModule(properties));
+      install(new DatamodelImplModule());
+
       install(new SecurityModule());
       bind(NetInfNodeConnection.class).annotatedWith(SecurityModule.Security.class).to(RemoteNodeConnection.class);
-      install(new DatamodelImplModule());
    }
 
 }
