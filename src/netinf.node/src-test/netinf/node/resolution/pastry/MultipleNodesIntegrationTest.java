@@ -69,158 +69,158 @@ import com.google.inject.Provider;
 @Ignore("Long runtime")
 public class MultipleNodesIntegrationTest extends InformationObjectHelper {
 
-	@Inject
-	public MultipleNodesIntegrationTest() {
-		super(null);
-	}
+   @Inject
+   public MultipleNodesIntegrationTest() {
+      super(null);
+   }
 
-	/**
+   /**
     * The Class NodePutCommand.
     * 
     * @author PG Augnet 2, University of Paderborn
     */
-	private class NodePutCommand implements Runnable {
+   private class NodePutCommand implements Runnable {
 
-		private final AbstractResolutionService resolutionService;
+      private final AbstractResolutionService resolutionService;
 
-		private final InformationObject io;
+      private final InformationObject io;
 
-		NodePutCommand(AbstractResolutionService node, InformationObject io) {
-			this.resolutionService = node;
-			this.io = io;
-		}
+      NodePutCommand(AbstractResolutionService node, InformationObject io) {
+         resolutionService = node;
+         this.io = io;
+      }
 
-		@Override
-		public void run() {
-			try {
-				resolutionService.put(io);
-			} catch (NetInfResolutionException e) {
-				throw new RuntimeException(e);
-			}
+      @Override
+      public void run() {
+         try {
+            resolutionService.put(io);
+         } catch (NetInfResolutionException e) {
+            throw new RuntimeException(e);
+         }
 
-		}
+      }
 
-	}
+   }
 
-	/**
+   /**
     * The Class NodeGetCommand.
     * 
     * @author PG Augnet 2, University of Paderborn
     */
-	private class NodeGetCommand implements Runnable {
+   private class NodeGetCommand implements Runnable {
 
-		private final AbstractResolutionService resolutionService;
+      private final AbstractResolutionService resolutionService;
 
-		private final InformationObject io;
+      private final InformationObject io;
 
-		private boolean isCorrect = false;
+      private boolean isCorrect = false;
 
-		NodeGetCommand(AbstractResolutionService node, InformationObject io) {
-			this.resolutionService = node;
-			this.io = io;
-		}
+      NodeGetCommand(AbstractResolutionService node, InformationObject io) {
+         resolutionService = node;
+         this.io = io;
+      }
 
-		public boolean isCorrect() {
-			return isCorrect;
-		}
+      public boolean isCorrect() {
+         return isCorrect;
+      }
 
-		@Override
-		public void run() {
-			try {
-				InformationObject retrievedIO = resolutionService.get(io.getIdentifier());
-				isCorrect = io.equals(retrievedIO);
+      @Override
+      public void run() {
+         try {
+            InformationObject retrievedIO = resolutionService.get(io.getIdentifier());
+            isCorrect = io.equals(retrievedIO);
 
-			} catch (NetInfResolutionException ex) {
-				throw new RuntimeException(ex);
-			}
+         } catch (NetInfResolutionException ex) {
+            throw new RuntimeException(ex);
+         }
 
-		}
+      }
 
-	}
+   }
 
-	private static final int NODE_NUMBER = 15;
+   private static final int NODE_NUMBER = 15;
 
-	private static final int IOS_PER_NODE = 10;
+   private static final int IOS_PER_NODE = 10;
 
-	private List<PastryResolutionService> resolutionServices;
+   private List<PastryResolutionService> resolutionServices;
 
-	private static List<NodeGetCommand> getterCommands;
+   private static List<NodeGetCommand> getterCommands;
 
-	@Before
-	public void setUp() throws Exception {
-		//Injector injector = Guice.createInjector(##new PastryTestModule(), new DatamodelImplModule());
-	   Injector injector = Guice.createInjector(new PastryTestModule());
-		datamodelFactory = injector.getInstance(DatamodelFactory.class);
+   @Before
+   public void setUp() throws Exception {
+      // Injector injector = Guice.createInjector(##new PastryTestModule(), new DatamodelImplModule());
+      Injector injector = Guice.createInjector(new PastryTestModule());
+      datamodelFactory = injector.getInstance(DatamodelFactory.class);
 
-		Provider<PastryResolutionService> provider = injector.getProvider(PastryResolutionService.class);
-		resolutionServices = new ArrayList<PastryResolutionService>();
-		for (int i = 0; i < NODE_NUMBER; i++) {
-			resolutionServices.add(provider.get());
-		}
-		getterCommands = new ArrayList<NodeGetCommand>();
-	}
+      Provider<PastryResolutionService> provider = injector.getProvider(PastryResolutionService.class);
+      resolutionServices = new ArrayList<PastryResolutionService>();
+      for (int i = 0; i < NODE_NUMBER; i++) {
+         resolutionServices.add(provider.get());
+      }
+      getterCommands = new ArrayList<NodeGetCommand>();
+   }
 
-	@Test
-	public void testPutGet() throws NetInfCheckedException {
-		List<InformationObject> insertedIOs = new ArrayList<InformationObject>();
+   @Test
+   public void testPutGet() throws NetInfCheckedException {
+      List<InformationObject> insertedIOs = new ArrayList<InformationObject>();
 
-		for (int i = 0; i < NODE_NUMBER; i++) {
-			for (int j = 0; j < IOS_PER_NODE; j++) {
-				InformationObject io = createUniqueIO();
-				resolutionServices.get(i).put(io);
-				insertedIOs.add(io);
-			}
-		}
+      for (int i = 0; i < NODE_NUMBER; i++) {
+         for (int j = 0; j < IOS_PER_NODE; j++) {
+            InformationObject io = createUniqueIO();
+            resolutionServices.get(i).put(io);
+            insertedIOs.add(io);
+         }
+      }
 
-		for (InformationObject io : insertedIOs) {
-			InformationObject retrievedIO = resolutionServices.get(0).get(io.getIdentifier());
-			Assert.assertEquals(io, retrievedIO);
-		}
-	}
+      for (InformationObject io : insertedIOs) {
+         InformationObject retrievedIO = resolutionServices.get(0).get(io.getIdentifier());
+         Assert.assertEquals(io, retrievedIO);
+      }
+   }
 
-	@Test
-	public void testPutDeleteGet() throws NetInfCheckedException {
-		InformationObject obj = createUniqueIO();
-		resolutionServices.get(0).put(obj);
-		InformationObject retrievedIo = resolutionServices.get(NODE_NUMBER - 1).get(obj.getIdentifier());
-		Assert.assertEquals(obj, retrievedIo);
-		resolutionServices.get(NODE_NUMBER - 1).delete(obj.getIdentifier());
-		retrievedIo = resolutionServices.get(0).get(obj.getIdentifier());
-		Assert.assertNull(retrievedIo);
-	}
+   @Test
+   public void testPutDeleteGet() throws NetInfCheckedException {
+      InformationObject obj = createUniqueIO();
+      resolutionServices.get(0).put(obj);
+      InformationObject retrievedIo = resolutionServices.get(NODE_NUMBER - 1).get(obj.getIdentifier());
+      Assert.assertEquals(obj, retrievedIo);
+      resolutionServices.get(NODE_NUMBER - 1).delete(obj.getIdentifier());
+      retrievedIo = resolutionServices.get(0).get(obj.getIdentifier());
+      Assert.assertNull(retrievedIo);
+   }
 
-	@Test
-	public void testConcurrentPutGet() throws NetInfCheckedException, InterruptedException {
-		List<InformationObject> insertedIOs = new ArrayList<InformationObject>();
-		ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 10, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10000));
+   @Test
+   public void testConcurrentPutGet() throws NetInfCheckedException, InterruptedException {
+      List<InformationObject> insertedIOs = new ArrayList<InformationObject>();
+      ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 10, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10000));
 
-		for (int i = 0; i < NODE_NUMBER; i++) {
-			for (int j = 0; j < IOS_PER_NODE; j++) {
-				InformationObject io = createUniqueIO();
-				executor.execute(new NodePutCommand(resolutionServices.get(i), io));
-				insertedIOs.add(io);
-			}
-		}
+      for (int i = 0; i < NODE_NUMBER; i++) {
+         for (int j = 0; j < IOS_PER_NODE; j++) {
+            InformationObject io = createUniqueIO();
+            executor.execute(new NodePutCommand(resolutionServices.get(i), io));
+            insertedIOs.add(io);
+         }
+      }
 
-		for (InformationObject io : insertedIOs) {
-			NodeGetCommand getter = new NodeGetCommand(resolutionServices.get(0), io);
-			executor.execute(getter);
-			getterCommands.add(getter);
-		}
-		executor.shutdown();
-		executor.awaitTermination(30, TimeUnit.SECONDS);
+      for (InformationObject io : insertedIOs) {
+         NodeGetCommand getter = new NodeGetCommand(resolutionServices.get(0), io);
+         executor.execute(getter);
+         getterCommands.add(getter);
+      }
+      executor.shutdown();
+      executor.awaitTermination(30, TimeUnit.SECONDS);
 
-		for (NodeGetCommand getter : getterCommands) {
-			Assert.assertTrue(getter.isCorrect());
-		}
-	}
+      for (NodeGetCommand getter : getterCommands) {
+         Assert.assertTrue(getter.isCorrect());
+      }
+   }
 
-	@After
-	public void tearDown() throws Exception {
-		for (PastryResolutionService prs : resolutionServices) {
-			prs.getPastryNode().destroy();
-		}
-		getterCommands = null;
-	}
+   @After
+   public void tearDown() throws Exception {
+      for (PastryResolutionService prs : resolutionServices) {
+         prs.getPastryNode().destroy();
+      }
+      getterCommands = null;
+   }
 
 }

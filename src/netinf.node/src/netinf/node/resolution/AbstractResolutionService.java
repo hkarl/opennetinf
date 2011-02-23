@@ -63,12 +63,9 @@ import rice.p2p.commonapi.IdFactory;
 public abstract class AbstractResolutionService implements ResolutionService {
 
    private static final Logger LOG = Logger.getLogger(AbstractResolutionService.class);
-
    private final List<EventPublisher> eventPublishers;
-
    private IdFactory idFactory;
-
-   protected ResolutionServiceIdentityObject identityObject;
+   private ResolutionServiceIdentityObject identityObject;
 
    public AbstractResolutionService() {
       eventPublishers = new ArrayList<EventPublisher>();
@@ -117,7 +114,6 @@ public abstract class AbstractResolutionService implements ResolutionService {
    }
 
    protected Id buildId(Identifier identifier) {
-
       return idFactory.buildId(new String(identifier.serializeToBytes()));
    }
 
