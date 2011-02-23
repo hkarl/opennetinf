@@ -72,22 +72,16 @@ import com.google.inject.Inject;
 public class PastryResolutionService extends AbstractResolutionService implements ResolutionService {
 
    private static final int RESOLUTION_SERVICE_PRIORITY = 70;
-
    private static final String RESOLUTION_SERVICE_NAME = "Pastry distributed Resolution Service";
-
    private static final Logger LOG = Logger.getLogger(PastryResolutionService.class);
-
    private PastryNode pastryNode;
-
    private Past past;
-
    private DatamodelFactory datamodelFactory;
-
    private DatamodelTranslator translator;
 
    @Inject
    public void setDatamodelFactory(DatamodelFactory factory) {
-      this.datamodelFactory = factory;
+      datamodelFactory = factory;
    }
 
    @Inject
@@ -100,23 +94,23 @@ public class PastryResolutionService extends AbstractResolutionService implement
       super();
       setIdFactory(idFactory);
       LOG.info("Creating resolution service");
-      this.pastryNode = pair.getNode();
-      this.past = pair.getPast();
+      pastryNode = pair.getNode();
+      past = pair.getPast();
       bootPastryNode();
    }
 
    private void bootPastryNode() {
       LOG.debug("Starting Pastry node of resolution Service");
       InetSocketAddress bootstrapAddress = getBootstrapAddress();
-      this.pastryNode.boot(bootstrapAddress);
+      pastryNode.boot(bootstrapAddress);
       waitForStartupOfNode();
-      LOG.info("Finished starting pastry node" + this.pastryNode);
+      LOG.info("Finished starting pastry node" + pastryNode);
    }
 
    private InetSocketAddress getBootstrapAddress() {
       InetSocketAddress bootstrapAddress = null;
       try {
-         bootstrapAddress = this.pastryNode.getEnvironment().getParameters().getInetSocketAddress("pastry.bootupaddress");
+         bootstrapAddress = pastryNode.getEnvironment().getParameters().getInetSocketAddress("pastry.bootupaddress");
       } catch (UnknownHostException e) {
          LOG.warn("Could not resolve bootup address. Will initiate new Ring ", e);
       }
@@ -124,16 +118,15 @@ public class PastryResolutionService extends AbstractResolutionService implement
    }
 
    private void waitForStartupOfNode() {
-      synchronized (this.pastryNode) {
-         while (!(this.pastryNode.isReady() || this.pastryNode.joinFailed())) {
+      synchronized (pastryNode) {
+         while (!(pastryNode.isReady() || pastryNode.joinFailed())) {
             try {
-               this.pastryNode.wait(500);
+               pastryNode.wait(500);
             } catch (InterruptedException e) {
                throw new NetInfUncheckedException("Pastry thread is interrupted", e);
             }
-            if (this.pastryNode.joinFailed()) {
-               throw new NetInfUncheckedException("Could not join the Pastry ring.  Reason:"
-                     + this.pastryNode.joinFailedReason());
+            if (pastryNode.joinFailed()) {
+               throw new NetInfUncheckedException("Could not join the Pastry ring.  Reason:" + pastryNode.joinFailedReason());
             }
          }
       }
@@ -141,13 +134,13 @@ public class PastryResolutionService extends AbstractResolutionService implement
 
    @Override
    public void delete(Identifier identifier) {
-      identifier = this.translator.toImpl(identifier);
-      if (identifier.isVersioned()) {
+      Identifier transIdentifier = translator.toImpl(identifier);
+      if (transIdentifier.isVersioned()) {
          throw new NetInfResolutionException("Trying to delete versioned io");
       }
 
       // TODO Check if we really need to get the IO before we delete it. Maybe it would be better to take an IO as parameter.
-      InformationObject ioToDelete = get(identifier);
+      InformationObject ioToDelete = get(transIdentifier);
 
       if (ioToDelete == null) {
          // Nothing more to do if the io does not exist
@@ -156,7 +149,7 @@ public class PastryResolutionService extends AbstractResolutionService implement
 
       ExternalContinuation<Object, Exception> command = new ExternalContinuation<Object, Exception>();
 
-      ((PastDeleteImpl) this.past).delete(buildId(identifier), command);
+      ((PastDeleteImpl) past).delete(buildId(transIdentifier), command);
 
       command.sleep();
 
@@ -166,16 +159,16 @@ public class PastryResolutionService extends AbstractResolutionService implement
       if (command.getResult() != null && !((Boolean[]) command.getResult())[0]) {
          throw new NetInfResolutionException("Could not delete Identifier ");
       }
-      publishDelete(ioToDelete);
 
+      publishDelete(ioToDelete);
    }
 
    @Override
    public InformationObject get(Identifier identifier) {
-      identifier = this.translator.toImpl(identifier);
+      identifier = translator.toImpl(identifier);
       Identifier idToLookup = getIdToLookup(identifier);
       ExternalContinuation<PastContent, Exception> command = new ExternalContinuation<PastContent, Exception>();
-      this.past.lookup(buildId(idToLookup), command);
+      past.lookup(buildId(idToLookup), command);
       command.sleep();
 
       if (command.exceptionThrown()) {
@@ -194,13 +187,13 @@ public class PastryResolutionService extends AbstractResolutionService implement
 
    @Override
    public List<Identifier> getAllVersions(Identifier identifier) {
-      identifier = this.translator.toImpl(identifier);
+      identifier = translator.toImpl(identifier);
       if (!identifier.isVersioned()) {
          throw new NetInfResolutionException("Trying to get versions for unversioned identifier");
       }
       ExternalContinuation<PastContent, Exception> command = new ExternalContinuation<PastContent, Exception>();
       Identifier idWithoutVersion = createIdentifierWithoutVersion(identifier);
-      this.past.lookup(buildId(idWithoutVersion), command);
+      past.lookup(buildId(idWithoutVersion), command);
       command.sleep();
       if (command.exceptionThrown()) {
          throw new NetInfResolutionException("Could not get Information object", command.getException());
@@ -217,7 +210,7 @@ public class PastryResolutionService extends AbstractResolutionService implement
 
    @Override
    public void put(InformationObject informationObject) {
-      informationObject = this.translator.toImpl(informationObject);
+      informationObject = translator.toImpl(informationObject);
       try {
          validateIOForPut(informationObject);
       } catch (IllegalArgumentException ex) {
@@ -249,7 +242,7 @@ public class PastryResolutionService extends AbstractResolutionService implement
       ExternalContinuation<Boolean[], Exception> versionInsertCallback = new ExternalContinuation<Boolean[], Exception>();
       Identifier unversionedIdentifier = createIdentifierWithoutVersion(informationObject.getIdentifier());
       VersionPastContent vpc = new VersionPastContent(informationObject.getIdentifier(), buildId(unversionedIdentifier));
-      this.past.insert(vpc, versionInsertCallback);
+      past.insert(vpc, versionInsertCallback);
       versionInsertCallback.sleep();
       if (versionInsertCallback.getException() != null) {
          throw new NetInfResolutionException("Could not insert version information", versionInsertCallback.getException());
@@ -259,7 +252,7 @@ public class PastryResolutionService extends AbstractResolutionService implement
    private void putInformationObject(InformationObject informationObject) {
       IOPastContent content = new IOPastContent(informationObject, buildId(informationObject));
       ExternalContinuation<Boolean[], Exception> insertCallback = new ExternalContinuation<Boolean[], Exception>();
-      this.past.insert(content, insertCallback);
+      past.insert(content, insertCallback);
       insertCallback.sleep();
       if (insertCallback.exceptionThrown()) {
          throw new NetInfResolutionException("Could not insert Information Object", insertCallback.getException());
@@ -269,14 +262,14 @@ public class PastryResolutionService extends AbstractResolutionService implement
    @Override
    protected void finalize() throws Throwable {
       LOG.info("PastryResoltionService is destroyed");
-      if (this.pastryNode != null) {
-         this.pastryNode.destroy();
+      if (pastryNode != null) {
+         pastryNode.destroy();
       }
       super.finalize();
    }
 
    public PastryNode getPastryNode() {
-      return this.pastryNode;
+      return pastryNode;
    }
 
    public void setPastryNode(PastryNode pastryNode) {
@@ -284,7 +277,7 @@ public class PastryResolutionService extends AbstractResolutionService implement
    }
 
    public Past getPast() {
-      return this.past;
+      return past;
    }
 
    public void setPast(Past past) {
@@ -293,8 +286,7 @@ public class PastryResolutionService extends AbstractResolutionService implement
 
    @Override
    protected ResolutionServiceIdentityObject createIdentityObject() {
-      ResolutionServiceIdentityObject identity = this.datamodelFactory
-            .createDatamodelObject(ResolutionServiceIdentityObject.class);
+      ResolutionServiceIdentityObject identity = datamodelFactory.createDatamodelObject(ResolutionServiceIdentityObject.class);
       identity.setName(RESOLUTION_SERVICE_NAME);
       identity.setDefaultPriority(70);
       identity.setDescription("This is a pastry resolution service running on " + getBootstrapAddress());
