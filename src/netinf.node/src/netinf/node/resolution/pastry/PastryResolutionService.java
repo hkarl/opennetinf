@@ -182,7 +182,6 @@ public class PastryResolutionService extends AbstractResolutionService implement
       } else {
          throw new NetInfUncheckedException("Received no Object of type Information Object");
       }
-
    }
 
    @Override
