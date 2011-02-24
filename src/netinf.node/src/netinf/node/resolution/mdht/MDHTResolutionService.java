@@ -37,17 +37,48 @@
  */
 package netinf.node.resolution.mdht;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.identity.ResolutionServiceIdentityObject;
+import netinf.common.datamodel.translation.DatamodelTranslator;
 import netinf.node.resolution.AbstractResolutionService;
+
+import org.apache.log4j.Logger;
+
+import com.google.inject.Inject;
 
 /**
  * @author PG NetInf 3
  */
 public class MDHTResolutionService extends AbstractResolutionService {
+
+   private static final int RESOLUTION_SERVICE_PRIORITY = 70;
+   private static final String RESOLUTION_SERVICE_NAME = "MDHT Resolution Service";
+
+   private static final Logger LOG = Logger.getLogger(MDHTResolutionService.class);
+   private DatamodelFactory datamodelFactory;
+   private DatamodelTranslator translator;
+
+   private static final String STORAGE_FOLDER = "../configs/storage/";
+
+   @Inject
+   public void setDatamodelFactory(DatamodelFactory factory) {
+      datamodelFactory = factory;
+   }
+
+   @Inject
+   public void setDataModelTranslator(DatamodelTranslator translator) {
+      this.translator = translator;
+   }
 
    /**
     * 
@@ -62,8 +93,16 @@ public class MDHTResolutionService extends AbstractResolutionService {
     */
    @Override
    public InformationObject get(Identifier identifier) {
-      // TODO Auto-generated method stub
-      return null;
+
+      // From Storage (eddy)
+      InformationObject io = null;
+      try {
+         io = this.getIOFromStorage(identifier);
+      } catch (IOException e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
+      return io;
    }
 
    /*
@@ -82,8 +121,96 @@ public class MDHTResolutionService extends AbstractResolutionService {
     */
    @Override
    public void put(InformationObject informationObject) {
-      // TODO Auto-generated method stub
 
+      // Storage (eddy)
+      this.storeIOPersistently(informationObject);
+   }
+
+   /**
+    * gets the IO from the storage by a given Identifier
+    * 
+    * @param id
+    *           Identifier of InformaionObject
+    * @return the corresponding IO or null
+    * @throws IOException
+    */
+   private InformationObject getIOFromStorage(Identifier id) throws IOException {
+      // TODO create folder "storage" if does not exist
+      InformationObject result = null;
+      File dir = new File(STORAGE_FOLDER);
+
+      if (dir.isDirectory()) {
+         String[] filenames = dir.list();
+         for (String filename : filenames) {
+            if (filename == getFilename(id)) {
+               byte[] fileContent = getBytesFromFile(STORAGE_FOLDER + filename);
+               result = datamodelFactory.createInformationObjectFromBytes(fileContent);
+            }
+         }
+      }
+
+      return result;
+   }
+
+   /**
+    * Stores a given InformationObject
+    * 
+    * @param io
+    *           the InformationObject that has to be stored
+    */
+   private void storeIOPersistently(InformationObject io) {
+      try {
+         FileWriter fstream = new FileWriter(STORAGE_FOLDER + getFilename(io));
+         BufferedWriter out = new BufferedWriter(fstream);
+         out.write(io.serializeToBytes().toString());
+         out.close();
+      } catch (Exception e) {
+         LOG.error("File could not be stored: " + e.getMessage());
+      }
+   }
+
+   /**
+    * Gets the filename corresponding to an IO
+    * 
+    * @param io
+    *           the given IO
+    * @return Filename of the given IO
+    */
+   private String getFilename(InformationObject io) {
+      return io.getIdentifier().toString() + ".txt";
+   }
+
+   private String getFilename(Identifier id) {
+      return id.toString() + ".txt";
+   }
+
+   private byte[] getBytesFromFile(String filename) throws IOException {
+      File file = new File(filename);
+      InputStream is = new FileInputStream(file);
+      long length = file.length();
+
+      if (length > Integer.MAX_VALUE) {
+         // File is too large
+      }
+
+      // Create the byte array to hold the data
+      byte[] bytes = new byte[(int) length];
+
+      // Read in the bytes
+      int offset = 0;
+      int numRead = 0;
+      while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+         offset += numRead;
+      }
+
+      // Ensure all the bytes have been read in
+      if (offset < bytes.length) {
+         throw new IOException("Could not completely read file " + file.getName());
+      }
+
+      // Close the input stream and return bytes
+      is.close();
+      return bytes;
    }
 
    /*
@@ -93,7 +220,6 @@ public class MDHTResolutionService extends AbstractResolutionService {
    @Override
    public void delete(Identifier identifier) {
       // TODO Auto-generated method stub
-
    }
 
    /*
@@ -111,8 +237,11 @@ public class MDHTResolutionService extends AbstractResolutionService {
     */
    @Override
    protected ResolutionServiceIdentityObject createIdentityObject() {
-      // TODO Auto-generated method stub
-      return null;
+      ResolutionServiceIdentityObject identity = datamodelFactory.createDatamodelObject(ResolutionServiceIdentityObject.class);
+      identity.setName(RESOLUTION_SERVICE_NAME);
+      identity.setDefaultPriority(70);
+      identity.setDescription("This is a mdht resolution service running on "); // TODO ? ...on what?
+      return identity;
    }
 
 }
