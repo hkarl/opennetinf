@@ -127,13 +127,13 @@ public class StarterNode {
    private NetInfNode netInfNode;
 
    public StarterNode(Module module) throws IOException {
-      this.injector = Guice.createInjector(module);
+      injector = Guice.createInjector(module);
    }
 
    public boolean start() throws IOException {
       LOG.trace(null);
 
-      this.netInfNode = this.injector.getInstance(NetInfNode.class);
+      netInfNode = injector.getInstance(NetInfNode.class);
 
       startResolution();
       startSearch();
@@ -144,11 +144,11 @@ public class StarterNode {
 
    private void startResolution() {
       LOG.trace(null);
-      ResolutionController resolutionController = this.netInfNode.getResolutionController();
+      ResolutionController resolutionController = netInfNode.getResolutionController();
 
       if (resolutionController != null) {
          // Plug in Resolution Services
-         ResolutionService[] resolutionServices = this.injector.getInstance(ResolutionService[].class);
+         ResolutionService[] resolutionServices = injector.getInstance(ResolutionService[].class);
 
          if (resolutionServices.length == 0) {
             LOG.log(DemoLevel.DEMO, "(NODE ) I have no active resolution services");
@@ -164,11 +164,11 @@ public class StarterNode {
 
    private void startSearch() {
       LOG.trace(null);
-      SearchController searchController = this.netInfNode.getSearchController();
+      SearchController searchController = netInfNode.getSearchController();
 
       if (searchController != null) {
          // Plug in Search Services
-         SearchService[] searchServices = this.injector.getInstance(SearchService[].class);
+         SearchService[] searchServices = injector.getInstance(SearchService[].class);
 
          if (searchServices.length == 0) {
             LOG.log(DemoLevel.DEMO, "(NODE ) I have no active search services");
@@ -184,11 +184,11 @@ public class StarterNode {
 
    private void startTransfer() {
       LOG.trace(null);
-      TransferController transferController = this.netInfNode.getTransferController();
+      TransferController transferController = netInfNode.getTransferController();
 
       if (transferController != null) {
          // Plug in Transfer Services
-         TransferService[] transferServices = this.injector.getInstance(TransferService[].class);
+         TransferService[] transferServices = injector.getInstance(TransferService[].class);
 
          if (transferServices.length == 0) {
             LOG.log(DemoLevel.DEMO, "(NODE ) I have no active transfer services");
@@ -209,9 +209,9 @@ public class StarterNode {
       LOG.trace(null);
 
       boolean success = false;
-      AsyncReceiveHandler asyncReceiveHandler = this.injector.getInstance(AsyncReceiveHandler.class);
+      AsyncReceiveHandler asyncReceiveHandler = injector.getInstance(AsyncReceiveHandler.class);
 
-      NetInfServer[] netInfServers = this.injector.getInstance(NetInfServer[].class);
+      NetInfServer[] netInfServers = injector.getInstance(NetInfServer[].class);
 
       for (NetInfServer netInfServer : netInfServers) {
          netInfServer.setAsyncReceiveHandler(asyncReceiveHandler);

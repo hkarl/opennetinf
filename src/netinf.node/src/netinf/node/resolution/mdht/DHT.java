@@ -3,6 +3,8 @@
  */
 package netinf.node.resolution.mdht;
 
+import java.net.InetSocketAddress;
+
 import netinf.common.datamodel.Identifier;
 
 /**
@@ -11,8 +13,8 @@ import netinf.common.datamodel.Identifier;
 public interface DHT {
 
    /**
-    * @param the
-    *           corresponding identifier
+    * @param id
+    *           the corresponding identifier
     * @return the Id of the responsible node
     */
    public String getResponsibleNode(Identifier id);
@@ -20,7 +22,7 @@ public interface DHT {
    /**
     * 
     */
-   public void joinRing();
+   public void joinRing(InetSocketAddress address);
 
    /**
     * 

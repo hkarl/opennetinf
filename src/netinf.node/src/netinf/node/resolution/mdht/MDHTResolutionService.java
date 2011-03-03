@@ -37,12 +37,12 @@
  */
 package netinf.node.resolution.mdht;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.util.Hashtable;
 import java.util.List;
 
 import netinf.common.datamodel.DatamodelFactory;
@@ -57,7 +57,7 @@ import org.apache.log4j.Logger;
 import com.google.inject.Inject;
 
 /**
- * @author PG NetInf 3
+ * @author PG NetInf 3, University of Paderborn
  */
 public class MDHTResolutionService extends AbstractResolutionService {
 
@@ -70,6 +70,12 @@ public class MDHTResolutionService extends AbstractResolutionService {
 
    private static final String STORAGE_FOLDER = "../configs/storage/";
 
+   // table of mdht levels
+   private Hashtable<Integer, DHT> levels = new Hashtable<Integer, DHT>();
+
+   // runtime-dummyStorage for IOs
+   private Hashtable<String, InformationObject> storage = new Hashtable<String, InformationObject>();
+
    @Inject
    public void setDatamodelFactory(DatamodelFactory factory) {
       datamodelFactory = factory;
@@ -80,11 +86,53 @@ public class MDHTResolutionService extends AbstractResolutionService {
       this.translator = translator;
    }
 
+   // temp properties: (later to configs/properties)
+   private int numberOfLevels = 3;
+   private String joinNode = "10.10.10.2"; // A joins nobody, otherwise address of the node to join
+   private int joinAtLevel = 0; // 0 -> join nobody
+   private String myHost = "10.10.10.1";
+   private int basePort = 2000;
+
    /**
-    * 
+    * Constructor
     */
    public MDHTResolutionService() {
-      // TODO Auto-generated constructor stub
+      super();
+      LOG.info("Creating resolution service");
+
+      // create necessary levels
+      int levelsToCreate = joinAtLevel - 1; // how many levels to create
+      for (int i = 1; i <= levelsToCreate; i++) {
+         LOG.info("Create DHT ring at level" + i);
+         levels.put(i, this.joinRing(myHost, basePort, i));
+      }
+
+      // joining
+      if (joinAtLevel > 0) {
+         while (joinAtLevel <= numberOfLevels) {
+            LOG.info("Join node " + joinNode + "on level " + joinAtLevel);
+            levels.put(joinAtLevel, this.joinRing(joinNode, basePort, joinAtLevel));
+            joinAtLevel++;
+         }
+      }
+   }
+
+   private DHT joinRing(String host, int port, int atLevel) {
+      DHT dht = this.createDHT();
+      // 2000 + 1 = 2001 -> port of first level
+      InetSocketAddress bootAddress = new InetSocketAddress(host, port + atLevel);
+      dht.joinRing(bootAddress);
+
+      return dht;
+   }
+
+   /**
+    * wrapper for creating a DHT ring
+    * 
+    * @return DHT
+    */
+   private DHT createDHT() {
+      return new FreePastryDHT();
    }
 
    /*
@@ -94,15 +142,17 @@ public class MDHTResolutionService extends AbstractResolutionService {
    @Override
    public InformationObject get(Identifier identifier) {
 
-      // From Storage (eddy)
-      InformationObject io = null;
-      try {
-         io = this.getIOFromStorage(identifier);
-      } catch (IOException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      }
-      return io;
+      return storage.get(identifier.toString());
+
+      // // From Storage (eddy)
+      // InformationObject io = null;
+      // try {
+      // io = this.getIOFromStorage(identifier);
+      // } catch (IOException e) {
+      // // TODO Auto-generated catch block
+      // e.printStackTrace();
+      // }
+      // return io;
    }
 
    /*
@@ -116,14 +166,27 @@ public class MDHTResolutionService extends AbstractResolutionService {
    }
 
    /*
-    * (non-Javadoc)
-    * @see netinf.node.resolution.ResolutionService#put(netinf.common.datamodel.InformationObject)
+    * Default put: put on every level
     */
    @Override
-   public void put(InformationObject informationObject) {
+   public void put(InformationObject io) {
+      for (int i = 1; i <= numberOfLevels; i++) {
+         DHT ring = levels.get(i);
+         String ip = ring.getResponsibleNode(io.getIdentifier());
+         // TODO store io on node of this IP, RPC?
+      }
 
-      // Storage (eddy)
-      this.storeIOPersistently(informationObject);
+      // store on every level
+      this.storeIO(io);
+   }
+
+   private void put(InformationObject io, int fromLevel, int toLevel) {
+      // DHT ring = levels.get(fromLevel);
+      // String ipOfNode = ring.getResponsibleNode(io.getIdentifier());
+      //
+      // if (fromLevel + 1 <= toLevel) {
+      //
+      // }
    }
 
    /**
@@ -158,15 +221,17 @@ public class MDHTResolutionService extends AbstractResolutionService {
     * @param io
     *           the InformationObject that has to be stored
     */
-   private void storeIOPersistently(InformationObject io) {
-      try {
-         FileWriter fstream = new FileWriter(STORAGE_FOLDER + getFilename(io));
-         BufferedWriter out = new BufferedWriter(fstream);
-         out.write(io.serializeToBytes().toString());
-         out.close();
-      } catch (Exception e) {
-         LOG.error("File could not be stored: " + e.getMessage());
-      }
+   private void storeIO(InformationObject io) {
+      storage.put(io.getIdentifier().toString(), io);
+
+      // try {
+      // FileWriter fstream = new FileWriter(STORAGE_FOLDER + getFilename(io));
+      // BufferedWriter out = new BufferedWriter(fstream);
+      // out.write(io.serializeToBytes().toString());
+      // out.close();
+      // } catch (Exception e) {
+      // LOG.error("File could not be stored: " + e.getMessage());
+      // }
    }
 
    /**
