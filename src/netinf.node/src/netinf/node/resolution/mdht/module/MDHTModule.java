@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Properties;
 
+import netinf.common.datamodel.rdf.module.DatamodelRdfModule;
 import netinf.node.resolution.mdht.MDHTResolutionService;
 import netinf.node.resolution.pastry.NetInfPastryParameters;
 import netinf.node.resolution.pastry.PastNodePair;
