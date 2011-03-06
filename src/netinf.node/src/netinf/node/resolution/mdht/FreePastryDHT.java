@@ -4,12 +4,16 @@
 package netinf.node.resolution.mdht;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import org.apache.log4j.Logger;
 import org.mpisws.p2p.transport.TransportLayer;
+import org.mpisws.p2p.transport.multiaddress.MultiInetSocketAddress;
+import org.mpisws.p2p.transport.sourceroute.SourceRoute;
 
 import rice.environment.Environment;
 import rice.p2p.commonapi.Application;
@@ -26,6 +30,8 @@ import rice.pastry.PastryNode;
 import rice.pastry.commonapi.PastryIdFactory;
 import rice.pastry.routing.RouteSet;
 import rice.pastry.routing.RoutingTable;
+import rice.pastry.socket.EpochInetSocketAddress;
+import rice.pastry.socket.SocketNodeHandle;
 import rice.pastry.socket.appsocket.AppSocketPastryNodeFactory;
 import rice.pastry.standard.RandomNodeIdFactory;
 
@@ -111,22 +117,34 @@ public class FreePastryDHT implements DHT, Application {
 	    {
 	    	nh.ping();
 	    }
-	    RouteSet rs = rt.getBestEntry((Id) myContent.getId());
+	    @SuppressWarnings("unused")
+	    //Verify if there are better candidate nodes for storage, other than the current node
+	    //If return value is null then use local node
+		RouteSet rs = rt.getBestEntry((Id) myContent.getId());
+	    //if(rs == null)
+	    	//return pastryNode.
 	    
 	    PastryNode pn = nh.getLocalNode();
 	    
+	    //SocketNodeHandle snh;
+	    if(nh instanceof SocketNodeHandle){
+	    	InetSocketAddress skt = ((SocketNodeHandle)pastryNode.getLocalHandle()).getInetSocketAddress();
+	    	return skt.toString();
+	    }
 	    
-	    try {
+	    	
+	    //DatagramSocket socket = null;
+	    /*try {
 			
 			if(this.factory != null){
-				@SuppressWarnings("unused")
-				TransportLayer<InetSocketAddress, ByteBuffer> res = this.factory.getBottomLayers(pn, null);
+				//@SuppressWarnings("unused")
+//				TransportLayer<InetSocketAddress, ByteBuffer> res = this.factory.getBottomLayers(pn, null);
 			}
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	    
 	      return null;
    }
@@ -155,40 +173,40 @@ public class FreePastryDHT implements DHT, Application {
 	         }
 	      }
 	
-}
+   }
 
-@Override
+   @Override
    public void leaveRing() {
       // TODO Auto-generated method stub
 
    }
 
-@Override
-public void deliver(rice.p2p.commonapi.Id arg0, Message arg1) {
+   @Override
+   public void deliver(rice.p2p.commonapi.Id arg0, Message arg1) {
 	// TODO Auto-generated method stub
 	
 	
 	
-}
+   }
 
-@Override
-public boolean forward(RouteMessage arg0) {
+   @Override
+   public boolean forward(RouteMessage arg0) {
 	// TODO Auto-generated method stub
-	return false;
-}
+	   return false;
+   }
 
-@Override
-public void update(rice.p2p.commonapi.NodeHandle arg0, boolean arg1) {
-	// TODO Auto-generated method stub
+   @Override
+   public void update(rice.p2p.commonapi.NodeHandle arg0, boolean arg1) {
+	   // TODO Auto-generated method stub
 	
-}
-private InetSocketAddress getBootstrapAddress() {
+   }
+   private InetSocketAddress getBootstrapAddress() {
     InetSocketAddress bootstrapAddress = null;
     
-       bootstrapAddress = new InetSocketAddress("10.9.8.7", 11111);
+    bootstrapAddress = new InetSocketAddress("10.9.8.7", 11111);
     if(bootstrapAddress.isUnresolved()){
-       LOG.warn("Could not resolve bootup address. Will initiate new Ring ");
+    	LOG.warn("Could not resolve bootup address. Will initiate new Ring ");
     }
-    return bootstrapAddress;
- }
+   	return bootstrapAddress;
+   }
 }
