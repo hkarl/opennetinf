@@ -3,6 +3,8 @@
  */
 package netinf.node.resolution.mdht;
 
+import java.net.InetSocketAddress;
+
 import netinf.common.datamodel.Identifier;
 
 /**
@@ -20,7 +22,7 @@ public interface DHT {
    /**
     * 
     */
-   public void joinRing();
+   public void joinRing(InetSocketAddress bootstrapAddress);
 
    /**
     * 
