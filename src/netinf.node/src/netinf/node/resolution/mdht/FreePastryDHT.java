@@ -100,53 +100,48 @@ public class FreePastryDHT implements DHT, Application {
 		});
 		    
 		this.endpoint.register();
-		InetSocketAddress bootstrapAddr = this.getBootstrapAddress();
+		
 		this.joinRing(null);
 	}
 
-   @Override
+   
+   /* (non-Javadoc)
+ * @see netinf.node.resolution.mdht.DHT#getResponsibleNode(netinf.common.datamodel.Identifier)
+ * Method returns a String of the form HOSTNAME/IP:PORT, if a corresponding node is found, null otherwise
+ */
+@Override
    
    public String getResponsibleNode(Identifier id) {	      	      
 	// 	build the past content
 	      final PastContent myContent = new DummyPastContent(localFactory.buildId(id.toString()), id.toString());
 	      
 	    RoutingTable rt = pastryNode.getRoutingTable();
+	    NodeHandle nh2;
 	    //Variable nh will be null if node not found
 	    NodeHandle nh = pastryNode.getLocalHandle();//rt.get(pastryNode.getNodeId()/*(Id) myContent.getId()*/);
 	    if(nh != null)
 	    {
 	    	nh.ping();
 	    }
-	    @SuppressWarnings("unused")
+	    
 	    //Verify if there are better candidate nodes for storage, other than the current node
 	    //If return value is null then use local node
 		RouteSet rs = rt.getBestEntry((Id) myContent.getId());
-	    //if(rs == null)
-	    	//return pastryNode.
-	    
-	    PastryNode pn = nh.getLocalNode();
-	    
-	    //SocketNodeHandle snh;
-	    if(nh instanceof SocketNodeHandle){
-	    	InetSocketAddress skt = ((SocketNodeHandle)pastryNode.getLocalHandle()).getInetSocketAddress();
-	    	return skt.toString();
-	    }
-	    
-	    	
-	    //DatagramSocket socket = null;
-	    /*try {
+		if(rs != null){
+			nh2 = rs.closestNode();
+			if(nh2 instanceof SocketNodeHandle){
+		    	InetSocketAddress skt = ((SocketNodeHandle)pastryNode.getLocalHandle()).getInetSocketAddress();
+		    	return skt.toString();
+		    }
+		}
+		else{
 			
-			if(this.factory != null){
-				//@SuppressWarnings("unused")
-//				TransportLayer<InetSocketAddress, ByteBuffer> res = this.factory.getBottomLayers(pn, null);
-			}
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-	    
-	      return null;
+			if(nh instanceof SocketNodeHandle){
+	    		InetSocketAddress skt = ((SocketNodeHandle)pastryNode.getLocalHandle()).getInetSocketAddress();
+	    		return skt.toString();
+	    	}
+		}   	
+	    return null;
    }
 
    @Override
