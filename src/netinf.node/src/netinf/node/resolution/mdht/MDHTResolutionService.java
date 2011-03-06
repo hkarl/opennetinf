@@ -54,6 +54,8 @@ import netinf.node.resolution.AbstractResolutionService;
 
 import org.apache.log4j.Logger;
 
+import rice.p2p.commonapi.IdFactory;
+
 import com.google.inject.Inject;
 
 /**
@@ -308,5 +310,19 @@ public class MDHTResolutionService extends AbstractResolutionService {
       identity.setDescription("This is a mdht resolution service running on "); // TODO ? ...on what?
       return identity;
    }
+
+public Thread getPastryNode() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+/* (non-Javadoc)
+ * @see netinf.node.resolution.AbstractResolutionService#setIdFactory(rice.p2p.commonapi.IdFactory)
+ */
+@Override
+public void setIdFactory(IdFactory idFactory) {
+	
+	super.setIdFactory(idFactory);
+}
 
 }
