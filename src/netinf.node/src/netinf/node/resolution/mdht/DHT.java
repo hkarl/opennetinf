@@ -13,8 +13,8 @@ import netinf.common.datamodel.Identifier;
 public interface DHT {
 
    /**
-    * @param id
-    *           the corresponding identifier
+    * @param the
+    *           corresponding identifier
     * @return the Id of the responsible node
     */
    public String getResponsibleNode(Identifier id);
@@ -22,7 +22,7 @@ public interface DHT {
    /**
     * 
     */
-   public void joinRing(InetSocketAddress address);
+   public void joinRing(InetSocketAddress bootstrapAddress);
 
    /**
     * 
