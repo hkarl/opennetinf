@@ -59,28 +59,28 @@ import com.google.inject.Provider;
  */
 public class PastNodePairProvider implements Provider<PastNodePair> {
 
-	private final Logger log = Logger.getLogger(PastNodePairProvider.class);
+   private final Logger log = Logger.getLogger(PastNodePairProvider.class);
 
-	private Provider<StorageManager> storageManagerProvider;
-	private PastryNodeFactory nodeFactory;
+   private Provider<StorageManager> storageManagerProvider;
+   private PastryNodeFactory nodeFactory;
 
-	@Inject
-	PastNodePairProvider(PastryNodeFactory nodeFactory, Provider<StorageManager> storageManager) {
-		storageManagerProvider = storageManager;
-		this.nodeFactory = nodeFactory;
-	}
+   @Inject
+   PastNodePairProvider(PastryNodeFactory nodeFactory, Provider<StorageManager> storageManager) {
+      storageManagerProvider = storageManager;
+      this.nodeFactory = nodeFactory;
+   }
 
-	@Override
-	public PastNodePair get() {
-		PastryNode node;
-		try {
-			node = nodeFactory.newNode();
-			Past past = new PastDeleteImpl(node, storageManagerProvider.get(), 0, "past");
-			return new PastNodePair(node, past);
-		} catch (IOException e) {
-			log.error("Error creating PastryNode");
-			throw new RuntimeException("Error creatiing Pastry Node", e);
-		}
-	}
+   @Override
+   public PastNodePair get() {
+      PastryNode node;
+      try {
+         node = nodeFactory.newNode();
+         Past past = new PastDeleteImpl(node, storageManagerProvider.get(), 0, "past");
+         return new PastNodePair(node, past);
+      } catch (IOException e) {
+         log.error("Error creating PastryNode");
+         throw new RuntimeException("Error creating Pastry Node", e);
+      }
+   }
 
 }
