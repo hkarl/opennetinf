@@ -4,6 +4,7 @@
 package netinf.node.resolution.mdht;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import org.apache.log4j.Logger;
@@ -40,22 +41,23 @@ public class FreePastryDHT implements DHT, Application {
 	private static final Logger LOG = Logger.getLogger(PastryResolutionService.class);
 	private PastryNode pastryNode;
 	private int bindport;
-	protected Endpoint endpoint;
-	protected AppSocketPastryNodeFactory factory;
-	protected PastryIdFactory localFactory;
+	private Endpoint endpoint;
+	private AppSocketPastryNodeFactory factory;
+	private PastryIdFactory localFactory;
 	
 	/**
 	 * More detailed constructor for joining an existing ring
 	 * @param instanceID - can be randomly generated and is only relevant when running more than one node on same JVM
-	 * @param bootstrapAddr - the address/port of the node to be used as a bootstrap node to join the DHT
+	 * @param bootstrapAddr - the IP address of the node to be used as a bootstrap node to join the DHT
 	 * @param port - the port to listen on locally (should be > 1024, use lower values at your own risk)
 	 */
-	public FreePastryDHT(int instanceID, InetSocketAddress bootstrapAddr, int port)
+	public FreePastryDHT(final int instanceID, InetAddress bootstrapAddr, int port)
 	{
-		this.bindport = port;
-		Environment env = new Environment();
-		// disable the UPnP setting (in case you are testing this on a NATted LAN)
-	      env.getParameters().setString("nat_search_policy","never");
+	   InetSocketAddress bootstrapAddress = new InetSocketAddress(bootstrapAddr, port);
+	   this.bindport = port;
+	   Environment env = new Environment();
+	   // disable the UPnP setting (in case you are testing this on a NATted LAN)
+	   env.getParameters().setString("nat_search_policy", "never");
 
 		// used for generating PastContent object Ids.
 	    //this implements the "hash function" for our DHT
@@ -70,9 +72,9 @@ public class FreePastryDHT implements DHT, Application {
 			e.printStackTrace();
 		}
 		this.pastryNode = factory.newNode();
-		this.endpoint = pastryNode.buildEndpoint(this, "PastryInstance"+ String.valueOf(instanceID));
+		this.endpoint = pastryNode.buildEndpoint(this, "PastryInstance" + String.valueOf(instanceID));
 		this.endpoint.register();
-		this.joinRing(bootstrapAddr);
+		this.joinRing(bootstrapAddress);
 	}
 	
 	/**
@@ -80,11 +82,10 @@ public class FreePastryDHT implements DHT, Application {
 	 * @param instanceID - can be randomly generated and is only relevant when running more than one node on
 	 * the same JVM
 	 */
-	public FreePastryDHT(int instanceID)
-	{	
+	public FreePastryDHT(final int instanceID) {
 		Environment env = new Environment();
 		// disable the UPnP setting (in case you are testing this on a NATted LAN)
-	      env.getParameters().setString("nat_search_policy","never");
+	      env.getParameters().setString("nat_search_policy", "never");
 		//Manually set the bootup address
 		//env.getParameters().setInetSocketAddress("pastry.bootupaddress", );
 		// used for generating PastContent object Ids.
@@ -99,10 +100,10 @@ public class FreePastryDHT implements DHT, Application {
 		      //SocketFactory sFactory = factory.getSocketFactory();		      
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Could not read from socket, AppSocketPastryNodeFactory could not be initialized", e);
 		}
 		this.pastryNode = factory.newNode();
-		this.endpoint = pastryNode.buildEndpoint(this, "PastryInstance"+ String.valueOf(instanceID));
+		this.endpoint = pastryNode.buildEndpoint(this, "PastryInstance" + String.valueOf(instanceID));
 		/*endpoint.accept(new AppSocketReceiver() {
 		      /**
 		       * When we accept a new socket.
@@ -140,14 +141,15 @@ public class FreePastryDHT implements DHT, Application {
  * Method returns a String of the form HOSTNAME/IP:PORT, if a corresponding node is found, null otherwise
  */
 	@Override
-public String getResponsibleNode(Identifier id) {	      	      
+	public String getResponsibleNode(Identifier id) {	      	      
 	// 	build the past content
 	      final PastContent myContent = new DummyPastContent(localFactory.buildId(id.toString()), id.toString());
 	      
-	    RoutingTable rt = pastryNode.getRoutingTable();
+	    final RoutingTable rt = pastryNode.getRoutingTable();
 	    NodeHandle nh2;
+	    String retVal = null;
 	    //Variable nh will be null if node not found
-	    NodeHandle nh = pastryNode.getLocalHandle();//rt.get(pastryNode.getNodeId()/*(Id) myContent.getId()*/);
+	    NodeHandle nh = pastryNode.getLocalHandle(); //rt.get(pastryNode.getNodeId()/*(Id) myContent.getId()*/);
 	    if(nh != null)
 	    {
 	    	nh.ping();
@@ -160,17 +162,17 @@ public String getResponsibleNode(Identifier id) {
 			nh2 = rs.closestNode();
 			if (nh2 instanceof SocketNodeHandle) {
 		    	InetSocketAddress skt = ((SocketNodeHandle) pastryNode.getLocalHandle()).getInetSocketAddress();
-		    	return skt.toString();
+		    	retVal = skt.toString();
 			}
 		}
 		else {
 			
 			if ( nh instanceof SocketNodeHandle) {
 	    		InetSocketAddress skt = ((SocketNodeHandle) pastryNode.getLocalHandle()).getInetSocketAddress();
-	    		return skt.toString();
+	    		retVal = skt.toString();
 	    	}
 		}   	
-	    return null;
+	    return retVal;
    }
 
    @Override
@@ -238,13 +240,5 @@ public String getResponsibleNode(Identifier id) {
 	   // TODO Auto-generated method stub
 	
    }
-   private InetSocketAddress getBootstrapAddress() {
-    InetSocketAddress bootstrapAddress = null;
-    
-    bootstrapAddress = new InetSocketAddress("10.9.8.7", 11111);
-    if (bootstrapAddress.isUnresolved()) {
-    	LOG.warn("Could not resolve bootup address. Will initiate new Ring ");
-    }
-   	return bootstrapAddress;
-   }
+   
 }
