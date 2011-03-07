@@ -17,7 +17,7 @@ public interface DHT {
     *           corresponding identifier
     * @return the Id of the responsible node
     */
-   public String getResponsibleNode(Identifier id);
+   public InetSocketAddress getResponsibleNode(Identifier id);
 
    /**
     * 
