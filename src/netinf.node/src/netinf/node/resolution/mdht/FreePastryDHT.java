@@ -80,9 +80,11 @@ public class FreePastryDHT implements DHT, Application {
 	/**
 	 * Constructor used for creating a new ring and then joining it.
 	 * @param instanceID - can be randomly generated and is only relevant when running more than one node on
+	 * @param port - the port used for this node (on which it listens to). Used at the same time to identify rings/levels
 	 * the same JVM
 	 */
-	public FreePastryDHT(final int instanceID) {
+	public FreePastryDHT(final int instanceID, int port) {
+	   this.bindport = port;
 		Environment env = new Environment();
 		// disable the UPnP setting (in case you are testing this on a NATted LAN)
 	      env.getParameters().setString("nat_search_policy", "never");
