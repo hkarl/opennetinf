@@ -11,8 +11,8 @@ import netinf.common.datamodel.InformationObject;
  */
 public interface RemoteRS extends Remote {
 
-   InformationObject getRemote(Identifier identifier) throws RemoteException;
+   InformationObject getRemote(Identifier identifier, int level, int maxLevel) throws RemoteException;
 
-   void putRemote(InformationObject io, int fromLevel, int toLevel) throws RemoteException;
+   void putRemote(byte[] io, int fromLevel, int toLevel) throws RemoteException;
 
 }

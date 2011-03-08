@@ -88,7 +88,7 @@ import com.google.inject.name.Names;
  */
 public class IntegrityTest {
 
-   public static final String NETINFNODE_PROPERTIES = "../configs/netinfnode_testing.properties";
+   public static final String NETINFNODE_PROPERTIES = "../configs/testing/netinfnode_testing.properties";
 
    private InformationObject io;
    private Attribute singleSignedAttribute;
@@ -166,8 +166,7 @@ public class IntegrityTest {
             identityManager);
 
       Attribute writerAttribute = dmFactory.createAttribute(DefinedAttributeIdentification.WRITER.getURI(), identityObject
-            .getIdentifier().toString()
-            + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
+            .getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       this.io.addAttribute(writerAttribute);
       assertEquals(IntegrityResult.SIGNING_SUCCEEDED, integrity.sign(this.io));
 
@@ -186,8 +185,7 @@ public class IntegrityTest {
             identityManager);
 
       Attribute writerAttribute = dmFactory.createAttribute(DefinedAttributeIdentification.WRITER.getURI(), identityObject
-            .getIdentifier().toString()
-            + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
+            .getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       this.io.addAttribute(writerAttribute);
       assertEquals(IntegrityResult.SIGNING_SUCCEEDED, integrity.sign(this.io));
 
@@ -200,8 +198,7 @@ public class IntegrityTest {
             identityManager);
 
       Attribute writerAttribute = dmFactory.createAttribute(DefinedAttributeIdentification.WRITER.getURI(), identityObject
-            .getIdentifier().toString()
-            + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
+            .getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       this.io.addAttribute(writerAttribute);
 
       assertEquals(IntegrityResult.SIGNING_SUCCEEDED, integrity.sign(this.io));
@@ -217,8 +214,7 @@ public class IntegrityTest {
             identityManager);
 
       Attribute writerAttribute = dmFactory.createAttribute(DefinedAttributeIdentification.WRITER.getURI(), identityObject
-            .getIdentifier().toString()
-            + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
+            .getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       this.io.addAttribute(writerAttribute);
 
       assertEquals(IntegrityResult.SIGNING_SUCCEEDED, integrity.sign(this.io));
@@ -234,8 +230,7 @@ public class IntegrityTest {
             identityManager);
 
       Attribute writerAttribute = dmFactory.createAttribute(DefinedAttributeIdentification.WRITER.getURI(), identityObject
-            .getIdentifier().toString()
-            + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
+            .getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       this.singleSignedAttribute.addSubattribute(writerAttribute);
 
       assertEquals(IntegrityResult.SIGNING_SUCCEEDED, integrity.sign(this.singleSignedAttribute));
@@ -244,17 +239,17 @@ public class IntegrityTest {
       assertNotNull(this.singleSignedAttribute.getSingleSubattribute(SIGNATURE.getURI()).getValue(String.class));
       assertNotNull(this.singleSignedAttribute.getSingleSubattribute(WRITER.getURI()));
       assertNotNull(this.singleSignedAttribute.getSingleSubattribute(WRITER.getURI()).getValue(String.class));
-      
-      //-> ValidCreator.isAttributeSigned
+
+      // -> ValidCreator.isAttributeSigned
       // first branch
       assertTrue(ValidCreator.isAttributeSigned(singleSignedAttribute));
       assertFalse(ValidCreator.isAttributeSignedIncorrectly(singleSignedAttribute));
       // second branch
       InformationObject iObj = dmFactory.createInformationObject();
-      Attribute attr = (Attribute)singleSignedAttribute.clone();
+      Attribute attr = (Attribute) singleSignedAttribute.clone();
       iObj.addAttribute(attr);
       ValidCreator.secureAttributeInOverall(attr, "testPathToKey");
-      
+
       assertTrue(ValidCreator.isAttributeSigned(attr));
       assertTrue(ValidCreator.isAttributeSignedIncorrectly(attr));
    }
@@ -265,8 +260,7 @@ public class IntegrityTest {
             identityManager);
 
       Attribute writerAttribute = dmFactory.createAttribute(DefinedAttributeIdentification.WRITER.getURI(), identityObject
-            .getIdentifier().toString()
-            + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
+            .getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       this.singleSignedAttribute.addSubattribute(writerAttribute);
 
       assertEquals(IntegrityResult.SIGNING_SUCCEEDED, integrity.sign(this.singleSignedAttribute));
@@ -281,8 +275,7 @@ public class IntegrityTest {
             identityManager);
 
       Attribute writerAttribute = dmFactory.createAttribute(DefinedAttributeIdentification.WRITER.getURI(), identityObject
-            .getIdentifier().toString()
-            + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
+            .getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       this.singleSignedAttribute.addSubattribute(writerAttribute);
 
       assertEquals(IntegrityResult.SIGNING_SUCCEEDED, integrity.sign(this.singleSignedAttribute));

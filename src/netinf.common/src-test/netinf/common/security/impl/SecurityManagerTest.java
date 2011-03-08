@@ -88,7 +88,7 @@ import com.google.inject.name.Names;
  */
 public class SecurityManagerTest {
 
-   public static final String NETINFNODE_PROPERTIES = "../configs/netinfnode_testing.properties";
+   public static final String NETINFNODE_PROPERTIES = "../configs/testing/netinfnode_testing.properties";
 
    private static IdentityManager identityManager;
    private static RemoteNodeConnection convenienceCommunicator;
@@ -196,8 +196,7 @@ public class SecurityManagerTest {
       InformationObject informationObject = createTestInformationObject();
       Assert.assertNotSame(informationObject, securityManager.checkOutgoingInformationObject(informationObject, true));
    }
-   
-  
+
    @Test
    public void testOutgoingIoUntrustedSender() throws NetInfCheckedException, NoSuchAlgorithmException {
       InformationObject informationObject = createTestInformationObject();

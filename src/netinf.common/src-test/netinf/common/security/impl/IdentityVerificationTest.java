@@ -85,7 +85,7 @@ import com.google.inject.name.Names;
  */
 public class IdentityVerificationTest {
 
-   public static final String NETINFNODE_PROPERTIES = "../configs/netinfnode_testing.properties";
+   public static final String NETINFNODE_PROPERTIES = "../configs/testing/netinfnode_testing.properties";
 
    private InformationObject io;
 
@@ -187,10 +187,10 @@ public class IdentityVerificationTest {
       IdentityVerification idVerify = new IdentityVerificationImpl(dmFactory, this.convenienceCommunicator, identityManager,
             signatureAlgorithm);
       Attribute writerAttribute = dmFactory.createAttribute(DefinedAttributeIdentification.WRITER.getURI(), identityObject
-            .getIdentifier().toString()
-            + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
+            .getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       this.io.addAttribute(writerAttribute);
-      Attribute writersList = dmFactory.createAttribute(DefinedAttributeIdentification.AUTHORIZED_WRITERS.getURI(),
+      Attribute writersList = dmFactory.createAttribute(
+            DefinedAttributeIdentification.AUTHORIZED_WRITERS.getURI(),
             identityObject.getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR
                   + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       this.io.addAttribute(writersList);
@@ -210,16 +210,13 @@ public class IdentityVerificationTest {
             signatureAlgorithm);
 
       Attribute writerAttribute = dmFactory.createAttribute(DefinedAttributeIdentification.WRITER.getURI(), idoWriter
-            .getIdentifier().toString()
-            + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
+            .getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       this.io.addAttribute(writerAttribute);
 
       Attribute writersList = dmFactory.createAttribute(DefinedAttributeIdentification.AUTHORIZED_WRITERS.getURI(), idoWriter
-            .getIdentifier().toString()
-            + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
+            .getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       Attribute writerOfList = dmFactory.createAttribute(DefinedAttributeIdentification.WRITER.getURI(), identityObject
-            .getIdentifier().toString()
-            + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
+            .getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       writersList.addSubattribute(writerOfList);
       this.io.addAttribute(writersList);
 
@@ -233,13 +230,13 @@ public class IdentityVerificationTest {
             signatureAlgorithm);
 
       Attribute writerAttribute = dmFactory.createAttribute(DefinedAttributeIdentification.WRITER.getURI(), identityObject
-            .getIdentifier().toString()
-            + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
+            .getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       Attribute upb = dmFactory.createAttribute("Name", "University of Paderborn");
       upb.addSubattribute(writerAttribute);
       this.io.addAttribute(upb);
 
-      Attribute writersList = dmFactory.createAttribute(DefinedAttributeIdentification.AUTHORIZED_WRITERS.getURI(),
+      Attribute writersList = dmFactory.createAttribute(
+            DefinedAttributeIdentification.AUTHORIZED_WRITERS.getURI(),
             identityObject.getIdentifier().toString() + IntegrityImpl.PATH_SEPERATOR
                   + DefinedAttributeIdentification.PUBLIC_KEY.getURI());
       this.io.addAttribute(writersList);
@@ -251,10 +248,9 @@ public class IdentityVerificationTest {
    public void tearDown() throws Exception {
    }
 
-public static Object[] getIdentityVerificationResultByVerificationResultString(
-		String string) {
-	// TODO Auto-generated method stub
-	return null;
-}
+   public static Object[] getIdentityVerificationResultByVerificationResultString(String string) {
+      // TODO Auto-generated method stub
+      return null;
+   }
 
 }

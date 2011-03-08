@@ -30,6 +30,7 @@ public class MDHTResolutionServiceTest {
    public void testPutGet() throws NetInfCheckedException {
       resolutionService.put(ioHelper.getDummyIO());
       InformationObject io = resolutionService.get(ioHelper.getDummyIO().getIdentifier());
+      System.out.println("got IO: " + io);
       Assert.assertTrue(ioHelper.getDummyIO().equals(io));
    }
 
