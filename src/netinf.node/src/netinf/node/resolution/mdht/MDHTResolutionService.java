@@ -228,7 +228,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
          LOG.debug(null);
          RemoteRS stub = (RemoteRS) remoteObj;
          LOG.debug(null);
-         return stub.getRemote(ident, level, maxLevel);
+         return stub.getRemote(ident.serializeToBytes(), level, maxLevel);
 
       } catch (MalformedURLException e) {
          LOG.error(e.getMessage());
