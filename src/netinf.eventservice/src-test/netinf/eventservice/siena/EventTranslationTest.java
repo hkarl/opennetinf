@@ -77,8 +77,8 @@ public class EventTranslationTest {
 
    private static final String HASH_CONSTANT = "This is the hash value";
    private static final String IDENTIFIER_STRING = "ni:HASH_OF_PK=123~HASH_OF_PK_IDENT=SHA1"
-      + "~VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=somethingUnique";
-   private static final String TESTING_PROPERTIES = "../configs/eventservicesiena_testing.properties";
+         + "~VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=somethingUnique";
+   private static final String TESTING_PROPERTIES = "../configs/testing/eventservicesiena_testing.properties";
    private static Injector injector;
    private static EventServiceSiena eventServiceSiena;
    private static DatamodelFactory datamodelFactory;
@@ -118,13 +118,13 @@ public class EventTranslationTest {
             oldInformationObject.serializeToBytes());
       Assert.assertTrue(equals);
 
-      equals = Arrays.equals(notification.getAttribute(TranslationSiena.PREFIX_NEW).byteArrayValue(), newInformationObject
-            .serializeToBytes());
+      equals = Arrays.equals(notification.getAttribute(TranslationSiena.PREFIX_NEW).byteArrayValue(),
+            newInformationObject.serializeToBytes());
       Assert.assertTrue(equals);
 
       // Try the other way around, deserialize the according notification
       SubscriberNetInf<HierarchicalDispatcher, Notifiable, Notification, Filter> subscriberNetInf = eventServiceSiena
-      .createSubscriberNetInf(identifier, (Identifier) identifier.clone());
+            .createSubscriberNetInf(identifier, (Identifier) identifier.clone());
 
       List<ESFEventMessage> eventList = subscriberNetInf.translateEvent(notification);
       ESFEventMessage eventMessage2 = eventList.get(0);
@@ -320,7 +320,7 @@ public class EventTranslationTest {
       Attribute attribute = datamodelFactory.createAttribute(DefinedAttributeIdentification.PERSON_NAME.getURI(), personName);
       Attribute subAttribute = datamodelFactory.createAttribute(DefinedAttributeIdentification.E_MAIL_ADDRESS.getURI(), eMail);
       Attribute subAttribute2 = datamodelFactory
-      .createAttribute(DefinedAttributeIdentification.DESCRIPTION.getURI(), description);
+            .createAttribute(DefinedAttributeIdentification.DESCRIPTION.getURI(), description);
       attribute.addSubattribute(subAttribute);
       attribute.addSubattribute(subAttribute2);
       informationObject.addAttribute(attribute);
@@ -433,10 +433,10 @@ public class EventTranslationTest {
 
       Attribute attribute1Old = datamodelFactory.createAttribute(DefinedAttributeIdentification.PERSON_NAME.getURI(), personName);
       Attribute subAttribute1Old = datamodelFactory
-      .createAttribute(DefinedAttributeIdentification.E_MAIL_ADDRESS.getURI(), eMail);
+            .createAttribute(DefinedAttributeIdentification.E_MAIL_ADDRESS.getURI(), eMail);
 
       Attribute attribute2Old = datamodelFactory
-      .createAttribute(DefinedAttributeIdentification.DESCRIPTION.getURI(), description);
+            .createAttribute(DefinedAttributeIdentification.DESCRIPTION.getURI(), description);
 
       attribute1Old.addSubattribute(subAttribute1Old);
       oldInformationObject.addAttribute(attribute1Old);
@@ -450,7 +450,7 @@ public class EventTranslationTest {
 
       Attribute attribute1New = datamodelFactory.createAttribute(DefinedAttributeIdentification.PERSON_NAME.getURI(), personName);
       Attribute subAttribute1New = datamodelFactory
-      .createAttribute(DefinedAttributeIdentification.E_MAIL_ADDRESS.getURI(), eMail);
+            .createAttribute(DefinedAttributeIdentification.E_MAIL_ADDRESS.getURI(), eMail);
 
       // Description is deleted
       attribute1New.addSubattribute(subAttribute1New);
@@ -491,10 +491,10 @@ public class EventTranslationTest {
 
       Attribute attribute1Old = datamodelFactory.createAttribute(DefinedAttributeIdentification.PERSON_NAME.getURI(), personName);
       Attribute subAttribute1Old = datamodelFactory
-      .createAttribute(DefinedAttributeIdentification.E_MAIL_ADDRESS.getURI(), eMail);
+            .createAttribute(DefinedAttributeIdentification.E_MAIL_ADDRESS.getURI(), eMail);
 
       Attribute attribute2Old = datamodelFactory
-      .createAttribute(DefinedAttributeIdentification.DESCRIPTION.getURI(), description);
+            .createAttribute(DefinedAttributeIdentification.DESCRIPTION.getURI(), description);
 
       attribute1Old.addSubattribute(subAttribute1Old);
       oldInformationObject.addAttribute(attribute1Old);
@@ -509,7 +509,7 @@ public class EventTranslationTest {
       // Person Name, and subattribute e-mail Address is deleted
 
       Attribute attribute1New = datamodelFactory
-      .createAttribute(DefinedAttributeIdentification.DESCRIPTION.getURI(), description);
+            .createAttribute(DefinedAttributeIdentification.DESCRIPTION.getURI(), description);
       newInformationObject.addAttribute(attribute1New);
 
       Notification notification = translate(oldInformationObject, newInformationObject);
@@ -599,7 +599,7 @@ public class EventTranslationTest {
       attribute1.addSubattribute(subAttribute1);
 
       Attribute attribute2Old = datamodelFactory
-      .createAttribute(DefinedAttributeIdentification.DESCRIPTION.getURI(), description);
+            .createAttribute(DefinedAttributeIdentification.DESCRIPTION.getURI(), description);
 
       oldInformationObject.addAttribute(attribute2Old);
       newInformationObject.addAttribute(attribute1);

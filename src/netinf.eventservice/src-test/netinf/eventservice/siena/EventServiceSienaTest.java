@@ -72,11 +72,11 @@ import com.google.inject.Injector;
  */
 public class EventServiceSienaTest {
 
-   private static final String CONFIGS_EVENTSERVICESIENA_TESTING_PROPERTIES = "../configs/eventservicesiena_testing.properties";
+   private static final String CONFIGS_EVENTSERVICESIENA_TESTING_PROPERTIES = "../configs/testing/eventservicesiena_testing.properties";
    private static final String EVENT_CONTAINER_ID_STRING = "ni:HASH_OF_PK=123~HASH_OF_PK_IDENT=SHA1~"
-      + "VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=eventContainer";
+         + "VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=eventContainer";
    private static final String PERSON_IDENTITY_OBJECT_ID_STRING = "ni:HASH_OF_PK=123~HASH_OF_PK_IDENT=SHA1"
-      + "~VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=personIdentityObject";
+         + "~VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=personIdentityObject";
 
    private static final String SUBSCRIPTION_IDENTIFICATION = "subscriptionIdentification";
    private static final String SPARQL_REQUEST = "SELECT ?old ?new WHERE {}";;
@@ -126,7 +126,7 @@ public class EventServiceSienaTest {
    @Test
    public void testCreateSubscriber() throws SQLException {
       SubscriberNetInf<HierarchicalDispatcher, Notifiable, Notification, Filter> subscriberNetInf = eventServiceSiena
-      .createSubscriberNetInf(eventContainerID, personIdentityObjectID);
+            .createSubscriberNetInf(eventContainerID, personIdentityObjectID);
 
       // Check if subscriber was correctly created
       Assert.assertEquals(eventContainerID, subscriberNetInf.getEventContainerID());

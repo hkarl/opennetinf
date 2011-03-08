@@ -66,7 +66,7 @@ import com.google.inject.name.Names;
  */
 public class IdentityManagerTest {
 
-   public static final String NETINFNODE_PROPERTIES = "../configs/netinfnode_testing.properties";
+   public static final String NETINFNODE_PROPERTIES = "../configs/testing/netinfnode_testing.properties";
 
    private IdentityManager identityManager;
 
@@ -83,8 +83,8 @@ public class IdentityManagerTest {
          @Override
          protected void configure() {
             Names.bindProperties(binder(), properties);
-            bind(NetInfNodeConnection.class).annotatedWith(SecurityModule.Security.class).to(RemoteNodeConnection.class).in(
-                  Singleton.class);
+            bind(NetInfNodeConnection.class).annotatedWith(SecurityModule.Security.class).to(RemoteNodeConnection.class)
+                  .in(Singleton.class);
          }
       });
 

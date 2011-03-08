@@ -87,7 +87,7 @@ import com.google.inject.name.Names;
  */
 public class CryptographyTest {
 
-   public static final String NETINFNODE_PROPERTIES = "../configs/netinfnode_testing.properties";
+   public static final String NETINFNODE_PROPERTIES = "../configs/testing/netinfnode_testing.properties";
 
    private static Cryptography crypto;
    private static CryptoAlgorithm algorithm = new CryptoAlgorithmImpl();
@@ -154,12 +154,14 @@ public class CryptographyTest {
       identityManager = EasyMock.createMock(IdentityManager.class);
       EasyMock.expect(identityManager.getPrivateKey((String) EasyMock.anyObject())).andReturn(privateKey).anyTimes();
       EasyMock.expect(identityManager.hasPrivateKey((String) EasyMock.anyObject())).andReturn(true).anyTimes();
-      EasyMock.expect(
-            identityManager.getPrivateKey(((String) EasyMock.anyObject()), (String) EasyMock.anyObject(), (String) EasyMock
-                  .anyObject())).andReturn(privateKey).anyTimes();
-      EasyMock.expect(
-            identityManager.hasPrivateKey(((String) EasyMock.anyObject()), (String) EasyMock.anyObject(), (String) EasyMock
-                  .anyObject())).andReturn(true).anyTimes();
+      EasyMock
+            .expect(
+                  identityManager.getPrivateKey(((String) EasyMock.anyObject()), (String) EasyMock.anyObject(),
+                        (String) EasyMock.anyObject())).andReturn(privateKey).anyTimes();
+      EasyMock
+            .expect(
+                  identityManager.hasPrivateKey(((String) EasyMock.anyObject()), (String) EasyMock.anyObject(),
+                        (String) EasyMock.anyObject())).andReturn(true).anyTimes();
       EasyMock.replay(identityManager);
 
       crypto = new CryptographyImpl(identityManager, algorithm, factory, convenienceCommunicator);
@@ -273,17 +275,19 @@ public class CryptographyTest {
       IdentityManager wrongIdentityManager = EasyMock.createMock(IdentityManager.class);
       try {
          EasyMock.expect(wrongIdentityManager.getPrivateKey((String) EasyMock.anyObject())).andReturn(null).anyTimes();
-         EasyMock.expect(
-               wrongIdentityManager.getPrivateKey((String) EasyMock.anyObject(), (String) EasyMock.anyObject(), (String) EasyMock
-                     .anyObject())).andReturn(null).anyTimes();
+         EasyMock
+               .expect(
+                     wrongIdentityManager.getPrivateKey((String) EasyMock.anyObject(), (String) EasyMock.anyObject(),
+                           (String) EasyMock.anyObject())).andReturn(null).anyTimes();
       } catch (NetInfCheckedException e1) {
          // TODO Auto-generated catch block
          e1.printStackTrace();
       }
       EasyMock.expect(wrongIdentityManager.hasPrivateKey((String) EasyMock.anyObject())).andReturn(true).anyTimes();
-      EasyMock.expect(
-            wrongIdentityManager.hasPrivateKey((String) EasyMock.anyObject(), (String) EasyMock.anyObject(), (String) EasyMock
-                  .anyObject())).andReturn(true).anyTimes();
+      EasyMock
+            .expect(
+                  wrongIdentityManager.hasPrivateKey((String) EasyMock.anyObject(), (String) EasyMock.anyObject(),
+                        (String) EasyMock.anyObject())).andReturn(true).anyTimes();
       EasyMock.replay(wrongIdentityManager);
 
       try {
@@ -307,9 +311,10 @@ public class CryptographyTest {
 
       IdentityManager wrongIdentityManager = EasyMock.createMock(IdentityManager.class);
       EasyMock.expect(wrongIdentityManager.hasPrivateKey((String) EasyMock.anyObject())).andReturn(true).anyTimes();
-      EasyMock.expect(
-            wrongIdentityManager.hasPrivateKey((String) EasyMock.anyObject(), (String) EasyMock.anyObject(), (String) EasyMock
-                  .anyObject())).andReturn(true).anyTimes();
+      EasyMock
+            .expect(
+                  wrongIdentityManager.hasPrivateKey((String) EasyMock.anyObject(), (String) EasyMock.anyObject(),
+                        (String) EasyMock.anyObject())).andReturn(true).anyTimes();
       try {
          KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
          keyPairGenerator.initialize(1024);
@@ -318,9 +323,10 @@ public class CryptographyTest {
          PrivateKey privateKey = pair.getPrivate();
          try {
             EasyMock.expect(wrongIdentityManager.getPrivateKey((String) EasyMock.anyObject())).andReturn(privateKey).anyTimes();
-            EasyMock.expect(
-                  wrongIdentityManager.getPrivateKey((String) EasyMock.anyObject(), (String) EasyMock.anyObject(),
-                        (String) EasyMock.anyObject())).andReturn(privateKey).anyTimes();
+            EasyMock
+                  .expect(
+                        wrongIdentityManager.getPrivateKey((String) EasyMock.anyObject(), (String) EasyMock.anyObject(),
+                              (String) EasyMock.anyObject())).andReturn(privateKey).anyTimes();
          } catch (NetInfCheckedException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -347,9 +353,10 @@ public class CryptographyTest {
 
       IdentityManager wrongIdentityManager = EasyMock.createMock(IdentityManager.class);
       EasyMock.expect(wrongIdentityManager.hasPrivateKey((String) EasyMock.anyObject())).andReturn(true).anyTimes();
-      EasyMock.expect(
-            wrongIdentityManager.hasPrivateKey((String) EasyMock.anyObject(), (String) EasyMock.anyObject(), (String) EasyMock
-                  .anyObject())).andReturn(true).anyTimes();
+      EasyMock
+            .expect(
+                  wrongIdentityManager.hasPrivateKey((String) EasyMock.anyObject(), (String) EasyMock.anyObject(),
+                        (String) EasyMock.anyObject())).andReturn(true).anyTimes();
       try {
          KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("DSA");
          keyPairGenerator.initialize(1024);
@@ -358,9 +365,10 @@ public class CryptographyTest {
          PrivateKey privateKey = pair.getPrivate();
          try {
             EasyMock.expect(wrongIdentityManager.getPrivateKey((String) EasyMock.anyObject())).andReturn(privateKey).anyTimes();
-            EasyMock.expect(
-                  wrongIdentityManager.getPrivateKey((String) EasyMock.anyObject(), (String) EasyMock.anyObject(),
-                        (String) EasyMock.anyObject())).andReturn(privateKey).anyTimes();
+            EasyMock
+                  .expect(
+                        wrongIdentityManager.getPrivateKey((String) EasyMock.anyObject(), (String) EasyMock.anyObject(),
+                              (String) EasyMock.anyObject())).andReturn(privateKey).anyTimes();
          } catch (NetInfCheckedException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();

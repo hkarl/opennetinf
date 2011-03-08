@@ -1,4 +1,4 @@
-package netinf.node.module;
+package netinf.node.module.MDHTPresentation;
 
 import netinf.access.HTTPServer;
 import netinf.access.NetInfServer;
@@ -6,6 +6,7 @@ import netinf.access.TCPServer;
 import netinf.common.datamodel.impl.module.DatamodelImplModule;
 import netinf.common.datamodel.translation.module.DatamodelTranslationModule;
 import netinf.common.utils.Utils;
+import netinf.node.module.AbstractNodeModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.iocaching.impl.IOCacheImpl;
@@ -24,11 +25,11 @@ import com.google.inject.Singleton;
 /**
  * @author PG Netinf 3, University of Paderborn
  */
-public class MDHTNodeModule extends AbstractNodeModule {
+public class MDHTNodeCModule extends AbstractNodeModule {
 
-   public static final String NODE_PROPERTIES = "../configs/netinfnode_standard.properties";
+   public static final String NODE_PROPERTIES = "../configs/MDHT-Presentation/NodeC.properties";
 
-   public MDHTNodeModule() {
+   public MDHTNodeCModule() {
       super(Utils.loadProperties(NODE_PROPERTIES));
    }
 

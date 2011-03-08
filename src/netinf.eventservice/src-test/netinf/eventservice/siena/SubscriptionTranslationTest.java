@@ -89,9 +89,9 @@ import com.google.inject.Injector;
 public class SubscriptionTranslationTest {
 
    private static final String PERSON_IDENTITY_OBJECT_ID_STRING = "HASH_OF_PK=123~HASH_OF_PK_IDENT=SHA1"
-      + "~VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=personIdentityObject";
+         + "~VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=personIdentityObject";
    private static final String SUBSCRIPTION_ID = "TestIdentification";
-   private static final String TESTING_PROPERTIES = "../configs/eventservicesiena_testing.properties";
+   private static final String TESTING_PROPERTIES = "../configs/testing/eventservicesiena_testing.properties";
    private static Injector injector;
    private static EventServiceSiena eventServiceSiena;
    private static DatamodelFactory datamodelFactory;
@@ -120,10 +120,10 @@ public class SubscriptionTranslationTest {
       final int ageAttributeValue2 = 50;
 
       String query = "SELECT ?old ?new WHERE {" + "?old <" + nameAttributeURI + "> \"" + nameAttributeValue + "\"." + "?old <"
-      + nameAttributeURI + "> ?name1." + "?new <" + nameAttributeURI + "> ?name2." + "?old <" + ageAttributeURI
-      + "> ?age1." + "?new <" + ageAttributeURI + "> ?age2." + "FILTER (?age1 > " + ageAttributeValue1 + ")."
-      + "FILTER (?age1 < " + ageAttributeValue2 + ")." + "FILTER (?age1 > ?age2)." + "FILTER (bound(?name2))."
-      + "FILTER (!bound(?name1)).}";
+            + nameAttributeURI + "> ?name1." + "?new <" + nameAttributeURI + "> ?name2." + "?old <" + ageAttributeURI
+            + "> ?age1." + "?new <" + ageAttributeURI + "> ?age2." + "FILTER (?age1 > " + ageAttributeValue1 + ")."
+            + "FILTER (?age1 < " + ageAttributeValue2 + ")." + "FILTER (?age1 > ?age2)." + "FILTER (bound(?name2))."
+            + "FILTER (!bound(?name1)).}";
 
       ESFSubscriptionRequest subscriptionRequest = new ESFSubscriptionRequest(null, query, 0);
       List<Filter> sienaFilters = subscriberNetInf.translateSubscriptionRequest(subscriptionRequest);
@@ -176,7 +176,7 @@ public class SubscriptionTranslationTest {
    @Test(expected = SubscriptionInfiniteVariableRecursionException.class)
    public void testInfiniteVariableRecursion1() throws NetInfCheckedException {
       String query = "SELECT ?old ?new WHERE {?old <http://netinf.org/#age> ?age."
-         + "?age <http://netinf.org/#age> ?age. FILTER(?age = 20)}";
+            + "?age <http://netinf.org/#age> ?age. FILTER(?age = 20)}";
 
       subscriberNetInf.translateSubscriptionRequest(new ESFSubscriptionRequest(null, query, 0));
    }
@@ -184,7 +184,7 @@ public class SubscriptionTranslationTest {
    @Test(expected = SubscriptionInfiniteVariableRecursionException.class)
    public void testInfiniteVariableRecursion2() throws NetInfCheckedException {
       String query = "SELECT ?old ?new WHERE {?old <http://netinf.org/#age> ?age1."
-         + "?age1 <http://netinf.org/#age> ?age2. ?age2 <http://netinf.org/#age> ?age1. FILTER(?age1 = 20)}";
+            + "?age1 <http://netinf.org/#age> ?age2. ?age2 <http://netinf.org/#age> ?age1. FILTER(?age1 = 20)}";
 
       subscriberNetInf.translateSubscriptionRequest(new ESFSubscriptionRequest(null, query, 0));
    }
@@ -199,7 +199,7 @@ public class SubscriptionTranslationTest {
    @Test(expected = SubscriptionInvalidFilterException.class)
    public void testInvalidBoundFilterBothOld() throws NetInfCheckedException {
       String query = "SELECT ?old ?new WHERE {?old <http://netinf.org/#age> ?age1. "
-         + "?old <http://netinf.org/#age> ?age2. FILTER(?age1 = ?age2)}";
+            + "?old <http://netinf.org/#age> ?age2. FILTER(?age1 = ?age2)}";
 
       subscriberNetInf.translateSubscriptionRequest(new ESFSubscriptionRequest(null, query, 0));
    }
@@ -207,7 +207,7 @@ public class SubscriptionTranslationTest {
    @Test(expected = SubscriptionInvalidFilterException.class)
    public void testInvalidBoundFilterBothNew() throws NetInfCheckedException {
       String query = "SELECT ?old ?new WHERE {?new <http://netinf.org/#age> ?age1. "
-         + "?new <http://netinf.org/#age> ?age2. FILTER(?age1 = ?age2)}";
+            + "?new <http://netinf.org/#age> ?age2. FILTER(?age1 = ?age2)}";
 
       subscriberNetInf.translateSubscriptionRequest(new ESFSubscriptionRequest(null, query, 0));
    }
@@ -215,7 +215,7 @@ public class SubscriptionTranslationTest {
    @Test(expected = SubscriptionInvalidFilterException.class)
    public void testInvalidBoundFilterDifferentAttribute() throws NetInfCheckedException {
       String query = "SELECT ?old ?new WHERE {?old <http://netinf.org/#age> ?age. "
-         + "?new <http://netinf.org/#name> ?name. FILTER(?age = ?name)}";
+            + "?new <http://netinf.org/#name> ?name. FILTER(?age = ?name)}";
 
       subscriberNetInf.translateSubscriptionRequest(new ESFSubscriptionRequest(null, query, 0));
    }
@@ -223,7 +223,7 @@ public class SubscriptionTranslationTest {
    @Test(expected = SubscriptionInvalidFilterException.class)
    public void testInvalidBoundFilterBothVariablesBound() throws NetInfCheckedException {
       String query = "SELECT ?old ?new WHERE {?old <http://netinf.org/#age> ?age1. "
-         + "?new <http://netinf.org/#age> ?age2. FILTER(bound(?age1)). FILTER(bound(?age2))}";
+            + "?new <http://netinf.org/#age> ?age2. FILTER(bound(?age1)). FILTER(bound(?age2))}";
 
       subscriberNetInf.translateSubscriptionRequest(new ESFSubscriptionRequest(null, query, 0));
    }
@@ -231,7 +231,7 @@ public class SubscriptionTranslationTest {
    @Test(expected = SubscriptionInvalidFilterException.class)
    public void testInvalidBoundFilterBothVariablesUnbound() throws NetInfCheckedException {
       String query = "SELECT ?old ?new WHERE {?old <http://netinf.org/#age> ?age1. "
-         + "?new <http://netinf.org/#age> ?age2. FILTER(!bound(?age1)). FILTER(!bound(?age2))}";
+            + "?new <http://netinf.org/#age> ?age2. FILTER(!bound(?age1)). FILTER(!bound(?age2))}";
 
       subscriberNetInf.translateSubscriptionRequest(new ESFSubscriptionRequest(null, query, 0));
    }
@@ -239,7 +239,7 @@ public class SubscriptionTranslationTest {
    @Test(expected = SubscriptionInvalidFilterOperatorException.class)
    public void testInvalidFilterOperator() throws NetInfCheckedException {
       String query = "SELECT ?old ?new WHERE {?old <http://netinf.org/#age> ?age1. "
-         + "?new <http://netinf.org/#age> ?age2. FILTER(?age1 <= ?age2)}";
+            + "?new <http://netinf.org/#age> ?age2. FILTER(?age1 <= ?age2)}";
 
       subscriberNetInf.translateSubscriptionRequest(new ESFSubscriptionRequest(null, query, 0));
    }
@@ -309,9 +309,9 @@ public class SubscriptionTranslationTest {
       Assert.assertTrue(setup);
 
       SubscriberNetInf<HierarchicalDispatcher, Notifiable, Notification, Filter> subscriberNetInf = eventServiceSiena
-      .createSubscriberNetInf(personIdentityObjectID, null);
+            .createSubscriberNetInf(personIdentityObjectID, null);
       PublisherNetInf<HierarchicalDispatcher, Notifiable, Notification, Filter> publisherNetInf = eventServiceSiena
-      .createPublisherNetInf();
+            .createPublisherNetInf();
       Assert.assertNotNull(subscriberNetInf);
       Assert.assertNotNull(publisherNetInf);
 
@@ -353,9 +353,9 @@ public class SubscriptionTranslationTest {
       Assert.assertTrue(setup);
 
       SubscriberNetInf<HierarchicalDispatcher, Notifiable, Notification, Filter> subscriberNetInf = eventServiceSiena
-      .createSubscriberNetInf(personIdentityObjectID, null);
+            .createSubscriberNetInf(personIdentityObjectID, null);
       PublisherNetInf<HierarchicalDispatcher, Notifiable, Notification, Filter> publisherNetInf = eventServiceSiena
-      .createPublisherNetInf();
+            .createPublisherNetInf();
       Assert.assertNotNull(subscriberNetInf);
       Assert.assertNotNull(publisherNetInf);
 
@@ -381,7 +381,7 @@ public class SubscriptionTranslationTest {
 
       // Create Subscription
       String query = "SELECT ?old ?new WHERE {?new <" + attributeURI + "> ?var. " + "?var <" + subattributeURI + "> \""
-      + subattributeValue + "\". }";
+            + subattributeValue + "\". }";
       ESFSubscriptionRequest subscriptionRequest = new ESFSubscriptionRequest(SUBSCRIPTION_ID, query, 60);
       subscriberNetInf.processSubscriptionRequest(subscriptionRequest);
       publisherNetInf.processEventMessage(eventMessage);

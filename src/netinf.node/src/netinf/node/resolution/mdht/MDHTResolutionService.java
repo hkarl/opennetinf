@@ -66,6 +66,7 @@ import org.apache.log4j.Logger;
 import rice.p2p.commonapi.IdFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * @author PG NetInf 3, University of Paderborn
@@ -99,19 +100,26 @@ public class MDHTResolutionService extends AbstractResolutionService {
       this.translator = translator;
    }
 
-   // temp properties: (later to configs/properties)
-   private int numberOfLevels = 3;
-   private String joinNode = "10.10.10.2"; // A joins nobody, otherwise address of the node to join
-   private int joinAtLevel = 0; // 0 -> join nobody
-   private int basePort = 2000;
+   private int numberOfLevels;
+   private String joinNode;
+   private int joinAtLevel;
+   private int basePort;
 
    /**
     * Constructor
     */
    @Inject
-   public MDHTResolutionService() {
+   public MDHTResolutionService(@Named("numberOfLevels") final String myNumberOfLevels,
+         @Named("joinNode") final String myJoinNode, @Named("joinAtLevel") final String myJoinAtLevel,
+         @Named("basePort") final String myBasePort) {
       super();
       LOG.info("Creating MDHT resolution service...");
+
+      // fields
+      this.numberOfLevels = Integer.parseInt(myNumberOfLevels);
+      this.joinNode = myJoinNode;
+      this.joinAtLevel = Integer.parseInt(myJoinAtLevel);
+      this.basePort = Integer.parseInt(myBasePort);
 
       // create necessary levels
       if (joinAtLevel == 0) { // create all levels
@@ -143,10 +151,10 @@ public class MDHTResolutionService extends AbstractResolutionService {
          }
       }
 
-      this.initRMIServer();
    }
 
-   private void initRMIServer() {
+   @Inject
+   private void initRMIServer(DatamodelFactory factory) {
       LOG.info("Initializing RMI Server...");
 
       try {
@@ -157,7 +165,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
       }
 
       try {
-         rmiServer = new RMIServerStub(this);
+         rmiServer = new RMIServerStub(this, factory);
          Naming.rebind("MDHTServer", rmiServer);
 
       } catch (RemoteException e) {
@@ -186,8 +194,11 @@ public class MDHTResolutionService extends AbstractResolutionService {
     */
    @Override
    public InformationObject get(Identifier identifier) {
+      LOG.info("(MDHT ) Getting IO with Identifier " + identifier);
 
-      return storage.get(identifier.toString());
+      Identifier identN = translator.toImpl(identifier);
+      LOG.info(null);
+      return get(identN, 1, numberOfLevels);
 
       // // From Storage (eddy)
       // InformationObject io = null;
@@ -200,12 +211,44 @@ public class MDHTResolutionService extends AbstractResolutionService {
       // return io;
    }
 
+   public InformationObject get(Identifier ident, int level, int maxLevel) {
+      LOG.info(null);
+      DHT ring = levels.get(level);
+      LOG.info(null);
+      if (ring != null) {
+         InetSocketAddress address = ring.getResponsibleNode(ident);
+         return getRemote(address.getAddress().getHostAddress(), ident, level, maxLevel);
+      }
+      return null;
+   }
+
+   private InformationObject getRemote(String address, Identifier ident, int level, int maxLevel) {
+      try {
+         Remote remoteObj = Naming.lookup("//" + address + "/MDHTServer");
+         LOG.debug(null);
+         RemoteRS stub = (RemoteRS) remoteObj;
+         LOG.debug(null);
+         return stub.getRemote(ident, level, maxLevel);
+
+      } catch (MalformedURLException e) {
+         LOG.error(e.getMessage());
+      } catch (RemoteException e) {
+         LOG.error(e.getMessage());
+      } catch (NotBoundException e) {
+         LOG.error(e.getMessage());
+      }
+
+      return null;
+   }
+
    /*
     * (non-Javadoc)
     * @see netinf.node.resolution.ResolutionService#getAllVersions(netinf.common.datamodel.Identifier)
     */
    @Override
    public List<Identifier> getAllVersions(Identifier identifier) {
+      LOG.info("(MDHT ) Getting all Versions with Identifier " + identifier);
+
       // TODO Auto-generated method stub
       return null;
    }
@@ -215,9 +258,10 @@ public class MDHTResolutionService extends AbstractResolutionService {
     */
    @Override
    public void put(InformationObject io) {
-      LOG.info("Putting IO: " + io.getIdentifier().toString() + " on all levels");
+      LOG.info("(MDHT ) Putting IO with Identifier: " + io.getIdentifier() + " on all levels");
 
-      this.put(io, 1, numberOfLevels);
+      InformationObject ioN = translator.toImpl(io);
+      this.put(ioN, 1, numberOfLevels);
    }
 
    /**
@@ -227,10 +271,16 @@ public class MDHTResolutionService extends AbstractResolutionService {
     * @param toLevel
     */
    private void putRemote(String address, InformationObject io, int fromLevel, int toLevel) {
+      LOG.debug("AUFRUF");
       try {
+         // System.setSecurityManager(new RMISecurityManager());
+
          Remote remoteObj = Naming.lookup("//" + address + "/MDHTServer");
+         LOG.debug(null);
          RemoteRS stub = (RemoteRS) remoteObj;
-         stub.putRemote(io, fromLevel, toLevel);
+         LOG.debug(null);
+         stub.putRemote(io.serializeToBytes(), fromLevel, toLevel);
+         LOG.debug(null);
 
       } catch (MalformedURLException e) {
          LOG.error(e.getMessage());
@@ -245,16 +295,8 @@ public class MDHTResolutionService extends AbstractResolutionService {
       // ring of this level
       DHT ring = levels.get(fromLevel);
       InetSocketAddress address = ring.getResponsibleNode(io.getIdentifier());
-      LOG.info("Responsible node-addres on level " + fromLevel + " is " + address);
+      LOG.info("Responsible node-address on level " + fromLevel + " is " + address);
       putRemote(address.getAddress().getHostAddress(), io, fromLevel, toLevel);
-
-      // for (int i = fromLevel; i <= toLevel; i++) {
-      // DHT ring = levels.get(i);
-      // InetSocketAddress address = ring.getResponsibleNode(io.getIdentifier());
-      // LOG.info("Responsible node-addres on level " + i + " is " + address);
-      // putRemote(address.getAddress().getHostAddress(), io, i);
-      // this.storeIO(io);
-      // }
    }
 
    /**
@@ -302,6 +344,11 @@ public class MDHTResolutionService extends AbstractResolutionService {
       // } catch (Exception e) {
       // LOG.error("File could not be stored: " + e.getMessage());
       // }
+   }
+
+   InformationObject getFromStorage(Identifier ident) {
+      LOG.info("getFromStorage" + ident);
+      return storage.get(ident.toString());
    }
 
    /**
