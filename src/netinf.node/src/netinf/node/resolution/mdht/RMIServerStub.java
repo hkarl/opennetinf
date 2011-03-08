@@ -26,8 +26,9 @@ public class RMIServerStub extends UnicastRemoteObject implements RemoteRS {
    }
 
    @Override
-   public InformationObject getRemote(Identifier identifier, int level, int maxLevel) throws RemoteException {
+   public InformationObject getRemote(byte[] ident, int level, int maxLevel) throws RemoteException {
       LOG.debug(null);
+      Identifier identifier = datamodelFactory.createIdentifierFromBytes(ident);
       InformationObject result = mdht.getFromStorage(identifier);
       if (result != null) {
          return result;
