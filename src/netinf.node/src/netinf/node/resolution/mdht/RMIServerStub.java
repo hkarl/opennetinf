@@ -6,6 +6,7 @@ import java.rmi.server.UnicastRemoteObject;
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
+import netinf.common.log.demo.DemoLevel;
 
 import org.apache.log4j.Logger;
 
@@ -27,10 +28,11 @@ public class RMIServerStub extends UnicastRemoteObject implements RemoteRS {
 
    @Override
    public InformationObject getRemote(byte[] ident, int level, int maxLevel) throws RemoteException {
-      LOG.debug(null);
       Identifier identifier = datamodelFactory.createIdentifierFromBytes(ident);
+      LOG.log(DemoLevel.DEMO, "(MDHT-RMI ) Getting IO: " + identifier + " on level " + level);
       InformationObject result = mdht.getFromStorage(identifier);
       if (result != null) {
+         LOG.log(DemoLevel.DEMO, "(MDHT-RMI ) Returning IO: " + identifier + " on level " + level);
          return result;
       } else {
          if (level < maxLevel) {
@@ -42,12 +44,13 @@ public class RMIServerStub extends UnicastRemoteObject implements RemoteRS {
 
    @Override
    public void putRemote(byte[] ion, int fromLevel, int toLevel) throws RemoteException {
-      LOG.debug(null);
       InformationObject io = datamodelFactory.createInformationObjectFromBytes(ion);
-      LOG.info("Storing IO: " + io.getIdentifier());
+      LOG.log(DemoLevel.DEMO, "(MDHT-RMI ) Storing IO: " + io.getIdentifier() + " on level " + fromLevel);
       mdht.storeIO(io);
       if (fromLevel < toLevel) {
          mdht.put(io, fromLevel + 1, toLevel);
+      } else {
+         LOG.log(DemoLevel.DEMO, "(MDHT-RMI ) Highest level reached");
       }
    }
 }

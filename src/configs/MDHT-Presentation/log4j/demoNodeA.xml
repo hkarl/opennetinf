@@ -5,35 +5,42 @@
 
   <appender name="A1" class="org.apache.log4j.ConsoleAppender"> 
     <param name="Target" value="System.out"/> 
-	<param name="Threshold" value="trace"/>
+	<param name="Threshold" value="debug"/>
     <layout class="org.apache.log4j.PatternLayout"> 
-      <param name="ConversionPattern" value="%6r %-5p [%t] %l - %m%n"/> 
+      <param name="ConversionPattern" value="%m%n"/> 
     </layout>
+    <filter class="netinf.common.log.demo.DemoFilter">
+		<param name="showBadThings" value="true"/>
+	</filter>
   </appender>
 
   <appender name="A2" class="org.apache.log4j.FileAppender">
     <param name="Append" value="true"/>
-    <param name="File" value="../logs/netinfnode.log"/>
+    <param name="File" value="../logs/mdht/NodeA.log"/>
     <layout class="org.apache.log4j.PatternLayout"> 
       <param name="ConversionPattern" value="%6r %-5p [%t] %c#%M - %m%n"/> 
     </layout>
   </appender>
 
   <appender name="SOCK" class="org.apache.log4j.net.SocketAppender">
-    <param name="RemoteHost" value="localhost"/>
+    <param name="RemoteHost" value="10.10.10.1"/>
     <param name="Port" value="4560"/>
     <param name="LocationInfo" value="true"/>
-    <param name="Application" value="node"/>
+    <param name="Application" value="Node-A"/>
     <layout class="org.apache.log4j.PatternLayout"> 
-      <param name="ConversionPattern" value="%6r %-5p [%t] %c#%M - %m%n"/> 
+      <param name="ConversionPattern" value="%m%n"/> 
     </layout>
+    <filter class="netinf.common.log.demo.DemoFilter">
+		<param name="showBadThings" value="false"/>
+	</filter>
   </appender>
   
   <root> 
-    <priority value ="DEMO" />
+    <priority value ="trace" />
     <appender-ref ref="A1" />
     <appender-ref ref="A2" />
     <appender-ref ref="SOCK" />
   </root>
   
 </log4j:configuration>
+

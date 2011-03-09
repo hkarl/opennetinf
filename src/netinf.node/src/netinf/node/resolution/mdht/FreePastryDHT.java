@@ -54,7 +54,7 @@ public class FreePastryDHT implements DHT, Application {
     */
    public FreePastryDHT(final int instanceID, InetAddress bootstrapAddr, int port) {
       InetSocketAddress bootstrapAddress = new InetSocketAddress(bootstrapAddr, port);
-      this.bindport = port;
+      bindport = port;
       Environment env = new Environment();
       // disable the UPnP setting (in case you are testing this on a NATted LAN)
       env.getParameters().setString("nat_search_policy", "never");
@@ -71,10 +71,10 @@ public class FreePastryDHT implements DHT, Application {
          // TODO Auto-generated catch block
          e.printStackTrace();
       }
-      this.pastryNode = factory.newNode();
-      this.endpoint = pastryNode.buildEndpoint(this, "PastryInstance" + String.valueOf(instanceID));
-      this.endpoint.register();
-      this.joinRing(bootstrapAddress);
+      pastryNode = factory.newNode();
+      endpoint = pastryNode.buildEndpoint(this, "PastryInstance" + String.valueOf(instanceID));
+      endpoint.register();
+      joinRing(bootstrapAddress);
    }
 
    /**
@@ -87,7 +87,7 @@ public class FreePastryDHT implements DHT, Application {
     *           JVM
     */
    public FreePastryDHT(final int instanceID, int port) {
-      this.bindport = port;
+      bindport = port;
       Environment env = new Environment();
       // disable the UPnP setting (in case you are testing this on a NATted LAN)
       env.getParameters().setString("nat_search_policy", "never");
@@ -107,8 +107,8 @@ public class FreePastryDHT implements DHT, Application {
          // TODO Auto-generated catch block
          LOG.error("Could not read from socket, AppSocketPastryNodeFactory could not be initialized", e);
       }
-      this.pastryNode = factory.newNode();
-      this.endpoint = pastryNode.buildEndpoint(this, "PastryInstance" + String.valueOf(instanceID));
+      pastryNode = factory.newNode();
+      endpoint = pastryNode.buildEndpoint(this, "PastryInstance" + String.valueOf(instanceID));
       /*
        * endpoint.accept(new AppSocketReceiver() { /** When we accept a new socket.
        */
@@ -120,9 +120,9 @@ public class FreePastryDHT implements DHT, Application {
        * Auto-generated method stub } });
        */
 
-      this.endpoint.register();
+      endpoint.register();
 
-      this.joinRing(null);
+      joinRing(null);
    }
 
    /*
@@ -151,12 +151,10 @@ public class FreePastryDHT implements DHT, Application {
          nh2 = rs.closestNode();
          if (nh2 instanceof SocketNodeHandle) {
             skt = ((SocketNodeHandle) pastryNode.getLocalHandle()).getInetSocketAddress();
-
          }
       } else {
          if (nh instanceof SocketNodeHandle) {
             skt = ((SocketNodeHandle) pastryNode.getLocalHandle()).getInetSocketAddress();
-
          }
       }
 

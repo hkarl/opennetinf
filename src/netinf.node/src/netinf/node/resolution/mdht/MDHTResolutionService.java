@@ -59,6 +59,7 @@ import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.identity.ResolutionServiceIdentityObject;
 import netinf.common.datamodel.translation.DatamodelTranslator;
+import netinf.common.log.demo.DemoLevel;
 import netinf.node.resolution.AbstractResolutionService;
 
 import org.apache.log4j.Logger;
@@ -113,7 +114,6 @@ public class MDHTResolutionService extends AbstractResolutionService {
          @Named("joinNode") final String myJoinNode, @Named("joinAtLevel") final String myJoinAtLevel,
          @Named("basePort") final String myBasePort) {
       super();
-      LOG.info("Creating MDHT resolution service...");
 
       // fields
       this.numberOfLevels = Integer.parseInt(myNumberOfLevels);
@@ -121,16 +121,18 @@ public class MDHTResolutionService extends AbstractResolutionService {
       this.joinAtLevel = Integer.parseInt(myJoinAtLevel);
       this.basePort = Integer.parseInt(myBasePort);
 
+      LOG.log(DemoLevel.DEMO, "(MDHT ) Starting MDHT resolution service with " + numberOfLevels + " levels");
+
       // create necessary levels
       if (joinAtLevel == 0) { // create all levels
          for (int i = 1; i <= numberOfLevels; i++) {
-            LOG.info("Create DHT ring at level " + i);
+            LOG.log(DemoLevel.DEMO, "(MDHT ) Creating DHT ring at level " + i);
             levels.put(i, createDHT(42, basePort + i));
          }
       } else if (joinAtLevel > 0) { // only levels below the join-level
          int levelsToCreate = joinAtLevel - 1; // how many levels to create
          for (int i = 1; i <= levelsToCreate; i++) {
-            LOG.info("Create DHT ring at level " + i);
+            LOG.log(DemoLevel.DEMO, "(MDHT ) Creating DHT ring at level " + i);
             levels.put(i, createDHT(42, basePort + i));
          }
       }
@@ -138,7 +140,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
       // joining
       if (joinAtLevel > 0) {
          while (joinAtLevel <= numberOfLevels) {
-            LOG.info("Join node " + joinNode + " on level " + joinAtLevel);
+            LOG.log(DemoLevel.DEMO, "(MDHT ) Joining node " + joinNode + " on level " + joinAtLevel);
             InetAddress bootstrap = null;
             try {
                bootstrap = InetAddress.getByName(joinNode);
@@ -155,7 +157,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
 
    @Inject
    private void initRMIServer(DatamodelFactory factory) {
-      LOG.info("Initializing RMI Server...");
+      LOG.log(DemoLevel.DEMO, "(MDHT ) Initializing RMI Server");
 
       try {
          LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
@@ -258,9 +260,14 @@ public class MDHTResolutionService extends AbstractResolutionService {
     */
    @Override
    public void put(InformationObject io) {
-      LOG.info("(MDHT ) Putting IO with Identifier: " + io.getIdentifier() + " on all levels");
-
+      LOG.log(DemoLevel.DEMO, "(MDHT ) Putting IO with Identifier: " + io.getIdentifier() + " on all levels");
       InformationObject ioN = translator.toImpl(io);
+      // try {
+      // validateIOForPut(ioN);
+      // } catch (IllegalArgumentException ex) {
+      // throw new NetInfResolutionException("Trying to put unvalid information object", ex);
+      // }
+
       this.put(ioN, 1, numberOfLevels);
    }
 
@@ -271,17 +278,14 @@ public class MDHTResolutionService extends AbstractResolutionService {
     * @param toLevel
     */
    private void putRemote(String address, InformationObject io, int fromLevel, int toLevel) {
-      LOG.debug("AUFRUF");
       try {
          // System.setSecurityManager(new RMISecurityManager());
-
          Remote remoteObj = Naming.lookup("//" + address + "/MDHTServer");
          LOG.debug(null);
          RemoteRS stub = (RemoteRS) remoteObj;
          LOG.debug(null);
          stub.putRemote(io.serializeToBytes(), fromLevel, toLevel);
          LOG.debug(null);
-
       } catch (MalformedURLException e) {
          LOG.error(e.getMessage());
       } catch (RemoteException e) {
@@ -295,7 +299,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
       // ring of this level
       DHT ring = levels.get(fromLevel);
       InetSocketAddress address = ring.getResponsibleNode(io.getIdentifier());
-      LOG.info("Responsible node-address on level " + fromLevel + " is " + address);
+      LOG.log(DemoLevel.DEMO, "(MDHT ) Responsible node-address on level " + fromLevel + " is " + address);
       putRemote(address.getAddress().getHostAddress(), io, fromLevel, toLevel);
    }
 
