@@ -9,7 +9,6 @@ import java.net.InetSocketAddress;
 
 import netinf.common.datamodel.Identifier;
 import netinf.common.exceptions.NetInfUncheckedException;
-import netinf.node.resolution.pastry.PastryResolutionService;
 
 import org.apache.log4j.Logger;
 
@@ -35,7 +34,7 @@ import rice.pastry.standard.RandomNodeIdFactory;
  */
 public class FreePastryDHT implements DHT, Application {
 
-   private static final Logger LOG = Logger.getLogger(PastryResolutionService.class);
+   private static final Logger LOG = Logger.getLogger(FreePastryDHT.class);
    private PastryNode pastryNode;
    private int bindport;
    private Endpoint endpoint;
