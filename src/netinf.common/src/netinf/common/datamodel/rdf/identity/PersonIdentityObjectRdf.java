@@ -81,25 +81,25 @@ public class PersonIdentityObjectRdf extends IdentityObjectRdf implements Person
 
    @Override
    public void setMailAddress(String eMail) {
-      resetAttribute(DefinedAttributeIdentification.E_MAIL_ADDRESS.getURI(), eMail, DefinedAttributePurpose.USER_ATTRIBUTE
-            .getAttributePurpose());
+      resetAttribute(DefinedAttributeIdentification.E_MAIL_ADDRESS.getURI(), eMail,
+            DefinedAttributePurpose.USER_ATTRIBUTE.getAttributePurpose());
    }
 
    @Override
    public void setName(String name) {
-      resetAttribute(DefinedAttributeIdentification.PERSON_NAME.getURI(), name, DefinedAttributePurpose.USER_ATTRIBUTE
-            .getAttributePurpose());
+      resetAttribute(DefinedAttributeIdentification.PERSON_NAME.getURI(), name,
+            DefinedAttributePurpose.USER_ATTRIBUTE.getAttributePurpose());
    }
 
    @Override
    public String describe() {
       StringBuffer buf = new StringBuffer("a Person Identity Object that ");
-      if(getIdentifier() != null)
-    	  buf.append(getIdentifier().describe());
-      else {
-    	  // TODO: What to do then? (eddy)
+      if (getIdentifier() != null) {
+         buf.append(getIdentifier().describe());
+      } else {
+         // TODO: What to do then? (eddy)
       }
-      
+
       return buf.toString();
    }
 }

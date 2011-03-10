@@ -13,19 +13,19 @@ import netinf.common.datamodel.Identifier;
 public interface DHT {
 
    /**
-    * @param the
-    *           corresponding identifier
-    * @return the Id of the responsible node
+    * @param id
+    *           identifier of the IO that has to be putted
+    * @return the address of the responsible node
     */
-   public InetSocketAddress getResponsibleNode(Identifier id);
+   InetSocketAddress getResponsibleNode(Identifier id);
 
    /**
     * 
     */
-   public void joinRing(InetSocketAddress bootstrapAddress);
+   void joinRing(InetSocketAddress bootstrapAddress);
 
    /**
     * 
     */
-   public void leaveRing();
+   void leaveRing();
 }

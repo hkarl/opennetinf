@@ -261,8 +261,8 @@ public class InformationObjectRdf extends NetInfObjectWrapperRdf implements Info
             try {
                String readerIdentifierString = reader.getValue(String.class);
                if (readerIdentifierString.indexOf(IntegrityImpl.PATH_SEPERATOR) != -1) {
-                  readerIdentifierString = readerIdentifierString.substring(0, readerIdentifierString
-                        .indexOf(IntegrityImpl.PATH_SEPERATOR));
+                  readerIdentifierString = readerIdentifierString.substring(0,
+                        readerIdentifierString.indexOf(IntegrityImpl.PATH_SEPERATOR));
                }
 
                Identifier identifier = getDatamodelFactory().createIdentifierFromString(readerIdentifierString);
@@ -487,12 +487,12 @@ public class InformationObjectRdf extends NetInfObjectWrapperRdf implements Info
    @Override
    public String describe() {
       StringBuffer buf = new StringBuffer("a (general) Information Object that ");
-      if(getIdentifier() != null)
-    	  buf.append(getIdentifier().describe());
-      else {
-    	  // TODO: What to do then? (eddy)
+      if (getIdentifier() != null) {
+         buf.append(getIdentifier().describe());
+      } else {
+         // TODO: What to do then? (eddy)
       }
-      
+
       return buf.toString();
    }
 

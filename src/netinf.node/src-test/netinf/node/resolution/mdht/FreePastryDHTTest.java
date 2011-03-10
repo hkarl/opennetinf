@@ -20,13 +20,13 @@ import com.google.inject.Injector;
  * @author razvan
  */
 public class FreePastryDHTTest {
-   private FreePastryDHT _myDHT;
+   private FreePastryDHT myDHT;
    private InformationObjectHelper ioHelper;
    private InformationObject io;
 
    @Before
    public void setUp() throws Exception {
-      this._myDHT = new FreePastryDHT(1, 2000);
+      this.myDHT = new FreePastryDHT(1, 2000);
       final Injector injector = Guice.createInjector(new MDHTResolutionTestModule());
       this.ioHelper = injector.getInstance(InformationObjectHelper.class);
       this.io = ioHelper.getUniqueIOWithDummyAttributeAndSubAttributes();
@@ -34,17 +34,18 @@ public class FreePastryDHTTest {
 
    @Test
    public void testStartUp() {
-      String result = _myDHT.getResponsibleNode(this.io.getIdentifier()).toString();
+      String result = myDHT.getResponsibleNode(this.io.getIdentifier()).toString();
       String hostname = "";
       String myIp = "";
-      byte[] ipAddr = new byte[] { 0, 0, 0, 0 };
+      byte[] ipAddr;
       boolean isLocalIp = false;
+
       try {
          InetAddress addr = InetAddress.getLocalHost();
 
          // Get IP Address
          ipAddr = addr.getAddress();
-         InetAddress addrs[] = InetAddress.getAllByName(addr.getHostName());
+         InetAddress[] addrs = InetAddress.getAllByName(addr.getHostName());
          // Get hostname
          hostname = addr.getHostName();
          String cmp = "";

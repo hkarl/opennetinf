@@ -227,8 +227,8 @@ public class InformationObjectImpl extends NetInfObjectWrapperImpl implements In
             try {
                String readerIdentifierString = reader.getValue(String.class);
                if (readerIdentifierString.indexOf(IntegrityImpl.PATH_SEPERATOR) != -1) {
-                  readerIdentifierString = readerIdentifierString.substring(0, readerIdentifierString
-                        .indexOf(IntegrityImpl.PATH_SEPERATOR));
+                  readerIdentifierString = readerIdentifierString.substring(0,
+                        readerIdentifierString.indexOf(IntegrityImpl.PATH_SEPERATOR));
                }
 
                Identifier identifier = this.datamodelFactory.createIdentifierFromString(readerIdentifierString);
@@ -331,10 +331,10 @@ public class InformationObjectImpl extends NetInfObjectWrapperImpl implements In
    @Override
    public String describe() {
       StringBuffer buf = new StringBuffer("a (general) Information Object that ");
-      if(getIdentifier() != null)
-    	  buf.append(getIdentifier().describe());
-      else {
-    	  // TODO: What to do then? (eddy)
+      if (getIdentifier() != null) {
+         buf.append(getIdentifier().describe());
+      } else {
+         // TODO: What to do then? (eddy)
       }
       return buf.toString();
    }

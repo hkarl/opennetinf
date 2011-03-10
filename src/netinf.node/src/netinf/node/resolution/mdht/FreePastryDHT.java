@@ -150,7 +150,7 @@ public class FreePastryDHT implements DHT, Application {
       if (rs != null) {
          nh2 = rs.closestNode();
          if (nh2 instanceof SocketNodeHandle) {
-            skt = ((SocketNodeHandle) pastryNode.getLocalHandle()).getInetSocketAddress();
+            skt = ((SocketNodeHandle) nh2).getInetSocketAddress();
          }
       } else {
          if (nh instanceof SocketNodeHandle) {
