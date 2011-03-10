@@ -42,7 +42,7 @@ public class MDHTNodeCModule extends AbstractNodeModule {
       install(new DatamodelTranslationModule());
 
       // The ResolutionServices
-      install(new MDHTModule(getProperties()));
+      install(new MDHTModule());
 
       // The SearchServices
       install(new SearchServiceRDFModule());
