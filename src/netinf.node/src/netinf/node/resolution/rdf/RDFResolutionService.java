@@ -283,8 +283,8 @@ public class RDFResolutionService extends AbstractResolutionService implements R
 
          if (ioFound) {
             // First set Identifier
-            Resource createdIoResource = (Resource) resultModel.listObjectsOfProperty(
-                  DatamodelFactoryRdf.getProperty(DefinedRdfNames.POINTER_TO_IO)).toList().get(0);
+            Resource createdIoResource = (Resource) resultModel
+                  .listObjectsOfProperty(DatamodelFactoryRdf.getProperty(DefinedRdfNames.POINTER_TO_IO)).toList().get(0);
             ResourceUtils.renameResource(createdIoResource, resultIoResource.getURI());
 
             // Now set all the attributes, beginning be the resultModel

@@ -115,7 +115,9 @@ public class TCChangeTransferRequest extends NetInfMessage {
    /**
     * The overridden equals method. It generally holds: For any non-null reference value x, x.equals(null) should return false.
     * That check is implemented in the NetInfMessage class
-    * @param obj The object comparing the message to. If it's not of the same type, the superclass method will take care of it
+    * 
+    * @param obj
+    *           The object comparing the message to. If it's not of the same type, the superclass method will take care of it
     * @see NetInfMessage
     */
    @Override
@@ -123,22 +125,19 @@ public class TCChangeTransferRequest extends NetInfMessage {
       if (!super.equals(obj)) {
          return false;
       }
-      /*Both pointless, as the parent class function will catch this case
-       * if (getClass() != obj.getClass()) {
-         return false;
-         if (this == obj) {
-         return true;
-      }
-      }*/
-      //We are at this point certain
+      /*
+       * Both pointless, as the parent class function will catch this case if (getClass() != obj.getClass()) { return false; if
+       * (this == obj) { return true; } }
+       */
+      // We are at this point certain
       TCChangeTransferRequest other = (TCChangeTransferRequest) obj;
       if (jobId == null) {
-	  if(other.jobId != null){
-	      return false;
-	  }
-      } else if (!jobId.equals(other.jobId)){ 
-          return false;
-      } 
+         if (other.jobId != null) {
+            return false;
+         }
+      } else if (!jobId.equals(other.jobId)) {
+         return false;
+      }
       if (newDestination == null) {
          if (other.newDestination != null) {
             return false;

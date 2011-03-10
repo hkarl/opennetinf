@@ -39,7 +39,6 @@ package netinf.common.messages;
 
 import netinf.common.communication.SerializeFormat;
 import netinf.common.datamodel.InformationObject;
-import netinf.common.exceptions.NetInfCheckedException;
 import netinf.common.exceptions.NetInfUncheckedException;
 
 /**
@@ -106,105 +105,91 @@ public abstract class NetInfMessage {
    public void setPrivateKey(String privateKey) {
       this.privateKey = privateKey;
    }
+
    /**
-    * For a regular NetInf message the hash code consists of the private key, user name and error message.
-    * The absence of any of these elements will result in a different hash code. The formula is:
-    * hashCode(n) = hashCode(n-1) * prime_number + field value
-    * More info here: http://www.angelikalanger.com/Articles/EffectiveJava/03.HashCode/03.HashCode.html
-    * Method will throw an unchecked exception, because there is nothing that the program can do to recover from that
-    * exception (privateKey or userName are null).
+    * For a regular NetInf message the hash code consists of the private key, user name and error message. The absence of any of
+    * these elements will result in a different hash code. The formula is: hashCode(n) = hashCode(n-1) * prime_number + field
+    * value More info here: http://www.angelikalanger.com/Articles/EffectiveJava/03.HashCode/03.HashCode.html Method will throw an
+    * unchecked exception, because there is nothing that the program can do to recover from that exception (privateKey or userName
+    * are null).
+    * 
     * @return
     */
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 13;
-      if(this.privateKey == null || this.userName == null)
-    	  throw new NetInfUncheckedException("Message is missing required parameters");
-      
+      if (this.privateKey == null || this.userName == null) {
+         throw new NetInfUncheckedException("Message is missing required parameters");
+      }
+
       result = prime + ((this.errorMessage == null) ? 0 : this.errorMessage.hashCode());
       result *= prime + ((this.privateKey == null) ? 0 : this.privateKey.hashCode());
       result *= prime + ((this.userName == null) ? 0 : this.userName.hashCode());
-      /*WAS:
-       * result = prime * result + ((this.errorMessage == null) ? 0 : this.errorMessage.hashCode());
-       * result = prime * result + ((this.privateKey == null) ? 0 : this.privateKey.hashCode());
-       * result = prime * result + ((this.userName == null) ? 0 : this.userName.hashCode());
+      /*
+       * WAS: result = prime * result + ((this.errorMessage == null) ? 0 : this.errorMessage.hashCode()); result = prime * result
+       * + ((this.privateKey == null) ? 0 : this.privateKey.hashCode()); result = prime * result + ((this.userName == null) ? 0 :
+       * this.userName.hashCode());
        */
       return result;
    }
 
-   /*** Defined equality for NetInfMessages as being messages which have the same username, same private key and same error  
-    * WARNING: You MUST override this method to get usable result for subclasses
-    * **/
+   /***
+    * Defined equality for NetInfMessages as being messages which have the same username, same private key and same error WARNING:
+    * You MUST override this method to get usable result for subclasses
+    **/
    @Override
    public boolean equals(Object obj) {
-       
-       if (obj == null) {
-	         return false;
-	      }
-       if(this == obj)
-	   return true;
-      
-      
+
+      if (obj == null) {
+         return false;
+      }
+      if (this == obj) {
+         return true;
+      }
+
       if (getClass() != obj.getClass()) {
          return false;
       }
       boolean bSameUser = false;
       boolean bSameKey = false;
       boolean bSameError = false;
-      if(obj != null && /*(obj.getClass().equals(NetInfMessage.class))*/obj instanceof NetInfMessage)
-      {
-    	  NetInfMessage other = (NetInfMessage) obj;
-    	  if(this.userName != null && other.userName != null)
-    	  {
-    		  if(this.userName.equalsIgnoreCase(other.userName))
-    			  bSameUser = true;
-    	  }
-    	  if(this.userName == null && other.userName == null){
-    	      bSameUser = true;
-    	  }
-    	  if(this.privateKey != null && other.privateKey != null)
-    	  {
-    		  if(this.privateKey.equalsIgnoreCase(other.privateKey))
-    			  bSameKey = true;
-    	  }
-    	  if(this.privateKey == null && other.privateKey ==null ){
-    	      bSameKey = true;
-    	  }
-    	  if(this.errorMessage != null && other.errorMessage != null)
-    	  {
-    		  if(this.errorMessage.equalsIgnoreCase(other.errorMessage))
-    			  bSameError = true;
-    	  }
-    	  if(this.errorMessage == null && other.errorMessage == null ){
-  	      bSameError = true;
-  	  }
-    		   
+      if (obj != null && /* (obj.getClass().equals(NetInfMessage.class)) */obj instanceof NetInfMessage) {
+         NetInfMessage other = (NetInfMessage) obj;
+         if (this.userName != null && other.userName != null) {
+            if (this.userName.equalsIgnoreCase(other.userName)) {
+               bSameUser = true;
+            }
+         }
+         if (this.userName == null && other.userName == null) {
+            bSameUser = true;
+         }
+         if (this.privateKey != null && other.privateKey != null) {
+            if (this.privateKey.equalsIgnoreCase(other.privateKey)) {
+               bSameKey = true;
+            }
+         }
+         if (this.privateKey == null && other.privateKey == null) {
+            bSameKey = true;
+         }
+         if (this.errorMessage != null && other.errorMessage != null) {
+            if (this.errorMessage.equalsIgnoreCase(other.errorMessage)) {
+               bSameError = true;
+            }
+         }
+         if (this.errorMessage == null && other.errorMessage == null) {
+            bSameError = true;
+         }
+
       }
       return (bSameUser && bSameKey && bSameError);
-      
-      /*if (this.errorMessage == null) {
-         if (other.errorMessage != null) {
-            return false;
-         }
-      } else if (!this.errorMessage.equals(other.errorMessage)) {
-         return false;
-      }
-   
-      if (this.privateKey == null) {
-         if (other.privateKey != null) {
-            return false;
-         }
-      } else if (!this.privateKey.equals(other.privateKey)) {
-         return false;
-      }
-      if (this.userName == null) {
-         if (other.userName != null) {
-            return false;
-         }
-      } else if (!this.userName.equals(other.userName)) {
-         return false;
-      }*/
+
+      /*
+       * if (this.errorMessage == null) { if (other.errorMessage != null) { return false; } } else if
+       * (!this.errorMessage.equals(other.errorMessage)) { return false; } if (this.privateKey == null) { if (other.privateKey !=
+       * null) { return false; } } else if (!this.privateKey.equals(other.privateKey)) { return false; } if (this.userName ==
+       * null) { if (other.userName != null) { return false; } } else if (!this.userName.equals(other.userName)) { return false; }
+       */
    }
 
    /*
