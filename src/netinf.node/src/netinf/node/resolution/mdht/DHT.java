@@ -5,7 +5,9 @@ package netinf.node.resolution.mdht;
 
 import java.net.InetSocketAddress;
 
-import netinf.common.datamodel.Identifier;
+import rice.p2p.past.PastContentHandle;
+
+import netinf.common.datamodel.InformationObject;
 
 /**
  * @author PG NetInf 3
@@ -13,19 +15,38 @@ import netinf.common.datamodel.Identifier;
 public interface DHT {
 
    /**
-    * @param id
+    * @param io
     *           identifier of the IO that has to be putted
     * @return the address of the responsible node
     */
-   InetSocketAddress getResponsibleNode(Identifier id);
+   InetSocketAddress getResponsibleNode(InformationObject io);
 
    /**
     * 
     */
-   void joinRing(InetSocketAddress bootstrapAddress);
+   void join(InetSocketAddress bootstrapAddress);
+   
+   /**
+    * 
+    * @param o
+    * @return
+    */
+   public PastContentHandle put(InformationObject o);
 
    /**
     * 
+    * @param contentKey
+    * @return
     */
-   void leaveRing();
+   public String get(PastContentHandle contentKey);
+   
+   /**
+    * Return IO after searching for it in PAST. Only valid after get() call and only until next get() call
+    * @return
+    */
+   public InformationObject getReturnedIOFromPast();
+   /**
+    * 
+    */
+   void leave();
 }
