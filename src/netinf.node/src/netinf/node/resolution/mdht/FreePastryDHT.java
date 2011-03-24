@@ -70,7 +70,7 @@ public class FreePastryDHT implements DHT, Application {
     *           - the port to listen on locally (should be > 1024, use lower values at your own risk)
     */
    public FreePastryDHT(final int instanceID, InetAddress bootstrapAddr, int port, MDHTResolutionService parent) {
-      InetSocketAddress bootstrapAddress = new InetSocketAddress(bootstrapAddr, port);
+      InetSocketAddress bootstrapAddress = bootstrapAddr == null ? null : new InetSocketAddress(bootstrapAddr, port);
       bindport = port;
       env = new Environment();      
 
@@ -85,8 +85,18 @@ public class FreePastryDHT implements DHT, Application {
       NodeIdFactory nidFactory = new RandomNodeIdFactory(env);
       // construct the PastryNodeFactory
 
+      InetAddress localIP = null;
+      if(parent.listenOnThisIP != null && parent.listenOnThisIP.isEmpty() == false)
+      {
+	try {
+	 localIP = InetAddress.getByName(parent.listenOnThisIP);
+        } catch (UnknownHostException e) {
+	   // TODO Auto-generated catch block
+	    e.printStackTrace();
+        } 
+      }
       try {
-         factory = new AppSocketPastryNodeFactory(nidFactory, bindport, env);
+         factory = new AppSocketPastryNodeFactory(nidFactory, localIP, bindport, env);
       } catch (IOException e) {
          LOG.error("AppSocketPastryNodeFactory could not be started. " +
                    "This means that the node cannot be created. Please check the port settings and try again.");

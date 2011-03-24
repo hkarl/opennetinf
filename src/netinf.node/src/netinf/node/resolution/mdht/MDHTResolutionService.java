@@ -60,6 +60,8 @@ public class MDHTResolutionService extends AbstractResolutionService {
    private int basePort;
    private Hashtable<Identifier, PastContentHandle> storedContentHandles;
    
+   public String listenOnThisIP;
+   
    // event handlers
    private EventDelegate passToNextLevelHandler;
    
@@ -82,15 +84,16 @@ public class MDHTResolutionService extends AbstractResolutionService {
    @Inject
    public MDHTResolutionService(@Named("numberOfLevels") final String myNumberOfLevels,
          @Named("joinNode") final String myJoinNode, @Named("joinAtLevel") final String myJoinAtLevel,
-         @Named("basePort") final String myBasePort) {
+         @Named("basePort") final String myBasePort, @Named("localIPforNode") final String listenOnThisIP) {
       super();
 
       // setting fields
       this.numberOfLevels = Integer.parseInt(myNumberOfLevels);
-      this.joinNode = myJoinNode;
+      this.joinNode = myJoinNode == "first node" ? null : myJoinNode;
       this.joinAtLevel = Integer.parseInt(myJoinAtLevel);
       this.basePort = Integer.parseInt(myBasePort);
       this.storedContentHandles = new Hashtable<Identifier, PastContentHandle>();
+      this.listenOnThisIP = listenOnThisIP;
       
       LOG.log(DemoLevel.DEMO, "(MDHT ) Starting MDHT RS with " + numberOfLevels + " levels");
       
