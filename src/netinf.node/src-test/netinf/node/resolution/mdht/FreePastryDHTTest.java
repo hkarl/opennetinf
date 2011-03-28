@@ -4,14 +4,19 @@
 package netinf.node.resolution.mdht;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 import junit.framework.Assert;
 import netinf.common.datamodel.InformationObject;
 import netinf.node.resolution.InformationObjectHelper;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import rice.p2p.commonapi.Id;
+import rice.p2p.past.PastContentHandle;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -26,15 +31,17 @@ public class FreePastryDHTTest {
 
    @Before
    public void setUp() throws Exception {
-      this.myDHT = new FreePastryDHT(1, 2000);
+      //this.myDHT = new FreePastryDHT(1, null, 5007, new MDHTResolutionService(3, "10.10.10.1", 1, 2001));
       final Injector injector = Guice.createInjector(new MDHTResolutionTestModule());
       this.ioHelper = injector.getInstance(InformationObjectHelper.class);
       this.io = ioHelper.getUniqueIOWithDummyAttributeAndSubAttributes();
+      
+      
    }
 
-   @Test
+   
    public void testStartUp() {
-      String result = myDHT.getResponsibleNode(this.io.getIdentifier()).toString();
+      InetSocketAddress result = myDHT.getResponsibleNode(this.io);
       String hostname = "";
       String myIp = "";
       byte[] ipAddr;
@@ -49,7 +56,7 @@ public class FreePastryDHTTest {
          // Get hostname
          hostname = addr.getHostName();
          String cmp = "";
-         for (InetAddress adr : addrs) {
+   /*      for (InetAddress adr : addrs) {
             if (!adr.isLoopbackAddress() && adr.isSiteLocalAddress()) {
                myIp = adr.getHostAddress();
                cmp = hostname + "/" + myIp + ":0";
@@ -58,7 +65,7 @@ public class FreePastryDHTTest {
                   break;
                }
             }
-         }
+         }*/
 
       } catch (UnknownHostException e) {
          // TODO Auto-generated catch block
@@ -66,7 +73,20 @@ public class FreePastryDHTTest {
       }
       // Assert.assertThat(result,equalTo("ZION/192.168.56.1:0"));
       Assert.assertTrue(isLocalIp);
-
+   }
+   
+   @Test
+   public void putTest()
+   {  
+      PastContentHandle pch = myDHT.put(this.io);
+      myDHT.get(pch);
+      InformationObject retIO = FreePastryDHT.returned;
+      Assert.assertEquals(this.io.toString(), retIO.toString());
    }
 
+   @After
+   public void CleanUp()
+   {
+     this.myDHT.leave();   
+   }
 }
