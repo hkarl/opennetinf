@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/netinf.eventservice/src/netinf/eventservice/siena/StarterEventServiceSiena.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="netinf.eventservice.siena.StarterEventServiceSiena"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="../configs/scenario2/eventServiceSiena.properties"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="netinf.eventservice"/>
+</launchConfiguration>
