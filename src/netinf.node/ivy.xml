@@ -7,6 +7,10 @@
         status="integration">
 	</info>
 	<dependency
+		org="org.apache.httpcomponents"
+		name="httpclient"
+		rev="4.1" />
+	<dependency
         org="log4j"
         name="log4j"
         rev="1.2.16" />

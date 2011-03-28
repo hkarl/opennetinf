@@ -112,14 +112,14 @@ public class UtilsTest {
    @Test
    public void testStringToPublicAndPrivateKey() {
 
-      String APPLICATION_PROPERTIES = "../configs/createIOs.properties";
+      String applicationProperties = "../configs/createIOs.properties";
 
       Injector injector;
       IdentityManager identityManager;
 
-      SecuredApplicationModule createIOsModule = new SecuredApplicationModule(APPLICATION_PROPERTIES);
+      SecuredApplicationModule createIOsModule = new SecuredApplicationModule(applicationProperties);
       injector = Guice.createInjector(createIOsModule);
-      final Properties properties = Utils.loadProperties(APPLICATION_PROPERTIES);
+      final Properties properties = Utils.loadProperties(applicationProperties);
 
       identityManager = injector.getInstance(IdentityManager.class);
       identityManager.setFilePath("../configs/Identities/publicKeyFile.pkf");
