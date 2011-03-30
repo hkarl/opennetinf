@@ -1,12 +1,16 @@
 package netinf.node.cache.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ByteArrayEntity;
@@ -55,6 +59,7 @@ public class EhCacheServerImpl implements CacheServer {
          ByteArrayEntity entity = new ByteArrayEntity(bo);
          httpPut.setEntity(entity);
          try {
+            // execute request
             HttpResponse response = client.execute(httpPut);
             int status = response.getStatusLine().getStatusCode();
             if (status == HttpStatus.SC_CREATED) {
@@ -71,6 +76,44 @@ public class EhCacheServerImpl implements CacheServer {
       }
 
       return false; // not connected
+   }
+
+   @Override
+   public byte[] getBO(String hashOfBO) {
+      if (isConnected()) {
+         HttpClient client = new DefaultHttpClient();
+         HttpGet httpGet = new HttpGet(cacheAddress + "/" + hashOfBO);
+         try {
+            // execute request
+            HttpResponse response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+               InputStream is = entity.getContent(); // message body
+               ByteArrayOutputStream byteOS = new ByteArrayOutputStream();
+               byte[] bo = null;
+               try {
+                  // getting BO;
+                  int line = 0;
+                  while ((line = is.read()) != -1) {
+                     byteOS.write((char) line);
+                  }
+                  bo = byteOS.toByteArray();
+               } finally {
+                  is.close();
+                  byteOS.close();
+               }
+               return bo;
+            }
+         } catch (ClientProtocolException e) {
+            LOG.error("ProtocolException in EhCache");
+            return null;
+         } catch (IOException e) {
+            LOG.error("IOException in EhCache");
+            return null;
+         }
+      }
+
+      return null; // not connected
    }
 
    @Override

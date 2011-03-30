@@ -18,6 +18,15 @@ public interface NetInfCache {
    void storeBObyIO(DataObject dataObject);
 
    /**
+    * Gets the BO related to the IO
+    * 
+    * @param dataObject
+    *           the given DataObject
+    * @return the corresponding BO
+    */
+   byte[] getBObyIO(DataObject dataObject);
+
+   /**
     * Checks if the cache contains a specific BO
     * 
     * @param hashfOfBO
