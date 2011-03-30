@@ -19,6 +19,15 @@ public interface CacheServer {
    boolean cacheBO(byte[] bo, String hashOfBO);
 
    /**
+    * Gets the BO from the cache
+    * 
+    * @param hashOfBO
+    *           the hash-value of the given BO
+    * @return the BO, in case of failure null
+    */
+   byte[] getBO(String hashOfBO);
+
+   /**
     * Checks if the cache contains a specific BO
     * 
     * @param hashOfBO

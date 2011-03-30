@@ -13,11 +13,16 @@ import org.junit.Test;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+/**
+ * Tests for MDHT
+ * 
+ * @author PG NetInf 3, University of Paderborn
+ */
 public class MDHTResolutionServiceTest {
 
-   protected InformationObjectHelper ioHelper;
-   protected ResolutionService resolutionService;
-   protected Injector injector;
+   private InformationObjectHelper ioHelper;
+   private ResolutionService resolutionService;
+   private Injector injector;
 
    @Before
    public void setUp() throws Exception {

@@ -3,8 +3,6 @@
  */
 package netinf.node.cache.impl;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.List;
 
 import netinf.common.datamodel.DataObject;
@@ -13,6 +11,8 @@ import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
 import netinf.node.cache.NetInfCache;
 
 import org.apache.log4j.Logger;
+
+import com.google.inject.Inject;
 
 /**
  * Implementations of the NetInfCache interface
@@ -28,11 +28,12 @@ public class NetInfCacheImpl implements NetInfCache {
     * Constructor
     */
    NetInfCacheImpl() {
-      try {
-         cacheServer = new EhCacheServerImpl(InetAddress.getLocalHost());
-      } catch (UnknownHostException e) {
-         LOG.error("Could not create EhCacheServer");
-      }
+
+   }
+
+   @Inject
+   public void setDatamodelFactory(CacheServer cs) {
+      cacheServer = cs;
    }
 
    @Override
@@ -55,6 +56,25 @@ public class NetInfCacheImpl implements NetInfCache {
    }
 
    @Override
+   public byte[] getBObyIO(DataObject dataObject) {
+      String hashOfBO = getHash(dataObject);
+
+      if (hashOfBO != null) {
+         if (contains(hashOfBO)) {
+            // get from adapter and return
+            byte[] bo = cacheServer.getBO(hashOfBO);
+            return bo;
+         } else {
+            LOG.info("DO not in cache");
+         }
+      } else {
+         LOG.info("Hash is null, will not be in cache");
+      }
+
+      return null;
+   }
+
+   @Override
    public boolean contains(String hashOfBO) {
       if (isConnected()) {
          return cacheServer.containsBO(hashOfBO);
@@ -69,18 +89,6 @@ public class NetInfCacheImpl implements NetInfCache {
       }
       return false;
    }
-
-   // private byte[] loadBO(String path) throws IOException {
-   // File file = new File(path);
-   // try {
-   // InputStream stream = new FileInputStream(file);
-   //
-   // } catch (FileNotFoundException e) {
-   // // TODO Auto-generated catch block
-   // e.printStackTrace();
-   // }
-   // return null;
-   // }
 
    /**
     * Gets the hash-value of a DataObject
