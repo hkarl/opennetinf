@@ -127,6 +127,7 @@ public class EhCacheServerImpl implements CacheServer {
             if (statusCode == HttpStatus.SC_NOT_FOUND) {
                return false;
             }
+            LOG.info("Cache contains BO with hash: " + hashOfBO);
             return true;
          } catch (ClientProtocolException e) {
             LOG.error("ProtocolException in EhCache");
@@ -162,14 +163,16 @@ public class EhCacheServerImpl implements CacheServer {
          int statusCode = response.getStatusLine().getStatusCode();
          LOG.debug("(EhCache ) Status of cache: " + statusCode);
          if (statusCode == HttpStatus.SC_NOT_FOUND) {
+            LOG.info("Cache server running - tables do not exist");
             return false;
          }
+         LOG.info("Cache server running - tables exist");
          return true;
       } catch (ClientProtocolException e) {
          LOG.error("ProtocolException in EhCache");
          return false;
       } catch (IOException e) {
-         LOG.error("IOException in EhCache");
+         LOG.error("IOException - Cache server not running...");
          return false;
       }
    }
@@ -187,6 +190,7 @@ public class EhCacheServerImpl implements CacheServer {
          HttpResponse response = client.execute(httpPut);
          int statusCode = response.getStatusLine().getStatusCode();
          if (statusCode == HttpStatus.SC_CREATED) {
+            LOG.info("Cache server running - created cache tables");
             return true;
          }
          return false;
@@ -194,7 +198,7 @@ public class EhCacheServerImpl implements CacheServer {
          LOG.error("ProtocolException in EhCache");
          return false;
       } catch (IOException e) {
-         LOG.error("IOException in EhCache");
+         LOG.error("IOException - Cache server not running...");
          return false;
       }
    }
@@ -208,6 +212,14 @@ public class EhCacheServerImpl implements CacheServer {
     */
    private String buildCacheAddress(InetAddress host) {
       return "http://" + host.getHostAddress() + ":8080/ehcache/rest/netinf";
+   }
+
+   @Override
+   public String getURL(String hashOfBO) {
+      if (isConnected()) {
+         return cacheAddress + "/" + hashOfBO;
+      }
+      return null;
    }
 
 }
