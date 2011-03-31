@@ -1,15 +1,22 @@
-/**
- * 
- */
 package netinf.node.cache.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import netinf.common.datamodel.DataObject;
+import netinf.common.datamodel.DefinedAttributePurpose;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
+import netinf.common.log.demo.DemoLevel;
+import netinf.common.security.Hashing;
+import netinf.common.utils.Utils;
 import netinf.node.cache.NetInfCache;
+import netinf.node.transfer.http.TransferJobHttp;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
@@ -24,6 +31,9 @@ public class NetInfCacheImpl implements NetInfCache {
    private static final Logger LOG = Logger.getLogger(NetInfCacheImpl.class); // Logger
    private CacheServer cacheServer; // adapter for the used cache server
 
+   // decisions:
+   // key = hash of BO
+
    /**
     * Constructor
     */
@@ -32,26 +42,69 @@ public class NetInfCacheImpl implements NetInfCache {
    }
 
    @Inject
-   public void setDatamodelFactory(CacheServer cs) {
+   public void setCacheServer(CacheServer cs) {
       cacheServer = cs;
    }
 
    @Override
-   public void storeBObyIO(DataObject io) {
-      String hashOfBO = getHash(io);
+   public void cache(DataObject dataObject) {
+      String hashOfBO = getHash(dataObject);
 
       if (hashOfBO != null) {
          if (!contains(hashOfBO)) {
-            // TODO:
-            // 1. download file
-            // 2. check hash
-            // 3. put to caching
-            LOG.info("DO stored");
+            List<Attribute> locators = dataObject.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
+            for (Attribute attribute : locators) {
+               String url = attribute.getValue(String.class);
+
+               try {
+                  if (url.startsWith("http://")) {
+                     String destination = getTmpFolder() + File.separator + hashOfBO + ".tmp";
+                     TransferJobHttp job = new TransferJobHttp(hashOfBO, url, destination);
+                     job.startCacheJob();
+
+                     FileInputStream fis = new FileInputStream(destination);
+                     byte[] hashBytes = Hashing.hashSHA1(fis);
+                     IOUtils.closeQuietly(fis);
+
+                     if (hashOfBO.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
+                        boolean success = cacheServer.cacheBO(hashBytes, hashOfBO);
+                        if (success) {
+                           String urlPath = cacheServer.getURL(hashOfBO);
+                           addLocator(dataObject, urlPath);
+                           LOG.info("DO cached...");
+                        }
+                     } else {
+                        LOG.info("Hash of file: " + hashOfBO + " -- Other: " + Utils.hexStringFromBytes(hashBytes));
+                        LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is invalid. Trying next locator");
+                     }
+                  }
+               } catch (FileNotFoundException ex) {
+                  LOG.warn("FileNotFound:" + url);
+               } catch (IOException e) {
+                  LOG.warn("IOException:" + url);
+               }
+            } // end for
          } else {
             LOG.info("DO already in cache");
          }
       } else {
          LOG.info("Hash is null, will not be cached");
+      }
+   }
+
+   /**
+    * Get system tmp folder
+    * 
+    * @return path to netinf tmp folder
+    */
+   private String getTmpFolder() {
+      String pathToTmp = System.getProperty("java.io.tmpdir") + File.separator + "netinfcache";
+      File folder = new File(pathToTmp);
+      if (folder.exists() && folder.isDirectory()) {
+         return pathToTmp;
+      } else {
+         folder.mkdir();
+         return pathToTmp;
       }
    }
 
@@ -106,36 +159,18 @@ public class NetInfCacheImpl implements NetInfCache {
       return null;
    }
 
-   // public static byte[] getBytesFromFile(File file) throws IOException {
-   // InputStream is = new FileInputStream(file);
-   //
-   // // Get the size of the file
-   // long length = file.length();
-   //
-   // if (length > Integer.MAX_VALUE) {
-   // // File is too large
-   // }
-   //
-   // // Create the byte array to hold the data
-   // byte[] bytes = new byte[(int) length];
-   //
-   // // Read in the bytes
-   // int offset = 0;
-   // int numRead = 0;
-   // while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-   // offset += numRead;
-   // }
-   //
-   // // Ensure all the bytes have been read in
-   // if (offset < bytes.length) {
-   // throw new IOException("Could not completely read file " + file.getName());
-   // }
-   //
-   // // Close the input stream and return bytes
-   // is.close();
-   // return bytes;
-   // }
+   /**
+    * @param dataObject
+    * @param url
+    */
+   private void addLocator(DataObject dataObject, String url) {
+      Attribute attribute = dataObject.getDatamodelFactory().createAttribute();
+      attribute.setAttributePurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
+      attribute.setIdentification(DefinedAttributeIdentification.HTTP_URL.getURI());
+      attribute.setValue(url);
+      if (!dataObject.getAttributes().contains(attribute)) {
+         dataObject.addAttribute(attribute);
+      }
+   }
 
-   // decisions:
-   // key = hash of BO
 }

@@ -103,4 +103,35 @@ public class TransferJobHttp extends ExecutableTransferJob {
 
    }
 
+   /**
+    * 
+    */
+   public void startCacheJob() {
+      LOG.info("(CacheJob ) Start downloading data for caching from: " + getSource());
+      LOG.log(DemoLevel.DEMO, "(NODE ) Start downloading data for caching from: " + getSource());
+      DataOutputStream file = null;
+      InputStream is = null;
+      try {
+         URL url = new URL(this.getSource());
+         URLConnection urlConnection = url.openConnection();
+         byte[] contentTypeBytes = urlConnection.getContentType().getBytes();
+         is = urlConnection.getInputStream();
+         file = new DataOutputStream(new FileOutputStream(this.getDestination()));
+         byte[] buffer = new byte[4096];
+         int readBytes = -1;
+         while ((readBytes = is.read(buffer)) != -1) {
+            file.write(buffer, 0, readBytes);
+         }
+         LOG.info("Finished download from: " + getSource());
+         LOG.log(DemoLevel.DEMO, "(NODE ) Finished download from: " + getSource());
+      } catch (MalformedURLException e) {
+         LOG.warn("Could not download data from: " + getSource());
+      } catch (IOException e) {
+         LOG.warn("Could not download data from: " + getSource());
+      } finally {
+         IOUtils.closeQuietly(is);
+         IOUtils.closeQuietly(file);
+      }
+   }
+
 }

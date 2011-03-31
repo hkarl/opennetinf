@@ -10,12 +10,12 @@ import netinf.common.datamodel.DataObject;
 public interface NetInfCache {
 
    /**
-    * Stores a DO in the cache
+    * Stores a DO in the cache and adds the locator to the DO
     * 
     * @param dataObject
     *           the DataObject that should be stored
     */
-   void storeBObyIO(DataObject dataObject);
+   void cache(DataObject dataObject);
 
    /**
     * Gets the BO related to the IO

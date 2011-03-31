@@ -28,6 +28,15 @@ public interface CacheServer {
    byte[] getBO(String hashOfBO);
 
    /**
+    * Get the URL of the cached BO
+    * 
+    * @param hashOfBO
+    *           hash-value of the given BO
+    * @return URL to the cached BO, in case of failure null
+    */
+   String getURL(String hashOfBO);
+
+   /**
     * Checks if the cache contains a specific BO
     * 
     * @param hashOfBO
