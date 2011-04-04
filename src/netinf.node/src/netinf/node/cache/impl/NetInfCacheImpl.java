@@ -51,6 +51,7 @@ public class NetInfCacheImpl implements NetInfCache {
       String hashOfBO = getHash(dataObject);
 
       if (hashOfBO != null) {
+         String urlPath = cacheServer.getURL(hashOfBO);
          if (!contains(hashOfBO)) {
             List<Attribute> locators = dataObject.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
             for (Attribute attribute : locators) {
@@ -69,8 +70,8 @@ public class NetInfCacheImpl implements NetInfCache {
                      if (hashOfBO.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
                         boolean success = cacheServer.cacheBO(hashBytes, hashOfBO);
                         if (success) {
-                           String urlPath = cacheServer.getURL(hashOfBO);
                            addLocator(dataObject, urlPath);
+                           deleteTmpFile(destination); // deleting tmp file
                            LOG.info("DO cached...");
                         }
                      } else {
@@ -85,7 +86,8 @@ public class NetInfCacheImpl implements NetInfCache {
                }
             } // end for
          } else {
-            LOG.info("DO already in cache");
+            LOG.info("DO already in cache, but locator not in DO - adding locator entry...");
+            addLocator(dataObject, urlPath);
          }
       } else {
          LOG.info("Hash is null, will not be cached");
@@ -171,6 +173,11 @@ public class NetInfCacheImpl implements NetInfCache {
       if (!dataObject.getAttributes().contains(attribute)) {
          dataObject.addAttribute(attribute);
       }
+   }
+
+   private void deleteTmpFile(String path) {
+      File file = new File(path);
+      file.delete();
    }
 
 }
