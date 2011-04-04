@@ -3,7 +3,8 @@ package netinf.node.cache.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -16,6 +17,9 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * Ehcache-Server adapter for NetInfCache
@@ -34,7 +38,8 @@ public class EhCacheServerImpl implements CacheServer {
     * @param host
     *           address where the server is hosted
     */
-   public EhCacheServerImpl(InetAddress host) {
+   @Inject
+   public EhCacheServerImpl(@Named("cache_address") final String host) {
       // create address of cache
       cacheAddress = buildCacheAddress(host);
 
@@ -210,8 +215,16 @@ public class EhCacheServerImpl implements CacheServer {
     *           the address of the host that runs the cache server
     * @return the URL of the cache
     */
-   private String buildCacheAddress(InetAddress host) {
-      return "http://" + host.getHostAddress() + ":8080/ehcache/rest/netinf";
+   private String buildCacheAddress(String host) {
+      String cacheUrl = "http://" + host;
+      try {
+         URL url = new URL(cacheUrl);
+         LOG.info("Using cache server on IP: " + url.getHost());
+      } catch (MalformedURLException e) {
+         LOG.warn("Wrong cache address - trying with localhost...");
+         host = "127.0.0.1";
+      }
+      return cacheUrl + ":8080/ehcache/rest/netinf";
    }
 
    @Override

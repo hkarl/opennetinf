@@ -1,7 +1,6 @@
 package netinf.node.resolution.mdht;
 
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.Naming;
@@ -13,13 +12,13 @@ import java.rmi.registry.Registry;
 import java.util.Hashtable;
 import java.util.List;
 
-
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.identity.ResolutionServiceIdentityObject;
 import netinf.common.datamodel.translation.DatamodelTranslator;
 import netinf.common.log.demo.DemoLevel;
+import netinf.node.cache.NetInfCache;
 import netinf.node.resolution.AbstractResolutionService;
 
 import org.apache.log4j.Logger;
@@ -40,10 +39,11 @@ public class MDHTResolutionService extends AbstractResolutionService {
    private static final Logger LOG = Logger.getLogger(MDHTResolutionService.class);
    private DatamodelFactory datamodelFactory;
    private DatamodelTranslator translator;
+   private NetInfCache networkCache;
 
    // server for remote-method-invocation (put/get on remote node)
    private RMIServerStub rmiServer;
-   
+
    // delegator class for building delegates
    private final Delegator MY_DEL = new Delegator();
 
@@ -59,14 +59,16 @@ public class MDHTResolutionService extends AbstractResolutionService {
    private int joinAtLevel;
    private int basePort;
    private Hashtable<Identifier, PastContentHandle> storedContentHandles;
-   
+
    public String listenOnThisIP;
-   
+
    // event handlers
    private EventDelegate passToNextLevelHandler;
-   
-   
-   
+
+   @Inject
+   public void setCache(NetInfCache cache) {
+      networkCache = cache;
+   }
 
    @Inject
    public void setDatamodelFactory(DatamodelFactory factory) {
@@ -94,11 +96,11 @@ public class MDHTResolutionService extends AbstractResolutionService {
       this.basePort = Integer.parseInt(myBasePort);
       this.storedContentHandles = new Hashtable<Identifier, PastContentHandle>();
       this.listenOnThisIP = listenOnThisIP;
-      
+
       LOG.log(DemoLevel.DEMO, "(MDHT ) Starting MDHT RS with " + numberOfLevels + " levels");
-      
-      //Event wireup section
-      this.passToNextLevelHandler = MY_DEL.build(this, "moveUpInRing"); 
+
+      // Event wireup section
+      this.passToNextLevelHandler = MY_DEL.build(this, "moveUpInRing");
 
       // create necessary levels
       if (joinAtLevel == 0) { // create all levels
@@ -187,13 +189,13 @@ public class MDHTResolutionService extends AbstractResolutionService {
       DHT ring = levels.get(level);
       LOG.trace(null);
       if (ring != null) {
-         //InetSocketAddress address = ring.getResponsibleNode(ident);
+         // InetSocketAddress address = ring.getResponsibleNode(ident);
          LOG.log(DemoLevel.DEMO, "(MDHT-GET) Retrieving content from " + ident);
          PastContentHandle contentKey = null;
          contentKey = this.storedContentHandles.get(ident);
-	 ring.get(contentKey);
+         ring.get(contentKey);
          return ring.getReturnedIOFromPast();
-         //return getRemote(address.getAddress().getHostAddress(), ident, level, maxLevel);
+         // return getRemote(address.getAddress().getHostAddress(), ident, level, maxLevel);
       }
       return null;
    }
@@ -236,7 +238,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
    public void put(InformationObject io) {
       LOG.log(DemoLevel.DEMO, "(MDHT ) Putting IO with Identifier: " + io.getIdentifier() + " on all levels");
       InformationObject ioN = translator.toImpl(io);
-      
+
       // try {
       // validateIOForPut(ioN);
       // } catch (IllegalArgumentException ex) {
@@ -275,9 +277,9 @@ public class MDHTResolutionService extends AbstractResolutionService {
    public void put(InformationObject io, int fromLevel, int toLevel) {
       // ring of this level
       DHT ring = levels.get(fromLevel);
-      //InetSocketAddress address = ring.getResponsibleNode(io);
+      // InetSocketAddress address = ring.getResponsibleNode(io);
       LOG.log(DemoLevel.DEMO, "(MDHT ) Putting io in " + fromLevel);
-      //putRemote(address.getAddress().getHostAddress(), io, fromLevel, toLevel);
+      // putRemote(address.getAddress().getHostAddress(), io, fromLevel, toLevel);
       this.storedContentHandles.put(io.getIdentifier(), ring.put(io));
    }
 
@@ -341,26 +343,21 @@ public class MDHTResolutionService extends AbstractResolutionService {
    public void setIdFactory(IdFactory idFactory) {
       super.setIdFactory(idFactory);
    }
-   
+
    /*
-    * Section for the signaling interface used by DHT child rings to notify the parent of various events 
-    */   
-   public void signalPassToNextLevel()
-   {
-      if(this.passToNextLevelHandler != null)
-      {
-	 // Execute the action associated with this event handler. No handling code should be written directly
-	 // in this method. Otherwise a velociraptor will eat you. You have been warned.
-	 this.passToNextLevelHandler.action();
-      }
-      else
-      {
-	 LOG.warn("No event handler for this event was registered in the MDHT. Signal will remain DHT local");
+    * Section for the signaling interface used by DHT child rings to notify the parent of various events
+    */
+   public void signalPassToNextLevel() {
+      if (this.passToNextLevelHandler != null) {
+         // Execute the action associated with this event handler. No handling code should be written directly
+         // in this method. Otherwise a velociraptor will eat you. You have been warned.
+         this.passToNextLevelHandler.action();
+      } else {
+         LOG.warn("No event handler for this event was registered in the MDHT. Signal will remain DHT local");
       }
    }
 
-   public void moveUpInRing()
-   {
+   public void moveUpInRing() {
       LOG.debug("Moving up in ring");
    }
 }

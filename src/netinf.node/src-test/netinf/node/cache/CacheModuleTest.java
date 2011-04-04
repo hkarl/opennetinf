@@ -1,16 +1,16 @@
 package netinf.node.cache;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.util.Properties;
 
 import netinf.common.datamodel.impl.module.DatamodelImplModule;
+import netinf.common.security.impl.module.SecurityModule;
 import netinf.node.cache.impl.CacheServer;
 import netinf.node.cache.impl.EhCacheServerImpl;
 import netinf.node.cache.impl.NetInfCacheImpl;
 
 import com.google.inject.PrivateModule;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.name.Names;
 
 /**
  * The module for the in-network-caching component
@@ -19,17 +19,21 @@ import com.google.inject.Singleton;
  */
 public class CacheModuleTest extends PrivateModule {
 
+   private final Properties properties;
+
+   public CacheModuleTest(final Properties properties) {
+      this.properties = properties;
+   }
+
    @Override
-   protected void configure() {
+   public void configure() {
+      Names.bindProperties(binder(), properties);
       bind(NetInfCache.class).to(NetInfCacheImpl.class).in(Singleton.class);
+      bind(CacheServer.class).to(EhCacheServerImpl.class);
       expose(NetInfCache.class);
 
       install(new DatamodelImplModule());
-   }
-
-   @Provides
-   CacheServer provideCacheServer() throws UnknownHostException {
-      return new EhCacheServerImpl(InetAddress.getLocalHost());
+      install(new SecurityModule());
    }
 
 }

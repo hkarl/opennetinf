@@ -1,21 +1,32 @@
 package netinf.node.cache;
 
 import java.util.List;
+import java.util.Properties;
 
 import junit.framework.Assert;
+import netinf.common.communication.NetInfNodeConnection;
+import netinf.common.communication.RemoteNodeConnection;
 import netinf.common.datamodel.DataObject;
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.DefinedAttributePurpose;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
-import netinf.common.datamodel.impl.DatamodelFactoryImpl;
-import netinf.node.cache.module.CachingModule;
+import netinf.common.datamodel.impl.module.DatamodelImplModule;
+import netinf.common.log.module.LogModule;
+import netinf.common.security.impl.module.SecurityModule;
+import netinf.common.utils.Utils;
+import netinf.node.cache.impl.CacheServer;
+import netinf.node.cache.impl.EhCacheServerImpl;
+import netinf.node.cache.impl.NetInfCacheImpl;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
+import com.google.inject.name.Names;
 
 /**
  * Test class for in-network-cache. Caching Server has to run a Cache server (Ehcache)
@@ -30,9 +41,21 @@ public class CacheTest {
 
    @BeforeClass
    public static void setUp() throws Exception {
-      injector = Guice.createInjector(new CachingModule());
+      final Properties properties = Utils.loadProperties("../configs/testing.properties");
+      injector = Guice.createInjector(new LogModule(properties), new SecurityModule(), new DatamodelImplModule(),
+            new AbstractModule() {
+
+               @Override
+               protected void configure() {
+                  Names.bindProperties(binder(), properties);
+                  bind(NetInfNodeConnection.class).annotatedWith(SecurityModule.Security.class).to(RemoteNodeConnection.class);
+
+                  bind(NetInfCache.class).to(NetInfCacheImpl.class).in(Singleton.class);
+                  bind(CacheServer.class).to(EhCacheServerImpl.class);
+               }
+            });
       cache = injector.getInstance(NetInfCache.class);
-      dmFactory = injector.getInstance(DatamodelFactoryImpl.class);
+      dmFactory = injector.getInstance(DatamodelFactory.class);
    }
 
    @Test
