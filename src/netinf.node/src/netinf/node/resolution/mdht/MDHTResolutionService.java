@@ -12,6 +12,7 @@ import java.rmi.registry.Registry;
 import java.util.Hashtable;
 import java.util.List;
 
+import netinf.common.datamodel.DataObject;
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
@@ -65,9 +66,15 @@ public class MDHTResolutionService extends AbstractResolutionService {
    // event handlers
    private EventDelegate passToNextLevelHandler;
 
-   @Inject
+   @Inject(optional = true)
    public void setCache(NetInfCache cache) {
       networkCache = cache;
+      if (!networkCache.isConnected()) {
+         networkCache = null;
+         LOG.warn("CachingModule loaded, but server not reachable...");
+      } else {
+         LOG.info("MDHT node connected with cache server");
+      }
    }
 
    @Inject
@@ -171,17 +178,37 @@ public class MDHTResolutionService extends AbstractResolutionService {
       return new FreePastryDHT(id, null, port, this);
    }
 
-   /*
-    * (non-Javadoc)
-    * @see netinf.node.resolution.ResolutionService#get(netinf.common.datamodel.Identifier)
-    */
    @Override
    public InformationObject get(Identifier identifier) {
       LOG.info("(MDHT ) Getting IO with Identifier " + identifier);
 
       Identifier identN = translator.toImpl(identifier);
       LOG.trace(null);
-      return get(identN, 1, numberOfLevels);
+
+      // -> cache snippet
+      InformationObject io = get(identN, 1, numberOfLevels);
+      if (shouldBeCached(io)) {
+         if (io instanceof DataObject) {
+            LOG.info("DO: " + io.getIdentifier() + " will be cached");
+            networkCache.cache((DataObject) io); // caching and adding locator
+            this.put(io, 2, 2); // propagating new DO; 2 = current level
+         }
+      }
+      // ->
+
+      return io;
+   }
+
+   /**
+    * Decides, if a IO should be cached, corresponding to an internal statistic
+    * 
+    * @param io
+    *           the InformationObject that has to be checked
+    * @return true, if IO should be cached, otherwise false
+    */
+   private boolean shouldBeCached(InformationObject io) {
+      // TODO: sophisticated statistics
+      return true; // always cache!
    }
 
    public InformationObject get(Identifier ident, int level, int maxLevel) {
