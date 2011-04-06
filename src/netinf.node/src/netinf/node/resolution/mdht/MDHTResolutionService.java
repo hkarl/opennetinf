@@ -187,17 +187,21 @@ public class MDHTResolutionService extends AbstractResolutionService {
 
       // -> cache snippet
       InformationObject io = get(identN, 1, numberOfLevels);
-      if (shouldBeCached(io)) {
+      //cacheObtainedIO(io);
+      // ->
+
+      return io;
+   }
+
+public void cacheObtainedIO(InformationObject io) {
+	if (shouldBeCached(io)) {
          if (io instanceof DataObject) {
             LOG.info("DO: " + io.getIdentifier() + " will be cached");
             networkCache.cache((DataObject) io); // caching and adding locator
             this.put(io, 2, 2); // propagating new DO; 2 = current level
          }
       }
-      // ->
-
-      return io;
-   }
+}
 
    /**
     * Decides, if a IO should be cached, corresponding to an internal statistic

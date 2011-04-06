@@ -34,6 +34,10 @@ public class NetInfDHTMessage implements Message {
    
    private DummyPastContent content;
    
+   public boolean isGetRequest;
+   //Only used when requesting something
+   public NodeHandle requester;
+   
    /**
     * 
     * @param from Source of the message
@@ -45,6 +49,8 @@ public class NetInfDHTMessage implements Message {
    {
       this.from = from;
       this.to = to;
+      //Message depicts a put request by default
+      this.isGetRequest = false;
       if(content instanceof DummyPastContent)
       {
 	 this.content = (DummyPastContent)content;

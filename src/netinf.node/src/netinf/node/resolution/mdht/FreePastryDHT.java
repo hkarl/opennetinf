@@ -57,6 +57,7 @@ public class FreePastryDHT implements DHT, Application {
    private Environment env;
    private MDHTResolutionService parent;
    public volatile static InformationObject returned;
+   private PastContentHandle contentHandle;
    
 
    /**
@@ -177,43 +178,16 @@ public class FreePastryDHT implements DHT, Application {
    public String get(PastContentHandle contentKey )
    {
    // let's do the "get" operation
-       	    LOG.info("Looking up the IO stored with key " + contentKey);
-       	   
-       	    // for each stored key     
-       	      final PastContentHandle lookupKey = contentKey;
-       	      
-       	       	            	
-       	      LOG.info("Looking up " + lookupKey + " at node " + app.getLocalNodeHandle());
-       	   /*   app.lookup(lookupKey.getId(), new Continuation<PastContent, Exception>() {
-       	        public void receiveResult(PastContent result) {
-       	          LOG.info("Successfully looked up " + result + " for key "+lookupKey+".");
-       	        }
-       	 
-       	        public void receiveException(Exception result) {
-       	          LOG.error("Error looking up "+lookupKey);
-       	          result.printStackTrace();
-       	        }
-       	      });*/
-       	    app.fetch(lookupKey, new Continuation<PastContent, Exception>() {
-      	        public void receiveResult(PastContent result) {
-        	          LOG.info("Successfully looked up " + result + " for key " + lookupKey.getId().toString() + ".");
-        	          if(result instanceof DummyPastContent)
-        	          {
-        	             returned = ((DummyPastContent)result).getIO();
-        	          }
-        	          else
-        	          {
-        	             LOG.error("Retrieved object had invalid contents and was discarded.");
-        	          }
-        	        }
-        	 
-        	        public void receiveException(Exception result) {
-        	          LOG.error("Error looking up " + lookupKey.getId().toString());
-        	          result.printStackTrace();
-        	        }
-        	      });
+     	    LOG.info("Looking up the IO stored with key " + contentKey);
        	    
-	    return null;            	    
+       	   this.contentHandle = contentKey;
+       	   
+       	 NetInfDHTMessage msg = new NetInfDHTMessage(endpoint.getLocalNodeHandle().getId(), null , null);
+       	 msg.isGetRequest = true;
+       	 msg.requester = endpoint.getLocalNodeHandle();
+         this.routeNetInfDHTMessage(msg);
+
+         return null;
    }
    
    public PastContentHandle put(InformationObject o){
@@ -265,9 +239,11 @@ public class FreePastryDHT implements DHT, Application {
      LOG.info("DHT-SUBSYSTEM: Received the messsage " + msgReceived + "with id " + id);
      if(msgReceived != null && msgReceived instanceof NetInfDHTMessage)
      {
+    	 
 	LOG.info("Got NetInfDHTMessage. Storing IO in PAST on this node.");
-	 NetInfDHTMessage msgUnpacked = (NetInfDHTMessage)msgReceived;
-
+	 final NetInfDHTMessage msgUnpacked = (NetInfDHTMessage)msgReceived;
+     if(false == msgUnpacked.isGetRequest)
+     {
 	 //This needs to be final to be used inside the Continuation
 	 final DummyPastContent myContent = msgUnpacked.getContent();
          
@@ -292,6 +268,49 @@ public class FreePastryDHT implements DHT, Application {
 	 
          }
          });
+     }
+     else
+     {
+    	//This is a get request.
+    	 if(msgUnpacked.requester.getId() == msgUnpacked.getTo())
+    	 {
+    		 //This is the original requestor node. Return IO, cache etc. here
+    		 this.parent.cacheObtainedIO(msgUnpacked.getContent().getIO());
+    	 }
+    	 else{
+    	 
+    	 //This is the node responsible for the content. Return the answer
+    	 LOG.info("Looking up the IO stored with key " + this.contentHandle);
+     	   
+    	    // for each stored key     
+    	      final PastContentHandle lookupKey = this.contentHandle;
+    	      
+    	       	            	
+    	      LOG.info("Looking up " + lookupKey + " at node " + app.getLocalNodeHandle());
+    	 
+    	    app.fetch(lookupKey, new Continuation<PastContent, Exception>() {
+   	        public void receiveResult(PastContent result) {
+     	          LOG.info("Successfully looked up " + result + " for key " + lookupKey.getId().toString() + ".");
+     	          if(result instanceof DummyPastContent)
+     	          {
+     	             returned = ((DummyPastContent)result).getIO();
+     	             NetInfDHTMessage replyMsg = new NetInfDHTMessage(endpoint.getLocalNodeHandle().getId(), msgUnpacked.requester.getId(), result);
+     	             routeNetInfDHTMessage(replyMsg);
+     	          }
+     	          else
+     	          {
+     	             LOG.error("Retrieved object had invalid contents and was discarded.");
+     	          }
+     	        }
+     	 
+     	        public void receiveException(Exception result) {
+     	          LOG.error("Error looking up " + lookupKey.getId().toString());
+     	          result.printStackTrace();
+     	        }
+     	      });
+    	 }
+     
+      }
      }
      
    }
