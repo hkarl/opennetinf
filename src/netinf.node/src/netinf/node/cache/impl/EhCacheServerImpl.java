@@ -39,9 +39,10 @@ public class EhCacheServerImpl implements CacheServer {
     *           address where the server is hosted
     */
    @Inject
-   public EhCacheServerImpl(@Named("cache_address") final String host) {
+   public EhCacheServerImpl(@Named("cache_address") final String host, @Named("cache_port") final String port,
+         @Named("cache_tablename") final String tablename) {
       // create address of cache
-      cacheAddress = buildCacheAddress(host);
+      cacheAddress = buildCacheAddress(host, port, tablename);
 
       // create/check Ehcache tables
       if (!cacheExists(cacheAddress)) {
@@ -215,16 +216,17 @@ public class EhCacheServerImpl implements CacheServer {
     *           the address of the host that runs the cache server
     * @return the URL of the cache
     */
-   private String buildCacheAddress(String host) {
-      String cacheUrl = "http://" + host;
+   private String buildCacheAddress(String host, String port, String tablename) {
+      String cacheUrl = "http://" + host + ":" + port;
       try {
          URL url = new URL(cacheUrl);
          LOG.info("Using cache server on IP: " + url.getHost());
       } catch (MalformedURLException e) {
          LOG.warn("Wrong cache address - trying with localhost...");
-         host = "127.0.0.1";
+         cacheUrl = "http://127.0.0.1:8080";
       }
-      return cacheUrl + ":8080/ehcache/rest/netinf";
+
+      return cacheUrl + "/ehcache/rest/" + tablename;
    }
 
    @Override
