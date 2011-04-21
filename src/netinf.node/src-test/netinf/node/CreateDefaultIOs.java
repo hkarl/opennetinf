@@ -112,7 +112,7 @@ public class CreateDefaultIOs {
       Attribute reader = datamodelFactory.createAttribute();
       reader.setIdentification(DefinedAttributeIdentification.READER.getURI());
       reader.setAttributePurpose(DefinedAttributePurpose.USER_ATTRIBUTE.getAttributePurpose());
-      reader.setValue("ni:HASH_OF_PK=f4f7d1cad86a2829d7ddc5c85651d59e161d9170~HASH_OF_PK_IDENT=SHA1~VERSION_KIND=UNVERSIONED");
+      reader.setValue(properties.getProperty("Identity2"));
       Attribute authReaders = datamodelFactory.createAttribute();
       authReaders.setIdentification(DefinedAttributeIdentification.AUTHORIZED_READERS.getURI());
       authReaders.setAttributePurpose(DefinedAttributePurpose.USER_ATTRIBUTE.getAttributePurpose());
