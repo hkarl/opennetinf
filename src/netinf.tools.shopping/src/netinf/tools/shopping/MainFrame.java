@@ -104,7 +104,7 @@ public class MainFrame extends JFrame {
    private static final long serialVersionUID = 6087288548349336906L;
    private static final Logger LOG = Logger.getLogger(MainFrame.class);
 
-   private static final String DEFAULT_SHOPPINGLIST_IDENTIFIER = "ni:HASH_OF_PK=8c4e559d464e38c68ac6a9760f4aad371470ccf9~"
+   private static final String DEFAULT_SHOPPINGLIST_IDENTIFIER = "ni:HASH_OF_PK=5e88f4ef66cc4b2c6ae7c0403dd895d1fbbe4798~"
          + "HASH_OF_PK_IDENT=SHA1~VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=Jack's ShoppingList";
    private static final int DEFAULT_RADIUS = 700;
    private static final int DEFAULT_SHOP_VIEW_RADIUS = 100000;
@@ -189,11 +189,11 @@ public class MainFrame extends JFrame {
       // setMinimumSize(new Dimension(getWidth(), getHeight()));
 
       if (applicationIdentity.equals("ni:HASH_OF_PK=123~UNIQUE_LABEL=ShoppingToolJack")) {
-         updateShoppingListIdentifier("ni:HASH_OF_PK=8c4e559d464e38c68ac6a9760f4aad371470ccf9~HASH_OF_PK_IDENT=SHA1~"
+         updateShoppingListIdentifier("ni:HASH_OF_PK=5e88f4ef66cc4b2c6ae7c0403dd895d1fbbe4798~HASH_OF_PK_IDENT=SHA1~"
                + "VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=Jack's ShoppingList");
       }
       if (applicationIdentity.equals("ni:HASH_OF_PK=123~UNIQUE_LABEL=ShoppingToolPeter")) {
-         updateShoppingListIdentifier("ni:HASH_OF_PK=8c4e559d464e38c68ac6a9760f4aad371470ccf9~HASH_OF_PK_IDENT=SHA1~"
+         updateShoppingListIdentifier("ni:HASH_OF_PK=5e88f4ef66cc4b2c6ae7c0403dd895d1fbbe4798~HASH_OF_PK_IDENT=SHA1~"
                + "VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=Peter's ShoppingList");
       }
 
@@ -324,13 +324,13 @@ public class MainFrame extends JFrame {
       final JLabel identifierLabel = new JLabel("ShoppingList:");
 
       Identifier jackId = dmFactory
-            .createIdentifierFromString("ni:HASH_OF_PK=8c4e559d464e38c68ac6a9760f4aad371470ccf9~HASH_OF_PK_IDENT=SHA1~"
+            .createIdentifierFromString("ni:HASH_OF_PK=5e88f4ef66cc4b2c6ae7c0403dd895d1fbbe4798~HASH_OF_PK_IDENT=SHA1~"
                   + "VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=Jack's ShoppingList");
       String jackStr = createReadableRepresentation(jackId, "Jack's ShoppingList");
       shoppinglistMap.put(jackStr, jackId);
 
       Identifier peterId = dmFactory
-            .createIdentifierFromString("ni:HASH_OF_PK=8c4e559d464e38c68ac6a9760f4aad371470ccf9~HASH_OF_PK_IDENT=SHA1~"
+            .createIdentifierFromString("ni:HASH_OF_PK=5e88f4ef66cc4b2c6ae7c0403dd895d1fbbe4798~HASH_OF_PK_IDENT=SHA1~"
                   + "VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=Peter's ShoppingList");
       String peterStr = createReadableRepresentation(peterId, "Peter's ShoppingList");
       shoppinglistMap.put(peterStr, peterId);
@@ -354,7 +354,7 @@ public class MainFrame extends JFrame {
 
       ActionListener listener = new ActionListener() {
 
-         private String selectedIdentifier = "ni:HASH_OF_PK=8c4e559d464e38c68ac6a9760f4aad371470ccf9~HASH_OF_PK_IDENT=SHA1~"
+         private String selectedIdentifier = "ni:HASH_OF_PK=5e88f4ef66cc4b2c6ae7c0403dd895d1fbbe4798~HASH_OF_PK_IDENT=SHA1~"
                + "VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=Jack's ShoppingList";
 
          @Override
