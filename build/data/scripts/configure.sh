@@ -94,3 +94,19 @@ for CURFILE in "${C}/scenario2/log4j/eventServiceSiena.xml" "${C}/scenario2/log4
 	sed -i "s|RemoteHost\" value=\"[a-zA-Z0-9\.]*\"|RemoteHost\" value=\"${LOGSERVER}\"|g" "${CURFILE}"
 	sed -i "s|Port\" value=\"[0-9]*\"|Port\* value=\"${LOGPORT}\"|g" "${CURFILE}"
 done
+
+echo ""
+echo "Configuring Scenario 2, Hosts and Ports"
+for fi in eventServiceSiena.properties searchRdfNode.properties globalRSNode.properties shoppingJack.properties productlistCheckout.properties shoppingPeter.properties productlistGirlfriendPeter.properties shopping.properties productlist.properties; do
+CURFILE="${C}/scenario2/${fi}"
+sed -i "s|cc.tcp.port = .*|cc.tcp.port = ${SC2_PO_RS}|g" "${CURFILE}"
+sed -i "s|esf.port = .*|esf.port = ${SC2_PO_ESSUB}|g" "${CURFILE}"
+sed -i "s|event_service.port = .*|event_service.port = ${SC2_PO_ESPUB}|g" "${CURFILE}"
+sed -i "s|publisher.server_port = .*|publisher.server_port = ${SC2_PO_ESPUB}|g" "${CURFILE}"
+sed -i "s|search_rdf_esf_port = .*|search_rdf_esf_port = ${SC2_PO_ESSUB}|g" "${CURFILE}"
+sed -i "s|search.tcp.port = .*|search.tcp.port = ${SC2_PO_SS}|g" "${CURFILE}"
+sed -i "s|subscriber.server_port = .*|subscriber.server_port = ${SC2_PO_ESSUB}|g" "${CURFILE}"
+done
+
+sed -i "s|access.tcp.port = .*|access.tcp.port = ${SC2_PO_RS}|g" "${C}/scenario2/globalRSNode.properties"
+sed -i "s|access.tcp.port = .*|access.tcp.port = ${SC2_PO_SS}|g" "${C}/scenario2/searchRdfNode.properties"
