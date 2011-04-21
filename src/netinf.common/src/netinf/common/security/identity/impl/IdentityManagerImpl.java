@@ -60,6 +60,7 @@ import netinf.common.security.CryptoAlgorithm;
 import netinf.common.security.SignatureAlgorithm;
 import netinf.common.security.identity.IdentityManager;
 import netinf.common.security.impl.IntegrityImpl;
+import netinf.common.utils.Utils;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
@@ -144,6 +145,9 @@ public class IdentityManagerImpl implements netinf.common.security.identity.Iden
       + DefinedAttributeIdentification.PUBLIC_KEY.getURI();
 
       this.privateKeys.put(pathToKey, pair.getPrivate());
+      
+      LOG.info("Private Key: "+Utils.objectToString(pair.getPrivate()));
+      LOG.info("Public Key: "+Utils.objectToString(pair.getPublic()));
 
       // save private keys to file
       writePrivateKeysToFile(this.defaultFilepath, this.defaultKeyAlgorithmName, this.defaultPassword);
