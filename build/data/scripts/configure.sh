@@ -62,7 +62,7 @@ echo "Configuring Scenario 1, Logging"
 for CURFILE in "${C}/scenario1/log4j/demoNodeA.xml" "${C}/scenario1/log4j/demoNodeB.xml" "${C}/scenario1/log4j/demoNodeC.xml"; do
 	echo "Modifying ${CURFILE}"
 	sed -i "s|RemoteHost\" value=\"[0-9\.]*\"|RemoteHost\" value=\"${LOGSERVER}\"|g" "${CURFILE}"
-	sed -i "s|Port\" value=\"[0-9]*\"|Port\* value=\"${LOGPORT}\"|g" "${CURFILE}"
+	sed -i "s|Port\" value=\"[0-9]*\"|Port\" value=\"${LOGPORT}\"|g" "${CURFILE}"
 done
 
 echo ""
