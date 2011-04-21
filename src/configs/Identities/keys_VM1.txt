@@ -1,31 +1,5 @@
-# Log4j properties.
-logging.xmlfile=scenario2/log4j/searchRdfNode.xml
-
-event_service.host = localhost
-event_service.port = 5001
-
-# The identities of a netInfNode
-identity.nodeIdentity = ni:HASH_OF_PK=123~UNIQUE_LABEL=456
-
-cc.tcp.host = 127.0.0.1
-cc.tcp.port = 5000
-
-access.tcp.port = 5003
-
-# Global timeout for search services
-search_timeout = 10000
-
-# Search Service RDF
-search_rdf_db_host = 127.0.0.1
-search_rdf_db_port = 3306
-search_rdf_db_dbname = netinf_node_data
-search_rdf_db_user = sdbuser
-search_rdf_db_pw = sdbpass
-search_rdf_db_layout = layout2/hash
-search_rdf_db_type = MySQL
-search_rdf_db_driver = com.mysql.jdbc.Driver
-search_rdf_identifier = ni:HASH_OF_PK=5e88f4ef66cc4b2c6ae7c0403dd895d1fbbe4798~HASH_OF_PK_IDENT=SHA1~VERSION_KIND=UNVERSIONED
-search_rdf_privateKey = rO0ABXNyABRqYXZhLnNlY3VyaXR5LktleVJlcL35T7OImqVDAgAETAAJYWxnb3JpdGhtdAASTGph
+Private Key:
+rO0ABXNyABRqYXZhLnNlY3VyaXR5LktleVJlcL35T7OImqVDAgAETAAJYWxnb3JpdGhtdAASTGph
 dmEvbGFuZy9TdHJpbmc7WwAHZW5jb2RlZHQAAltCTAAGZm9ybWF0cQB+AAFMAAR0eXBldAAbTGph
 dmEvc2VjdXJpdHkvS2V5UmVwJFR5cGU7eHB0AANSU0F1cgACW0Ks8xf4BghU4AIAAHhwAAACejCC
 AnYCAQAwDQYJKoZIhvcNAQEBBQAEggJgMIICXAIBAAKBgQCuO5uH/lObMNVO6k833CH7Hasgynhm
@@ -41,7 +15,9 @@ Q52WgSPjgv1Othlih3/yr2rE222CC+LxEOaE55VlcM85me9MjBI1B4mY++oZE7SvtSDCdwJBANow
 cVTR/MXEeB5QjCXuMylZE32S5yoW57XJzCRIlZl2wYXujvw2yPIY2f1Ij8zprExJ5cAGZXb6gVvT
 MWbEw8d0AAZQS0NTIzh+cgAZamF2YS5zZWN1cml0eS5LZXlSZXAkVHlwZQAAAAAAAAAAEgAAeHIA
 DmphdmEubGFuZy5FbnVtAAAAAAAAAAASAAB4cHQAB1BSSVZBVEU=
-search_rdf_publicKey = rO0ABXNyABRqYXZhLnNlY3VyaXR5LktleVJlcL35T7OImqVDAgAETAAJYWxnb3JpdGhtdAASTGph
+
+Public Key:
+rO0ABXNyABRqYXZhLnNlY3VyaXR5LktleVJlcL35T7OImqVDAgAETAAJYWxnb3JpdGhtdAASTGph
 dmEvbGFuZy9TdHJpbmc7WwAHZW5jb2RlZHQAAltCTAAGZm9ybWF0cQB+AAFMAAR0eXBldAAbTGph
 dmEvc2VjdXJpdHkvS2V5UmVwJFR5cGU7eHB0AANSU0F1cgACW0Ks8xf4BghU4AIAAHhwAAAAojCB
 nzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEArjubh/5TmzDVTupPN9wh+x2rIMp4ZpKKPHOfAK9t
@@ -49,16 +25,3 @@ LmtvrgHqVS+7gqJrTSMNCdLv/BB/87T8hfErrPfwDBn2EeMH/YYITlNvgmwNDod7esZHWWuFSPCn
 2O/ZCWZ7ydfa5gkXqmLnAMCN6xmQCaPzZM2ZbUq/h4krwjb3/FBkCvkCAwEAAXQABVguNTA5fnIA
 GWphdmEuc2VjdXJpdHkuS2V5UmVwJFR5cGUAAAAAAAAAABIAAHhyAA5qYXZhLmxhbmcuRW51bQAA
 AAAAAAAAEgAAeHB0AAZQVUJMSUM=
-search_rdf_connect_to_esf = true
-search_rdf_esf_host = localhost
-search_rdf_esf_port = 5002
-
-# Resolution Service RDF
-resolution_rdf_db_host = 127.0.0.1
-resolution_rdf_db_port = 3306
-resolution_rdf_db_dbname = netinf_node_data
-resolution_rdf_db_user = sdbuser
-resolution_rdf_db_pw = sdbpass
-resolution_rdf_db_layout = layout2/hash
-resolution_rdf_db_type = MySQL
-resolution_rdf_db_driver = com.mysql.jdbc.Driver
