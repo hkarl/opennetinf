@@ -92,7 +92,7 @@ echo "Configuring Scenario 2, Logging"
 for CURFILE in "${C}/scenario2/log4j/eventServiceSiena.xml" "${C}/scenario2/log4j/globalRSNode.xml" "${C}/scenario2/log4j/managementTool.xml" "${C}/scenario2/log4j/productlistCheckout.xml" "${C}/scenario2/log4j/productlistGirlfriendPeter.xml" "${C}/scenario2/log4j/productlist.xml" "${C}/scenario2/log4j/searchRdfNode.xml" "${C}/scenario2/log4j/shoppingJack.xml" "${C}/scenario2/log4j/shoppingPeter.xml" "${C}/scenario2/log4j/shopping.xml"; do
 	echo "Modifying ${CURFILE}"
 	sed -i "s|RemoteHost\" value=\"[a-zA-Z0-9\.]*\"|RemoteHost\" value=\"${LOGSERVER}\"|g" "${CURFILE}"
-	sed -i "s|Port\" value=\"[0-9]*\"|Port\* value=\"${LOGPORT}\"|g" "${CURFILE}"
+	sed -i "s|Port\" value=\"[0-9]*\"|Port\" value=\"${LOGPORT}\"|g" "${CURFILE}"
 done
 
 echo ""
