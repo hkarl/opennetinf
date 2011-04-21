@@ -5,6 +5,17 @@ C=${DP_LOC}/configs
 echo "This script configures the compiled distribution in ${DP_LOC}"
 echo "from values in ~/.netinf/settings"
 
+echo "Configuring SQL database files"
+for fi in "${DP_LOC}/sql/event_service.sql;${DB_EVSUSER};${DB_EVSPASS}" "${DP_LOC}/sql/netinf_node_data.sql;${DB_SDBUSER};${DB_SDBPASS}"; do
+CURFILE="`echo $fi | cut -f1 -d\;`"
+USER="`echo $fi | cut -f2 -d\;`"
+PASS="`echo $fi | cut -f3 -d\;`"
+sed -i "s|^GRANT USAGE ON .*|GRANT USAGE ON \*.\* TO '${USER}'@'%';|g" "${CURFILE}"
+sed -i "s|^DROP USER .*|DROP USER '${USER}'@'%';|g" "${CURFILE}"
+sed -i "s|^CREATE USER .*|CREATE USER '${USER}'@'%' IDENTIFIED BY '${PASS}';|g" "${CURFILE}"
+sed -i "s|^GRANT ALL ON .*|GRANT ALL ON \*.\* TO '${USER}'@'%';|g" "${CURFILE}"
+done
+
 echo ""
 echo "Configuring Scenario 1, Node A"
 CURFILE="${C}/scenario1/netinfnode_a.properties"

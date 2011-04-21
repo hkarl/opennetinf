@@ -31,8 +31,6 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `netinf_node_data` /*!40100 DEFAULT CHA
 
 USE `netinf_node_data`;
 
-GRANT ALL ON netinf_node_data.* TO 'sdbuser'@'localhost'; 
-
 --
 -- Table structure for table `Nodes`
 --
