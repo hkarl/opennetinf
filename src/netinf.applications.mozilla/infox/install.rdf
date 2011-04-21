@@ -5,12 +5,12 @@
 	<Description about="urn:mozilla:install-manifest">
 		<em:id>info@netinf.net</em:id>
 		<em:name>InFox Client Plugin</em:name>
-		<em:version>0.3.10</em:version>
+		<em:version>0.3.11</em:version>
 		<em:type>2</em:type>
 		<em:creator>NetInf.net</em:creator>
 		<em:description>Enables Web browsing via NetInf InformationObjects</em:description>
 		<em:homepageURL>http://www.netinf.org/</em:homepageURL>
-		<em:aboutURL>http://www.netinf.org/about-2/license</em:aboutURL>
+		<em:aboutURL>http://www.netinf.org/about-2/license/</em:aboutURL>
 		<em:optionsURL>chrome://infox/content/options.xul</em:optionsURL>
 		<em:iconURL>chrome://infox/icon.png</em:iconURL>
 
@@ -18,7 +18,7 @@
 			<Description>
 				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
 				<em:minVersion>3.0</em:minVersion>
-				<em:maxVersion>3.7</em:maxVersion>
+				<em:maxVersion>4.99</em:maxVersion>
 			</Description>
 		</em:targetApplication>
 	</Description>
