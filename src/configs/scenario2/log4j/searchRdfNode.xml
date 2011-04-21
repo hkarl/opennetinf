@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
-
   <appender name="A1" class="org.apache.log4j.ConsoleAppender">
     <param name="Target" value="System.out" />
     <param name="Threshold" value="debug" />
@@ -14,15 +13,12 @@
   </appender>
   <appender name="A2" class="org.apache.log4j.FileAppender">
     <param name="Append" value="true" />
-    <param name="File"
-    value="../logs/scenario2/searchRdfNode.log" />
+    <param name="File" value="../logs/scenario2/searchRdfNode.log" />
     <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern"
-      value="%6r %-5p [%t] %c#%M - %m%n" />
+      <param name="ConversionPattern" value="%6r %-5p [%t] %c#%M - %m%n" />
     </layout>
   </appender>
-  <appender name="SOCK"
-  class="org.apache.log4j.net.SocketAppender">
+  <appender name="SOCK" class="org.apache.log4j.net.SocketAppender">
     <param name="RemoteHost" value="localhost" />
     <param name="Port" value="4560" />
     <param name="LocationInfo" value="true" />
