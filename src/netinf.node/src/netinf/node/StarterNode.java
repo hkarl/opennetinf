@@ -43,6 +43,7 @@ import netinf.access.NetInfServer;
 import netinf.common.communication.AsyncReceiveHandler;
 import netinf.common.exceptions.NetInfCheckedException;
 import netinf.common.log.demo.DemoLevel;
+import netinf.node.access.AccessServer;
 import netinf.node.api.NetInfNode;
 import netinf.node.module.StandardNodeModule;
 import netinf.node.resolution.ResolutionController;
@@ -57,6 +58,7 @@ import org.apache.log4j.Logger;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.hp.hpl.jena.sdb.shared.Access;
 
 /**
  * This is the class that starts the whole NetInfNode. The properties file, and the module {@link StandardNodeModule} determine
@@ -138,8 +140,9 @@ public class StarterNode {
       startResolution();
       startSearch();
       startTransfer();
+      startAPIAccess();
 
-      return startAccess();
+      return startN2NAccess();
    }
 
    private void startResolution() {
@@ -205,7 +208,7 @@ public class StarterNode {
    /**
     * @return <code>true</code> if at least one server is running. <code>false</code> otherwise.
     */
-   private boolean startAccess() {
+   private boolean startN2NAccess() {
       LOG.trace(null);
 
       boolean success = false;
@@ -229,6 +232,16 @@ public class StarterNode {
          LOG.log(DemoLevel.DEMO, "(NODE ) I can't be accessed");
       }
       return success;
+   }
+   
+   private void startAPIAccess() {
+      LOG.trace(null);
+
+      AccessServer[] accessServers = injector.getInstance(AccessServer[].class);
+      for (AccessServer server : accessServers) {
+         server.start();
+         LOG.debug("Started AccessServer '" + server.getClass().getCanonicalName() + "'");
+      }
    }
 
 }

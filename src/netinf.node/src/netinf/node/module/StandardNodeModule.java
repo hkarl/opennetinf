@@ -43,6 +43,9 @@ import netinf.access.TCPServer;
 import netinf.common.datamodel.rdf.module.DatamodelRdfModule;
 import netinf.common.datamodel.translation.module.DatamodelTranslationModule;
 import netinf.common.utils.Utils;
+import netinf.node.access.AccessServer;
+import netinf.node.access.rest.RESTAccessServer;
+import netinf.node.access.rest.module.RESTModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.iocaching.impl.IOCacheImpl;
@@ -89,6 +92,9 @@ public class StandardNodeModule extends AbstractNodeModule {
 
       // Caching Storage
       install(new LocalIOCachingModule());
+      
+      // RESTful API
+      install(new RESTModule());
    }
 
    /**
@@ -154,5 +160,11 @@ public class StandardNodeModule extends AbstractNodeModule {
    @Provides
    NetInfServer[] providesAccess(TCPServer tcpServer, HTTPServer httpServer) {
       return new NetInfServer[] { tcpServer, httpServer };
+   }
+   
+   @Singleton
+   @Provides
+   AccessServer[] provideAccessServers(RESTAccessServer rest) {
+      return new AccessServer[] { rest };
    }
 }
