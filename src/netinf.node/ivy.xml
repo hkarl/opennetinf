@@ -54,5 +54,8 @@
         org="org.freepastry"
         name="FreePastry"
         rev="2.1" />
-       
+    <dependency
+        org="org.restlet.jse"
+        name="org.restlet"
+        rev="2.0.0" />
 </ivy-module>
