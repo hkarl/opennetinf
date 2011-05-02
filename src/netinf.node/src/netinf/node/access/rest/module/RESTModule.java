@@ -9,7 +9,7 @@ import com.google.inject.name.Names;
 /**
  * Module to be installed to access a NetInf node via a RESTful interface.
  * 
- * @author mmuehe
+ * @author PG NetInf 3, University of Paderborn
  *
  */
 public class RESTModule extends AbstractModule {

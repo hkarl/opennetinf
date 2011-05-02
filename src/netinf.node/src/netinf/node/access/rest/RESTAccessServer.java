@@ -7,7 +7,6 @@ import netinf.node.api.impl.LocalNodeConnection;
 import org.apache.log4j.Logger;
 import org.restlet.Application;
 import org.restlet.Component;
-import org.restlet.Context;
 import org.restlet.data.Protocol;
 
 import com.google.inject.Inject;
@@ -16,7 +15,7 @@ import com.google.inject.name.Named;
 /**
  * A RESTAccessServer is a AccessServer providing a RESTful interface to a NetInf node.
  * 
- * @author mmuehe
+ * @author PG NetInf 3, University of Paderborn
  *
  */
 public class RESTAccessServer implements AccessServer {
@@ -26,21 +25,17 @@ public class RESTAccessServer implements AccessServer {
    private Component component;
 
    @Inject
-   public RESTAccessServer(@Named("node.access.rest.port") int port, DatamodelFactory factory, LocalNodeConnection connection) {
+   public RESTAccessServer(@Named("node.access.rest.port") int port, LocalNodeConnection connection, DatamodelFactory factory) {
       component = new Component();
       component.getServers().add(Protocol.HTTP, port);
       
-      Context context = new Context();
-      context.getAttributes().put(LocalNodeConnection.class.getCanonicalName(), connection);
-      context.getAttributes().put(DatamodelFactory.class.getCanonicalName(), factory);
-
-      Application application = new RESTApplication(context);
+      Application application = new RESTApplication(connection, factory);
 
       component.getDefaultHost().attach(application);
    }
 
    /**
-    * Starts the RESTAccessServer
+    * Starts the RESTAccessServer.
     */
    @Override
    public void start() {
@@ -52,7 +47,7 @@ public class RESTAccessServer implements AccessServer {
    }
 
    /**
-    * Stops the RESTAccessServer
+    * Stops the RESTAccessServer.
     */
    @Override
    public void stop() {

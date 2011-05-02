@@ -1,94 +1,64 @@
 package netinf.node.access.rest.resources;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
-
-import netinf.common.datamodel.DefinedAttributePurpose;
 import netinf.common.datamodel.DefinedLabelName;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.IdentifierLabel;
 import netinf.common.datamodel.InformationObject;
-import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.exceptions.NetInfCheckedException;
 
 import org.apache.log4j.Logger;
-import org.restlet.data.MediaType;
 import org.restlet.data.Status;
-import org.restlet.representation.InputRepresentation;
-import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;
 
 /**
- * Resource to retrieve a BO by requesting a NetInf identifier.
+ * Resource to display an IO by requesting a NetInf identifier.
  * 
  * @author PG NetInf 3, University of Paderborn
- *
+ * 
  */
-public class BOResource extends NetInfResource {
+public class IOResource extends NetInfResource {
    
-   private static final Logger LOG = Logger.getLogger(BOResource.class);
-
+   private static final Logger LOG = Logger.getLogger(IOResource.class);
+   
    private String hashOfPK;
    private String hashOfPKIdent;
-   private String versionKind;
    private String uniqueLabel;
+   private String versionKind;
    private String versionNumber;
 
    /**
-    * Initializes the context of a BOResource.
+    * Initializes the context of a IOResource.
     */
    @Override
    protected void doInit() throws ResourceException {
-      super.doInit();      
+      super.doInit();
       hashOfPK = getQuery().getFirstValue("HASH_OF_PK", true);
       hashOfPKIdent = getQuery().getFirstValue("HASH_OF_PK_IDENT", true);
       uniqueLabel = getQuery().getFirstValue("UNIQUE_LABEL", true);
       versionKind = getQuery().getFirstValue("VERSION_KIND", true);
       versionNumber = getQuery().getFirstValue("VERSION_NUMBER", true);
    }
-
+   
    /**
-    * Handler for a GET-requests.
+    * Handler for GET-requests.
     * 
-    * @return InputRepresentation if DO was found
+    * @return Simple String representation of an IO
     */
    @Get
-   public Representation retrieveBO() {
-      Identifier identifier = createIdentifier();
-      
+   public String showIO() {
       InformationObject io = null;
       try {
-         io = getNodeConnection().getIO(identifier);
+         io = getNodeConnection().getIO(createIdentifier());
       } catch (NetInfCheckedException e) {
-         LOG.warn("Could not get IO", e);
+         LOG.warn("Could not create identifier from given labels");
       }
       
       if (io != null) {
-         List<Attribute> locators = io.getAttributesForPurpose(
-               DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
-         if (!locators.isEmpty()) {
-            URL url;
-            for (Attribute locator: locators) {
-               try {
-                  url = new URL(locator.getValue(String.class));
-                  URLConnection conn = url.openConnection();
-                  return new InputRepresentation(conn.getInputStream(),
-                        new MediaType(conn.getContentType()));
-               } catch (MalformedURLException mue) {
-                  LOG.warn("Malformed locator URL", mue);
-                  continue;
-               } catch (IOException ioe) {
-                  LOG.warn("Could not open URL connection", ioe);
-                  continue;
-               }
-            }
-         }
+         return io.toString();
+      } else {
+         throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND);
       }
-      throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND);
    }
    
    private Identifier createIdentifier() {
@@ -124,5 +94,5 @@ public class BOResource extends NetInfResource {
       }      
       return identifier;
    }
-
+   
 }
