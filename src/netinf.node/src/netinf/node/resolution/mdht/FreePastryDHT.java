@@ -357,9 +357,14 @@ public class FreePastryDHT implements DHT, Application {
    {
       LOG.info("DHT-SUBSYSTEM: "+ this.pastryNode.getId() + "sending NetInfDHTMessage to " + msg.getTo());
       
-      
-      //Route using the DHT-internal mechanism with no hints (3rd argument null = no routing hints)
-      this.endpoint.route(msg.getTo(), msg, null);
+      if(null == msg.getTo())
+      {
+         this.endpoint.route(this.pastryNode.getId(), msg, null);
+      }
+      else{
+         //Route using the DHT-internal mechanism with no hints (3rd argument null = no routing hints)
+         this.endpoint.route(msg.getTo(), msg, null);
+      }
    }
 
    /**
