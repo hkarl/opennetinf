@@ -7,7 +7,7 @@ import com.google.inject.PrivateModule;
 /**
  * @author PG NetInf 3
  */
-public class MDHTModule extends PrivateModule {
+public class MDHTResolutionModule extends PrivateModule {
 
    @Override
    protected void configure() {

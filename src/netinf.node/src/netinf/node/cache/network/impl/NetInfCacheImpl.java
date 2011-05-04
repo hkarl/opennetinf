@@ -1,4 +1,4 @@
-package netinf.node.cache.impl;
+package netinf.node.cache.network.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +13,7 @@ import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
 import netinf.common.log.demo.DemoLevel;
 import netinf.common.security.Hashing;
 import netinf.common.utils.Utils;
-import netinf.node.cache.NetInfCache;
+import netinf.node.cache.network.NetworkCache;
 import netinf.node.transfer.http.TransferJobHttp;
 
 import org.apache.commons.io.IOUtils;
@@ -26,7 +26,7 @@ import com.google.inject.Inject;
  * 
  * @author PG NetInf 3, University of Paderborn
  */
-public class NetInfCacheImpl implements NetInfCache {
+public class NetInfCacheImpl implements NetworkCache {
 
    private static final Logger LOG = Logger.getLogger(NetInfCacheImpl.class); // Logger
    private CacheServer cacheServer; // adapter for the used cache server

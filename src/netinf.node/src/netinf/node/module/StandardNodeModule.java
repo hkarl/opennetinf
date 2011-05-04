@@ -46,13 +46,14 @@ import netinf.common.utils.Utils;
 import netinf.node.access.AccessServer;
 import netinf.node.access.rest.RESTAccessServer;
 import netinf.node.access.rest.module.RESTModule;
+import netinf.node.cache.network.module.NetworkCacheModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.iocaching.impl.IOCacheImpl;
 import netinf.node.resolution.iocaching.module.LocalIOCachingModule;
 import netinf.node.resolution.locator.impl.LocatorSelectorImpl;
-import netinf.node.resolution.rdf.RDFResolutionService;
-import netinf.node.resolution.rdf.module.RDFResolutionServiceModule;
+import netinf.node.resolution.mdht.MDHTResolutionService;
+import netinf.node.resolution.mdht.module.MDHTResolutionModule;
 import netinf.node.search.SearchService;
 import netinf.node.search.rdf.SearchServiceRDF;
 import netinf.node.search.rdf.module.SearchServiceRDFModule;
@@ -85,16 +86,22 @@ public class StandardNodeModule extends AbstractNodeModule {
 
       // The ResolutionServices
       // install(new LocalResolutionModule());
-      install(new RDFResolutionServiceModule());
+      // install(new RDFResolutionServiceModule());
 
       // The SearchServices
       install(new SearchServiceRDFModule());
 
       // Caching Storage
       install(new LocalIOCachingModule());
-      
+
       // RESTful API
       install(new RESTModule());
+
+      // MDHT Resolution
+      install(new MDHTResolutionModule());
+
+      // In-network Caching
+      install(new NetworkCacheModule());
    }
 
    /**
@@ -108,8 +115,8 @@ public class StandardNodeModule extends AbstractNodeModule {
     */
    @Singleton
    @Provides
-   ResolutionService[] provideResolutionServices(RDFResolutionService rdfResolutionService) {
-      return new ResolutionService[] { rdfResolutionService };
+   ResolutionService[] provideResolutionServices(MDHTResolutionService mdhtResolutionService) {
+      return new ResolutionService[] { mdhtResolutionService };
    }
 
    /**
@@ -161,7 +168,7 @@ public class StandardNodeModule extends AbstractNodeModule {
    NetInfServer[] providesAccess(TCPServer tcpServer, HTTPServer httpServer) {
       return new NetInfServer[] { tcpServer, httpServer };
    }
-   
+
    @Singleton
    @Provides
    AccessServer[] provideAccessServers(RESTAccessServer rest) {

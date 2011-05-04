@@ -15,9 +15,10 @@ import netinf.common.datamodel.impl.module.DatamodelImplModule;
 import netinf.common.log.module.LogModule;
 import netinf.common.security.impl.module.SecurityModule;
 import netinf.common.utils.Utils;
-import netinf.node.cache.impl.CacheServer;
-import netinf.node.cache.impl.EhCacheServerImpl;
-import netinf.node.cache.impl.NetInfCacheImpl;
+import netinf.node.cache.network.NetworkCache;
+import netinf.node.cache.network.impl.CacheServer;
+import netinf.node.cache.network.impl.EhCacheServerImpl;
+import netinf.node.cache.network.impl.NetInfCacheImpl;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,7 +37,7 @@ import com.google.inject.name.Names;
 public class CacheTest {
 
    private static Injector injector;
-   private static NetInfCache cache;
+   private static NetworkCache cache;
    private static DatamodelFactory dmFactory;
 
    @BeforeClass
@@ -50,11 +51,11 @@ public class CacheTest {
                   Names.bindProperties(binder(), properties);
                   bind(NetInfNodeConnection.class).annotatedWith(SecurityModule.Security.class).to(RemoteNodeConnection.class);
 
-                  bind(NetInfCache.class).to(NetInfCacheImpl.class).in(Singleton.class);
+                  bind(NetworkCache.class).to(NetInfCacheImpl.class).in(Singleton.class);
                   bind(CacheServer.class).to(EhCacheServerImpl.class);
                }
             });
-      cache = injector.getInstance(NetInfCache.class);
+      cache = injector.getInstance(NetworkCache.class);
       dmFactory = injector.getInstance(DatamodelFactory.class);
    }
 
