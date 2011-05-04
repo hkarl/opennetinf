@@ -1,4 +1,4 @@
-package netinf.node.cache;
+package netinf.node.cache.network;
 
 import netinf.common.datamodel.DataObject;
 
@@ -7,7 +7,7 @@ import netinf.common.datamodel.DataObject;
  * 
  * @author PG NetInf 3, University of Paderborn
  */
-public interface NetInfCache {
+public interface NetworkCache {
 
    /**
     * Stores a DO in the cache and adds the locator to the DO

@@ -1,4 +1,4 @@
-package netinf.node.cache.impl;
+package netinf.node.cache.network.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

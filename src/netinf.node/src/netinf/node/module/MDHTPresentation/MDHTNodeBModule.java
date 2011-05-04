@@ -13,7 +13,7 @@ import netinf.node.resolution.iocaching.impl.IOCacheImpl;
 import netinf.node.resolution.iocaching.module.LocalIOCachingModule;
 import netinf.node.resolution.locator.impl.LocatorSelectorImpl;
 import netinf.node.resolution.mdht.MDHTResolutionService;
-import netinf.node.resolution.mdht.module.MDHTModule;
+import netinf.node.resolution.mdht.module.MDHTResolutionModule;
 import netinf.node.search.SearchService;
 import netinf.node.search.rdf.SearchServiceRDF;
 import netinf.node.search.rdf.module.SearchServiceRDFModule;
@@ -42,7 +42,7 @@ public class MDHTNodeBModule extends AbstractNodeModule {
       install(new DatamodelTranslationModule());
 
       // The ResolutionServices
-      install(new MDHTModule());
+      install(new MDHTResolutionModule());
 
       // The SearchServices
       install(new SearchServiceRDFModule());

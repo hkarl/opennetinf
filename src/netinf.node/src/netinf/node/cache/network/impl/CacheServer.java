@@ -1,4 +1,4 @@
-package netinf.node.cache.impl;
+package netinf.node.cache.network.impl;
 
 /**
  * Interface for an cache adapter that can be used by a NetInfCache

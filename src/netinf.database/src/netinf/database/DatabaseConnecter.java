@@ -90,10 +90,7 @@ public class DatabaseConnecter {
          connection = DriverManager.getConnection(urlToDatabase, user, password);
          LOG.debug("Successfully connected to database '" + db + "'");
       } catch (SQLException e) {
-         LOG
-               .error(
-                     "Could not connect to database '" + db + "' with username '" + user + "' and password '" + password + "'",
-                     e);
+         LOG.error("Could not connect to database '" + db + "' with username '" + user + "' and password '" + password + "'", e);
 
          result = false;
       }

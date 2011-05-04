@@ -6,7 +6,7 @@ import netinf.access.TCPServer;
 import netinf.common.datamodel.impl.module.DatamodelImplModule;
 import netinf.common.datamodel.translation.module.DatamodelTranslationModule;
 import netinf.common.utils.Utils;
-import netinf.node.cache.module.CachingModule;
+import netinf.node.cache.network.module.NetworkCacheModule;
 import netinf.node.module.AbstractNodeModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
@@ -14,7 +14,7 @@ import netinf.node.resolution.iocaching.impl.IOCacheImpl;
 import netinf.node.resolution.iocaching.module.LocalIOCachingModule;
 import netinf.node.resolution.locator.impl.LocatorSelectorImpl;
 import netinf.node.resolution.mdht.MDHTResolutionService;
-import netinf.node.resolution.mdht.module.MDHTModule;
+import netinf.node.resolution.mdht.module.MDHTResolutionModule;
 import netinf.node.search.SearchService;
 import netinf.node.search.rdf.SearchServiceRDF;
 import netinf.node.search.rdf.module.SearchServiceRDFModule;
@@ -43,7 +43,7 @@ public class MDHTNodeAModule extends AbstractNodeModule {
       install(new DatamodelTranslationModule());
 
       // The ResolutionServices
-      install(new MDHTModule());
+      install(new MDHTResolutionModule());
 
       // The SearchServices
       install(new SearchServiceRDFModule());
@@ -52,7 +52,7 @@ public class MDHTNodeAModule extends AbstractNodeModule {
       install(new LocalIOCachingModule());
 
       // In-network Caching
-      install(new CachingModule());
+      install(new NetworkCacheModule());
    }
 
    @Singleton
