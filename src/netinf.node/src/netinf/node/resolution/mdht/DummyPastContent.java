@@ -17,8 +17,8 @@ public class DummyPastContent extends ContentHashPastContent {
       super(myId);
       this.content = content;
    }
-   public InformationObject getIO()
-   {
+
+   public InformationObject getIO() {
       return this.content != null ? this.content : null;
    }
 

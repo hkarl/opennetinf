@@ -1,8 +1,5 @@
 package netinf.node.access;
 
-import netinf.node.access.rest.RESTAccessServer;
-
-import com.google.inject.ImplementedBy;
 
 /**
  * An AccessServer provides an interface to a NetInfNode.
