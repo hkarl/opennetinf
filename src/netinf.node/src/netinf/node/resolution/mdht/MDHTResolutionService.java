@@ -19,7 +19,7 @@ import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.identity.ResolutionServiceIdentityObject;
 import netinf.common.datamodel.translation.DatamodelTranslator;
 import netinf.common.log.demo.DemoLevel;
-import netinf.node.cache.NetInfCache;
+import netinf.node.cache.network.NetworkCache;
 import netinf.node.resolution.AbstractResolutionService;
 
 import org.apache.log4j.Logger;
@@ -40,7 +40,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
    private static final Logger LOG = Logger.getLogger(MDHTResolutionService.class);
    private DatamodelFactory datamodelFactory;
    private DatamodelTranslator translator;
-   private NetInfCache networkCache;
+   private NetworkCache networkCache;
 
    // server for remote-method-invocation (put/get on remote node)
    private RMIServerStub rmiServer;
@@ -67,7 +67,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
    private EventDelegate passToNextLevelHandler;
 
    @Inject(optional = true)
-   public void setCache(NetInfCache cache) {
+   public void setCache(NetworkCache cache) {
       networkCache = cache;
       if (!networkCache.isConnected()) {
          networkCache = null;
@@ -187,21 +187,21 @@ public class MDHTResolutionService extends AbstractResolutionService {
 
       // -> cache snippet
       InformationObject io = get(identN, 1, numberOfLevels);
-      //cacheObtainedIO(io);
+      // cacheObtainedIO(io);
       // ->
 
       return io;
    }
 
-public void cacheObtainedIO(InformationObject io) {
-	if (shouldBeCached(io)) {
+   public void cacheObtainedIO(InformationObject io) {
+      if (shouldBeCached(io)) {
          if (io instanceof DataObject) {
             LOG.info("DO: " + io.getIdentifier() + " will be cached");
             networkCache.cache((DataObject) io); // caching and adding locator
             this.put(io, 2, 2); // propagating new DO; 2 = current level
          }
       }
-}
+   }
 
    /**
     * Decides, if a IO should be cached, corresponding to an internal statistic

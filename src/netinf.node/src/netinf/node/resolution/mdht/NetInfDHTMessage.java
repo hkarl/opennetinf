@@ -12,12 +12,9 @@ import rice.p2p.past.PastContent;
 
 /**
  * @author NetInf3 at the University of Paderborn
- * @since 2011
- * Note: Only CommonAPI functionality is used here. For more information on CommonAPI see the paper:
- * 
- * Towards a Common API for Structured Peer-to-Peer Overlays, 
- * by F. Dabek, B. Zhao, P. Druschel, J. Kubiatowicz, and I. Stoica, 
- * second International Workshop on Peer-to-Peer Systems, Berkeley, CA, February 2003
+ * @since 2011 Note: Only CommonAPI functionality is used here. For more information on CommonAPI see the paper: Towards a Common
+ *        API for Structured Peer-to-Peer Overlays, by F. Dabek, B. Zhao, P. Druschel, J. Kubiatowicz, and I. Stoica, second
+ *        International Workshop on Peer-to-Peer Systems, Berkeley, CA, February 2003
  */
 public class NetInfDHTMessage implements Message {
 
@@ -25,51 +22,52 @@ public class NetInfDHTMessage implements Message {
     * Automatically generated field for Serializable object NetInfDHTMessage
     */
    private static final long serialVersionUID = 6203375763932442376L;
-   //Source of message
+   // Source of message
    private Id from;
-   //Destination of message
+   // Destination of message
    private Id to;
-   
+
    private ArrayList<NodeHandle> passport;
-   
+
    private DummyPastContent content;
-   
+
    public boolean isGetRequest;
-   //Only used when requesting something
+   // Only used when requesting something
    public NodeHandle requester;
-   
+
    /**
-    * 
-    * @param from Source of the message
-    * @param to Optional: Where the message should be routed to. 
-    * @param content The actual IO
+    * @param from
+    *           Source of the message
+    * @param to
+    *           Optional: Where the message should be routed to.
+    * @param content
+    *           The actual IO
     */
-   
-   public NetInfDHTMessage(Id from, Id to, PastContent content)
-   {
+
+   public NetInfDHTMessage(Id from, Id to, PastContent content) {
       this.from = from;
       this.to = to;
-      //Message depicts a put request by default
+      // Message depicts a put request by default
       this.isGetRequest = false;
-      if(content instanceof DummyPastContent)
-      {
-	 this.content = (DummyPastContent)content;
-      }
-      else
-	 this.content = null;
+      if (content instanceof DummyPastContent) {
+         this.content = (DummyPastContent) content;
+      } else
+         this.content = null;
       this.passport = new ArrayList<NodeHandle>();
    }
-   
+
    /**
     * Method stores the NodeHandle of each node as it passes through. This way the path of the message is known
-    * @param hop Current NodeHandle
+    * 
+    * @param hop
+    *           Current NodeHandle
     */
-   public void addHop(NodeHandle hop)
-   {
+   public void addHop(NodeHandle hop) {
       passport.add(hop);
    }
-   
-   /* (non-Javadoc)
+
+   /*
+    * (non-Javadoc)
     * @see rice.p2p.commonapi.Message#getPriority()
     */
    @Override
@@ -77,20 +75,19 @@ public class NetInfDHTMessage implements Message {
       return Message.LOW_PRIORITY;
    }
 
-
-   /* (non-Javadoc)
+   /*
+    * (non-Javadoc)
     * @see java.lang.Object#toString()
     */
    @Override
    public String toString() {
       StringBuilder path = new StringBuilder("Message Path: ");
-      
-      for (int i = 0; i < this.passport.size(); i++) 
-      {
-	 path.append(this.passport.get(i) + ",");
+
+      for (int i = 0; i < this.passport.size(); i++) {
+         path.append(this.passport.get(i) + ",");
       }
 
-      return "DHT-SUBSYS: NetInfRouteMessage from nodeId" + from + " to " + to + path; 
+      return "DHT-SUBSYS: NetInfRouteMessage from nodeId" + from + " to " + to + path;
    }
 
    /**

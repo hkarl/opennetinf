@@ -2,9 +2,9 @@ package netinf.node.resolution.mdht;
 
 /**
  * This interface is solely for the purpose of simulating delegates (similar to C++ function pointers)
- * @author PG NetInf3
- *
+ * 
+ * @author PG NetInf 3
  */
 public interface EventDelegate {
-    public void action();
+   public void action();
 }
