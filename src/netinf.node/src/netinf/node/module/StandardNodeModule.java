@@ -101,7 +101,7 @@ public class StandardNodeModule extends AbstractNodeModule {
       install(new MDHTResolutionModule());
 
       // In-network Caching
-      install(new NetworkCacheModule());
+      //install(new NetworkCacheModule());
    }
 
    /**

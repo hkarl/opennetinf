@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
 import junit.framework.Assert;
 import netinf.common.datamodel.InformationObject;
 import netinf.node.resolution.InformationObjectHelper;
-import netinf.node.resolution.mdht.dht.FreePastryDHT;
+import netinf.node.resolution.mdht.dht.pastry.FreePastryDHT;
 
 import org.junit.After;
 import org.junit.Before;

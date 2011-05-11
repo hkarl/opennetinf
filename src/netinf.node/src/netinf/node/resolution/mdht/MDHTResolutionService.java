@@ -1,6 +1,7 @@
 package netinf.node.resolution.mdht;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -9,19 +10,21 @@ import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.identity.ResolutionServiceIdentityObject;
+import netinf.common.datamodel.translation.DatamodelTranslator;
+import netinf.common.exceptions.NetInfResolutionException;
 import netinf.common.log.demo.DemoLevel;
 import netinf.node.cache.network.NetworkCache;
 import netinf.node.resolution.AbstractResolutionService;
 import netinf.node.resolution.mdht.dht.DHT;
 import netinf.node.resolution.mdht.dht.DHTConfiguration;
-import netinf.node.resolution.mdht.dht.FreePastryDHT;
+import netinf.node.resolution.mdht.dht.pastry.FreePastryDHT;
 
 import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
 
 /**
- * Multi-level Distributed Hash tables - Resolution Service
+ * Multi-level Distributed Hash table - Resolution Service
  * 
  * @author PG NetInf 3, University of Paderborn
  */
@@ -33,6 +36,13 @@ public class MDHTResolutionService extends AbstractResolutionService {
    
    // table of MDHT levels
    private Map<Integer, DHT> dhts = new Hashtable<Integer, DHT>();
+   
+   private DatamodelTranslator translator;
+
+   @Inject
+   public void setDatamodelTranslator(DatamodelTranslator translator) {
+      this.translator = translator;
+   }
 
 
    @Inject(optional = true)
@@ -84,7 +94,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
 
    @Override
    public InformationObject get(Identifier identifier) {
-      LOG.info("(MDHT ) Getting IO with Identifier " + identifier);      
+      LOG.info("(MDHT ) Getting IO with Identifier " + identifier);
       for (int level = 0; level < dhts.size(); level++) {
          InformationObject result = dhts.get(level).get(identifier);
          if (result != null) {
@@ -98,7 +108,14 @@ public class MDHTResolutionService extends AbstractResolutionService {
    @Override
    public List<Identifier> getAllVersions(Identifier identifier) {
       LOG.info("(MDHT ) Getting all Versions with Identifier " + identifier);
-      return null;
+      InformationObject io = get(identifier);
+      if (io != null) {
+        List<Identifier> ids = new ArrayList<Identifier>();
+        ids.add(io.getIdentifier());
+        return ids;
+      } else {
+        throw new NetInfResolutionException("Could not get all versions");
+      }
    }
 
    /*
@@ -107,8 +124,15 @@ public class MDHTResolutionService extends AbstractResolutionService {
    @Override
    public void put(InformationObject io) {
       LOG.log(DemoLevel.DEMO, "(MDHT ) Putting IO with Identifier: " + io.getIdentifier() + " on all levels");
+      InformationObject informationObject = this.translator.toImpl(io);
+      try {
+         validateIOForPut(informationObject);
+      } catch (IllegalArgumentException ex) {
+         throw new NetInfResolutionException("Trying to put invalid Information Object", ex);
+      }
+      
       for (int level = 0; level < dhts.size(); level++) {
-         dhts.get(level).put(io);
+         dhts.get(level).put(informationObject);
          LOG.info("(MDHT ) Put IO at level " + level);
       }
    }
