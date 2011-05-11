@@ -92,7 +92,7 @@ public class StandardNodeModule extends AbstractNodeModule {
       install(new SearchServiceRDFModule());
 
       // Caching Storage
-      install(new LocalIOCachingModule());
+      //install(new LocalIOCachingModule());
 
       // RESTful API
       install(new RESTModule());
@@ -131,8 +131,11 @@ public class StandardNodeModule extends AbstractNodeModule {
     */
    @Singleton
    @Provides
-   ResolutionInterceptor[] provideResolutionInterceptors(IOCacheImpl ioCache, LocatorSelectorImpl locatorSelector) {
-      return new ResolutionInterceptor[] { ioCache, locatorSelector };
+//   ResolutionInterceptor[] provideResolutionInterceptors(IOCacheImpl ioCache, LocatorSelectorImpl locatorSelector) {
+//      return new ResolutionInterceptor[] { ioCache, locatorSelector };
+//   }
+   ResolutionInterceptor[] provideResolutionInterceptors() {
+      return new ResolutionInterceptor[] { };
    }
 
    /**
