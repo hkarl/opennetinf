@@ -1,11 +1,12 @@
-package netinf.node.resolution.mdht.dht;
+package netinf.node.resolution.mdht.dht.pastry;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
-import netinf.node.resolution.mdht.DummyPastContent;
+import netinf.node.resolution.mdht.dht.DHT;
+import netinf.node.resolution.mdht.dht.DHTConfiguration;
 
 import org.apache.log4j.Logger;
 
@@ -32,7 +33,7 @@ import rice.persistence.StorageManagerImpl;
 public class FreePastryDHT implements DHT {
 
    private static final Logger LOG = Logger.getLogger(FreePastryDHT.class);
-   private PastryNode pastryNode;;
+   private PastryNode pastryNode;
    private Environment environment;
    private PastryIdFactory pastryIdFactory;
    private Past past;
@@ -67,48 +68,46 @@ public class FreePastryDHT implements DHT {
          while (!(pastryNode.isReady() || pastryNode.joinFailed())) {
             pastryNode.wait(500);
             if (pastryNode.joinFailed()) {
-               LOG.info("Could not join the Pastry ring.  Reason:" + pastryNode.joinFailedReason());
-               LOG.info("Creating new ring");
+               LOG.info("(FreePastryDHT) Could not join the Pastry ring.  Reason:" + pastryNode.joinFailedReason());
             }
          }
       }
 
-      LOG.info("Finished starting pastry node" + pastryNode);
+      LOG.info("(FreePastryDHT) Finished starting pastry node" + pastryNode);
    }
 
    public InformationObject get(Identifier id) {
       ExternalContinuation<PastContent, Exception> lookupCont = new ExternalContinuation<PastContent, Exception>();
-
       past.lookup(pastryIdFactory.buildId(id.toString()), lookupCont);
       lookupCont.sleep();
       if (lookupCont.exceptionThrown()) {
          Exception ex = lookupCont.getException();
          LOG.error(ex.getMessage());
       } else {
-         DummyPastContent result = (DummyPastContent) lookupCont.getResult();
+         MDHTPastContent result = (MDHTPastContent) lookupCont.getResult();
          if (result != null) {
-            return result.getIO();
+            return result.getInformationObject();
          }
       }
-
       return null;
    }
 
    @Override
-   public void put(InformationObject o) {
+   public void put(InformationObject io) {
       // build the past content
-      PastContent myContent = new DummyPastContent(pastryIdFactory.buildId(o.getIdentifier().toString()), o);
+      // PastContent content = new DummyPastContent(pastryIdFactory.buildId(io.getIdentifier().toString()), (Serializable) io);
+      MDHTPastContent content = new MDHTPastContent(pastryIdFactory.buildId(io.getIdentifier().toString()), io);
 
       ExternalContinuation<Boolean[], Exception> insertCont = new ExternalContinuation<Boolean[], Exception>();
-      past.insert(myContent, insertCont);
+      past.insert(content, insertCont);
       insertCont.sleep();
 
       if (insertCont.exceptionThrown()) {
-         Exception ex = insertCont.getException();
-         LOG.error(ex.getMessage());
+         Exception exception = insertCont.getException();
+         LOG.error(exception.getMessage());
       } else {
          Boolean[] result = (Boolean[]) insertCont.getResult();
-         LOG.info(result.length + " objects have been inserted.");
+         LOG.info("(FreePastryDHT) " + result.length + " objects have been inserted.");
       }
    }
 
