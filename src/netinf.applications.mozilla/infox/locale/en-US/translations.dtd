@@ -14,3 +14,4 @@
 <!ENTITY rescolor			"Resolved link's color">
 <!ENTITY switchdevice		"Relocate GP">
 <!ENTITY switchdevicedesc	"Relocate GP">
+<!ENTITY restbehavior		"RESTful Behavior with Popups">

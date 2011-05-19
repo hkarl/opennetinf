@@ -41,18 +41,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This enumeration type contains all the defined label naems. The string of each defined label name is the user-readable
+ * This enumeration type contains all the defined label names. The string of each defined label name is the user-readable
  * labelname within identifiers. The number of each defined label name defines the ordering among the label names. This guarantees
  * uniqueness among the labelnames.
  * 
  * @author PG Augnet 2, University of Paderborn
  */
 public enum DefinedLabelName {
-   HASH_OF_PK("HASH_OF_PK", 1),
-   HASH_OF_PK_IDENT("HASH_OF_PK_IDENT", 2),
-   VERSION_KIND("VERSION_KIND", 3),
-   UNIQUE_LABEL("UNIQUE_LABEL", 4),
-   VERSION_NUMBER("VERSION_NUMBER", 5);
+   HASH_OF_PK("HASH_OF_PK", 1), HASH_OF_PK_IDENT("HASH_OF_PK_IDENT", 2), VERSION_KIND("VERSION_KIND", 3), UNIQUE_LABEL(
+         "UNIQUE_LABEL", 4), VERSION_NUMBER("VERSION_NUMBER", 5);
 
    private final String labelName;
    private final int order;

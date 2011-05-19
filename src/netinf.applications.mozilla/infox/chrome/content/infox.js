@@ -36,8 +36,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 /* Central Logging Class. For now with just two levels: info and error.
- * 
  */
 var LOG = {
 	info: function(strMessage) {
@@ -53,7 +53,6 @@ var LOG = {
 };
 
 /* The main InFox (NetInf Firefox Extension) Class. Contains all NetInf related functionality.
- * 
  */
 var InFox = {
 		
@@ -64,9 +63,7 @@ var InFox = {
 		
 		gBrowser.addEventListener("DOMContentLoaded", this.registerClickObserver, true);
 		gBrowser.addEventListener("DOMTitleChanged", this.registerClickObserver, true);
-		
 		gBrowser.addEventListener("contextmenu", this.checkContextMenu, true);
-
 		
 		this.init();
 	},
@@ -96,6 +93,8 @@ var InFox = {
 		this.rescolor		= this.prefManager.getCharPref("rescolor");
 		
 		this.GPJobId		= "";
+		
+		this.RESTBEHAVIOR	= this.prefManager.getBoolPref("restbehavior");
 		
 		this.updateUI();
 	},
@@ -176,6 +175,11 @@ var InFox = {
 					//LOG.info("Styling link");
 					netinfLink.className = "netinf-selected";
 					netinfLink.style.background = this.unrescolor + " url(\"chrome://infox/skin/oni16.png\") no-repeat";
+				}
+				
+				if(this.RESTBEHAVIOR || true){
+					netinfLink.href = "#";
+					netinfLink.setAttribute('onclick', 'alert("blabla")'); 
 				}
 								
 				foundLinks++;
