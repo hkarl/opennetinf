@@ -11,3 +11,5 @@ pref("extensions.infox.autoopen", true);
 pref("extensions.infox.colorizelinks", true);
 pref("extensions.infox.unrescolor", "#ffaaaa");
 pref("extensions.infox.rescolor", "#aaffaa");
+
+pref("extensions.infox.restbehavior", true);
