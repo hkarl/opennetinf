@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
+import netinf.node.resolution.mdht.MDHTResolutionService;
 import netinf.node.resolution.mdht.dht.DHT;
 import netinf.node.resolution.mdht.dht.DHTConfiguration;
 
@@ -22,7 +23,6 @@ import rice.p2p.commonapi.RouteMessage;
 import rice.p2p.past.Past;
 import rice.p2p.past.PastContent;
 import rice.p2p.past.PastImpl;
-import rice.p2p.past.messaging.InsertMessage;
 import rice.pastry.NodeIdFactory;
 import rice.pastry.PastryNode;
 import rice.pastry.PastryNodeFactory;
@@ -46,15 +46,19 @@ public class FreePastryDHT implements DHT, Application {
    private PastryIdFactory pastryIdFactory;
    private Past past;
    private InetSocketAddress bootAddress;
+   private MDHTResolutionService parent;
    /**
-   	   * The Endpoint represents the underlieing node.  By making calls on the
+   	   * The Endpoint represents the underlying node.  By making calls on the
    	   * Endpoint, it assures that the message will be delivered to a MyApp on whichever
    	   * node the message is intended for.
    	   */
    private Endpoint endpoint;
 
-   public FreePastryDHT(int listenPort, String bootHost, int bootPort, String pastName) throws IOException {
-      // PastryNode setup
+   public FreePastryDHT(int listenPort, String bootHost, int bootPort, String pastName, MDHTResolutionService pParent) throws IOException {
+      // Set the reference to the parent MDHT
+	  this.parent = pParent;
+	  
+	  // PastryNode setup
       environment = new Environment();
       NodeIdFactory nodeIdFactory = new RandomNodeIdFactory(environment);
       PastryNodeFactory pastryNodeFactory = new SocketPastryNodeFactory(nodeIdFactory, listenPort, environment);
@@ -73,8 +77,8 @@ public class FreePastryDHT implements DHT, Application {
 
    }
    
-   public FreePastryDHT(DHTConfiguration config) throws IOException {
-      this(config.getListenPort(), config.getBootHost(), config.getBootPort(), "Level-"+config.getLevel());
+   public FreePastryDHT(DHTConfiguration config, MDHTResolutionService pParent) throws IOException {
+      this(config.getListenPort(), config.getBootHost(), config.getBootPort(), "Level-" + config.getLevel(),pParent);
    }
 
    @Override
@@ -94,9 +98,11 @@ public class FreePastryDHT implements DHT, Application {
       LOG.info("(FreePastryDHT) Finished starting pastry node" + pastryNode);
    }
 
-   public InformationObject get(Identifier id) {
+   public InformationObject get(Identifier id, int level) {
       ExternalContinuation<PastContent, Exception> lookupCont = new ExternalContinuation<PastContent, Exception>();
-      past.lookup(pastryIdFactory.buildId(id.toString()), lookupCont);
+      InformationObject retIO = null;
+      Id lookupId = pastryIdFactory.buildId(id.toString());
+      past.lookup(lookupId, lookupCont);
       lookupCont.sleep();
       if (lookupCont.exceptionThrown()) {
          Exception ex = lookupCont.getException();
@@ -107,8 +113,31 @@ public class FreePastryDHT implements DHT, Application {
             return result.getInformationObject();
          }
       }
-      return null;
+    //Not found, instruct parent to look in next ring
+      retIO = parent.get(lookupId, level+1);
+      return retIO;
    }
+   
+   //Version of the get function for looking up p2p.commonapi.Ids directly
+   public InformationObject get(Id id, int level) {
+	      ExternalContinuation<PastContent, Exception> lookupCont = new ExternalContinuation<PastContent, Exception>();
+	      InformationObject retIO = null;
+	      past.lookup(id, lookupCont);
+	      lookupCont.sleep();
+	      if (lookupCont.exceptionThrown()) {
+	         Exception ex = lookupCont.getException();
+	         LOG.error(ex.getMessage());
+	      } else {
+	         MDHTPastContent result = (MDHTPastContent) lookupCont.getResult();
+	         if (result != null) {
+	            return result.getInformationObject();
+	         }
+	      }
+	      //Not found, instruct parent to look in next ring
+	      retIO = parent.get(id, level+1);
+	      return retIO;
+	   }
+
 
    @Override
    public void put(InformationObject io) {
