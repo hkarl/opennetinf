@@ -45,15 +45,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
 	<prefpane label="InFox Preferences">
 		<preferences>
-			<preference id="infox-server" name="extensions.infox.server" type="string"/>
-			<preference id="infox-port" name="extensions.infox.port" type="string"/>
-			<preference id="infox-username" name="extensions.infox.username" type="string"/>
-			<preference id="infox-password" name="extensions.infox.password" type="string"/>
-			<preference id="infox-autorun" name="extensions.infox.autorun" type="bool"/>
-			<preference id="infox-autoopen" name="extensions.infox.autoopen" type="bool"/>
-			<preference id="infox-colorizelinks" name="extensions.infox.colorizelinks" type="bool"/>
-			<preference id="infox-unrescolor" name="extensions.infox.unrescolor" type="string"/>
-			<preference id="infox-rescolor" name="extensions.infox.rescolor" type="string"/>
+			<preference id="infox-server" 			name="extensions.infox.server" type="string"/>
+			<preference id="infox-port" 			name="extensions.infox.port" type="string"/>
+			<preference id="infox-username" 		name="extensions.infox.username" type="string"/>
+			<preference id="infox-password" 		name="extensions.infox.password" type="string"/>
+			<preference id="infox-autorun" 			name="extensions.infox.autorun" type="bool"/>
+			<preference id="infox-autoopen" 		name="extensions.infox.autoopen" type="bool"/>
+			<preference id="infox-colorizelinks" 	name="extensions.infox.colorizelinks" type="bool"/>
+			<preference id="infox-unrescolor" 		name="extensions.infox.unrescolor" type="string"/>
+			<preference id="infox-rescolor" 		name="extensions.infox.rescolor" type="string"/>
+			<preference id="infox-restbehavior" 	name="extensions.infox.restbehavior" type="bool"/>
 		</preferences>
 
 		<grid>
@@ -95,7 +96,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 					<colorpicker type="button" id="rescolor" preference="infox-rescolor" />
 				</row>
 				<row>
-					
+					<label control="restbehavior" value="&restbehavior;" />
+					<checkbox id="restbehavior"  preference="infox-restbehavior" />
+				</row>
+				<row>
+				
 				</row>
 			</rows>
 		</grid>
