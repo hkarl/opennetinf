@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<packager-module version="1.0"> 
+    <property name="name" value="${ivy.packager.module}" /> 
+    <property name="revision" value="${ivy.packager.revision}" /> 
+    
+    <resource
+      url="http://www.inf.usi.ch/carzaniga/siena/software/${name}-${revision}.jar"
+      sha1="cbb07628a4942011a8cbe341ab6d1eeeed9b2b83"
+      tofile="artifacts/jars/${name}.jar" />
+</packager-module> 
