@@ -35,6 +35,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
    private static final Logger LOG = Logger.getLogger(MDHTResolutionService.class);
    private DatamodelFactory datamodelFactory;
    private NetworkCache networkCache;
+   private Map<Integer,InformationObject> openRequests;
    
    // table of MDHT levels
    private Map<Integer, DHT> dhts = new Hashtable<Integer, DHT>();
@@ -69,6 +70,9 @@ public class MDHTResolutionService extends AbstractResolutionService {
    @Inject
    public MDHTResolutionService(List<DHTConfiguration> configs) {
       super();
+      
+      // Initialize requests hash
+      this.openRequests = new Hashtable<Integer, InformationObject>();
       // Create DHTs
       for (DHTConfiguration config : configs) {
          try {
@@ -97,7 +101,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
    @Override
    public InformationObject get(Identifier identifier) {
       LOG.info("(MDHT ) Getting IO with Identifier " + identifier);
-      
+//      this.openRequests.put(key, value)
       InformationObject result = get(identifier, 0);
       //InformationObject result = dhts.get(0).get(identifier);
       if (result != null) {
