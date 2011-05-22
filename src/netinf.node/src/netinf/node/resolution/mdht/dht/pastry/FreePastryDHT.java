@@ -8,6 +8,7 @@ import netinf.common.datamodel.InformationObject;
 import netinf.node.resolution.mdht.MDHTResolutionService;
 import netinf.node.resolution.mdht.dht.DHT;
 import netinf.node.resolution.mdht.dht.DHTConfiguration;
+import netinf.node.resolution.mdht.dht.NetInfPast;
 
 import org.apache.log4j.Logger;
 
@@ -26,6 +27,7 @@ import rice.p2p.past.PastImpl;
 import rice.pastry.NodeIdFactory;
 import rice.pastry.PastryNode;
 import rice.pastry.PastryNodeFactory;
+import rice.pastry.commonapi.PastryEndpointMessage;
 import rice.pastry.commonapi.PastryIdFactory;
 import rice.pastry.socket.SocketPastryNodeFactory;
 import rice.pastry.standard.RandomNodeIdFactory;
@@ -38,13 +40,13 @@ import rice.persistence.StorageManagerImpl;
 /**
  * @author PG NetInf 3
  */
-public class FreePastryDHT implements DHT, Application {
+public class FreePastryDHT implements DHT, Application{
 
    private static final Logger LOG = Logger.getLogger(FreePastryDHT.class);
    private PastryNode pastryNode;
    private Environment environment;
    private PastryIdFactory pastryIdFactory;
-   private Past past;
+   private NetInfPast past;
    private InetSocketAddress bootAddress;
    private MDHTResolutionService parent;
    /**
@@ -53,9 +55,10 @@ public class FreePastryDHT implements DHT, Application {
    	   * node the message is intended for.
    	   */
    private Endpoint endpoint;
+   
 
    public FreePastryDHT(int listenPort, String bootHost, int bootPort, String pastName, MDHTResolutionService pParent) throws IOException {
-      // Set the reference to the parent MDHT
+	   // Set the reference to the parent MDHT
 	  this.parent = pParent;
 	  
 	  // PastryNode setup
@@ -67,13 +70,16 @@ public class FreePastryDHT implements DHT, Application {
       pastryIdFactory = new PastryIdFactory(environment);
       Storage storage = new MemoryStorage(pastryIdFactory);
       StorageManager storageManager = new StorageManagerImpl(pastryIdFactory, storage, new EmptyCache(pastryIdFactory));
-      past = new PastImpl(pastryNode, storageManager, 0, pastName);
+      
+      
       // boot address
       bootAddress = new InetSocketAddress(bootHost, bootPort);
       
       // We are only going to use one instance of this application on each PastryNode
       this.endpoint = pastryNode.buildEndpoint(this, "NetInfMDHTNode");      	   
       this.endpoint.register();
+      
+      past = new NetInfPast(pastryNode, storageManager, 0, pastName, this);
 
    }
    
@@ -102,7 +108,7 @@ public class FreePastryDHT implements DHT, Application {
       ExternalContinuation<PastContent, Exception> lookupCont = new ExternalContinuation<PastContent, Exception>();
       InformationObject retIO = null;
       Id lookupId = pastryIdFactory.buildId(id.toString());
-      past.lookup(lookupId, lookupCont);
+      past.lookup(lookupId, level, false, lookupCont);
       lookupCont.sleep();
       if (lookupCont.exceptionThrown()) {
          Exception ex = lookupCont.getException();
@@ -122,7 +128,7 @@ public class FreePastryDHT implements DHT, Application {
    public InformationObject get(Id id, int level) {
 	      ExternalContinuation<PastContent, Exception> lookupCont = new ExternalContinuation<PastContent, Exception>();
 	      InformationObject retIO = null;
-	      past.lookup(id, lookupCont);
+	      past.lookup(id, level, false, lookupCont);
 	      lookupCont.sleep();
 	      if (lookupCont.exceptionThrown()) {
 	         Exception ex = lookupCont.getException();
@@ -138,6 +144,14 @@ public class FreePastryDHT implements DHT, Application {
 	      return retIO;
 	   }
 
+   public void NotifyParent(Id id, int level)
+   {
+	   InformationObject retIO = null;
+	   LOG.info("Parent to be notified. Level is " + level);
+	 //Not found, instruct parent to look in next ring
+	 //retIO = parent.get(id, level+1);
+	 
+   }
 
    @Override
    public void put(InformationObject io) {
@@ -188,6 +202,8 @@ public void deliver(Id id, Message msg) {
 	
 	if(msg instanceof NetInfDHTMessage) {
 		LOG.info("(FreePastryDHT) Received ACK message " + msg + " on node with id " + id);
+	} else if (msg instanceof PastryEndpointMessage) {
+		LOG.info("(FreePastryDHT) Received Endpoint message " + msg + " on node with id " + id);
 	} else {
 		LOG.info("(FreePastryDHT) Received generic message " + msg + " on node with id " + id);
 	}
