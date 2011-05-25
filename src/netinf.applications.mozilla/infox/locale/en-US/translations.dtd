@@ -15,3 +15,4 @@
 <!ENTITY switchdevice		"Relocate GP">
 <!ENTITY switchdevicedesc	"Relocate GP">
 <!ENTITY restbehavior		"RESTful Behavior with Popups">
+<!ENTITY restport			"REST Interface Port">

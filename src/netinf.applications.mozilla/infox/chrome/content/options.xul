@@ -55,6 +55,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<preference id="infox-unrescolor" 		name="extensions.infox.unrescolor" type="string"/>
 			<preference id="infox-rescolor" 		name="extensions.infox.rescolor" type="string"/>
 			<preference id="infox-restbehavior" 	name="extensions.infox.restbehavior" type="bool"/>
+			<preference id="infox-restport" 		name="extensions.infox.restport" type="string"/>
+			
 		</preferences>
 
 		<grid>
@@ -98,6 +100,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 				<row>
 					<label control="restbehavior" value="&restbehavior;" />
 					<checkbox id="restbehavior"  preference="infox-restbehavior" />
+				</row>
+				<row>
+					<label control="restport" value="&restport;" />
+					<textbox id="restport" rows="15" preference="infox-restport" />
 				</row>
 				<row>
 				
