@@ -48,6 +48,10 @@ import netinf.common.datamodel.rdf.DefinedRdfNames;
  */
 public enum DefinedAttributeIdentification {
 
+   // new by PG NetInf 3
+   REFERENCED_DO("referenced_do", true),  // reference to a DO (inside an IO)
+   CONTENT_TYPE("content_type", true),    // content-type of a Do (added as subattribute of referenced-do)
+   
    // TODO: The following lines should be URIs one day
    OWNER("owner", true),
    PARENT_VERSION("parent_version", true),
@@ -90,7 +94,7 @@ public enum DefinedAttributeIdentification {
    DESCRIPTION("description", true),
    IO_TYPE("ioType", true),
    EVENT("event", true),
-   DEFAULT_PRIORITY("default_priority", true), //
+   DEFAULT_PRIORITY("default_priority", true),
    DELETE("delete", true),
    NAME("name", true),
    IDENTITY_VERIFICATION_FAILED("identity_verification_failed", true),
@@ -100,7 +104,8 @@ public enum DefinedAttributeIdentification {
    AMOUNT("amount", true),
    GEO_LONG("http://www.w3.org/2003/01/geo/wgs84_pos#long", false),
    GEO_LAT("http://www.w3.org/2003/01/geo/wgs84_pos#lat", false);
-
+   
+   
    private final String uri;
 
    private DefinedAttributeIdentification(String uri, boolean fromNetInf) {

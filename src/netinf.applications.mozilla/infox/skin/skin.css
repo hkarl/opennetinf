@@ -57,3 +57,55 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	background-image: url("chrome://infox/skin/loading.gif");
 	background-repeat: no-repeat;
 }
+
+/* RESTful Popup Tooltip */
+#RestPopup {
+	padding: 0;
+	position: fixed;
+	background: #FFFFFF;
+	border: 1px solid #333;
+	z-index: 2;
+	font-size: 13px;
+	text-align: left;
+}
+#RestPopup h1 {
+	background: #f5f5f5;
+	text-align: left;
+	font-size: 16px;
+	border-bottom: 1px dotted #000;
+	padding: 0 3px;
+	margin: 0;
+}
+#RestPopup span {
+	padding: 2px 0 2px 20px;
+}
+/* icons from: http://pinvoke.com/
+Copyright (C) 2010 Yusuke Kamiyamane. All rights reserved.
+The icons are licensed under a Creative Commons Attribution
+3.0 license. <http://creativecommons.org/licenses/by/3.0/>
+*/
+#RestPopup span.pdf {
+	background: url("chrome://infox/skin/fileicons/fileicon_pdf.png") no-repeat left center;
+}
+#RestPopup span.image {
+	background: url("chrome://infox/skin/fileicons/fileicon_image.png") no-repeat left center;
+}
+#RestPopup span.video {
+	background: url("chrome://infox/skin/fileicons/fileicon_video.png") no-repeat left center;
+}
+#RestPopup span.default {
+	background: url("chrome://infox/skin/fileicons/fileicon_default.png") no-repeat left center;
+}
+#RestPopup p {
+	margin: 5px;
+}
+#RestPopupClose {
+	font-size: 20px;
+	line-height: 14px;
+	right: 6px;
+	top: 2px;
+	position: absolute;
+	display: block;
+	cursor: pointer;
+	text-decoration: none;
+}

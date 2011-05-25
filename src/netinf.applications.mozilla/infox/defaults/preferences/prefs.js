@@ -13,3 +13,4 @@ pref("extensions.infox.unrescolor", "#ffaaaa");
 pref("extensions.infox.rescolor", "#aaffaa");
 
 pref("extensions.infox.restbehavior", true);
+pref("extensions.infox.restport", "8081");

@@ -7,7 +7,7 @@ Copyright (C) 2009,2010 Eduard Bauer <edebauer@mail.upb.de>
 Copyright (C) 2009,2010 Matthias Becker <matzeb@mail.upb.de>
 Copyright (C) 2009,2010 Frederic Beister <azamir@zitmail.uni-paderborn.de>
 Copyright (C) 2009,2010 Nadine Dertmann <ndertmann@gmx.de>
-Copyright (C) 2009,2010 Martin Dr√§xler <draexler@mail.uni-paderborn.de>
+Copyright (C) 2009,2010 Martin Dr‰xler <draexler@mail.uni-paderborn.de>
 Copyright (C) 2009,2010 Michael Kionka <mkionka@mail.upb.de>
 Copyright (C) 2009,2010 Mario Mohr <mmohr@mail.upb.de>
 Copyright (C) 2009,2010 Felix Steffen <felix.steffen@gmx.de>
@@ -89,12 +89,14 @@ var InFox = {
 		this.auto_open 		= this.prefManager.getBoolPref("autoopen");
 		this.colorize_links	= this.prefManager.getBoolPref("colorizelinks");
 		
+		this.restbehavior	= this.prefManager.getBoolPref("restbehavior");
+		this.RESTPORT		= this.prefManager.getCharPref("restport");
+		
 		this.unrescolor		= this.prefManager.getCharPref("unrescolor");	
 		this.rescolor		= this.prefManager.getCharPref("rescolor");
 		
 		this.GPJobId		= "";
 		
-		this.RESTBEHAVIOR	= this.prefManager.getBoolPref("restbehavior");
 		
 		this.updateUI();
 	},
@@ -176,11 +178,6 @@ var InFox = {
 					netinfLink.className = "netinf-selected";
 					netinfLink.style.background = this.unrescolor + " url(\"chrome://infox/skin/oni16.png\") no-repeat";
 				}
-				
-				if(this.RESTBEHAVIOR || true){
-					netinfLink.href = "#";
-					netinfLink.setAttribute('onclick', 'alert("blabla")'); 
-				}
 								
 				foundLinks++;
 			}
@@ -237,11 +234,18 @@ var InFox = {
 					strIdentifier = RegExp.$1;
 				}
 				if(patternfound) {				
-				// ... and fire! Get that Locator from our InformationObject
+					// ... and fire! Get that Locator from our InformationObject
 					var showinfo = false;
-					if (event.onLink)
+					if (event.onLink) {
 						showinfo = true;
-					InFox.sendRequest(strIdentifier, event.target, showinfo);	
+					}
+
+					if (InFox.restbehavior) {
+						InFox.sendRESTRequest(strIdentifier, event);
+					}
+					else { // standard behavior
+						InFox.sendRequest(strIdentifier, event.target, showinfo);
+					}
 				}
 			} else {
 				// do nothing
@@ -251,6 +255,95 @@ var InFox = {
 		} else { // neither context menu nor left click
 			return;
 		}
+	},
+	
+	sendRESTRequest: function(strIdentifier, clickEvent) {
+		var client	= new XMLHttpRequest();
+		//var url = "http://localhost:8081/io/ni:" + strIdentifier;
+		var url = 'http://localhost:' + this.RESTPORT + '/io/ni:' + strIdentifier;
+		
+		client.open("GET", url, true);
+		client.setRequestHeader("Content-type", "text/plain");
+		client.send(null);
+		client.onreadystatechange = function() {
+			if(client.readyState == 4 && client.status == 200) {
+				// load jQuery
+				var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+				jsLoader.loadSubScript("chrome://infox/content/jquery/jquery-1.3.2.min.js");
+				jQuery.noConflict();
+				var docContext = window.content.document;
+					    				
+				var foundLocators = 0;
+				var locatorsHtml = '';
+				jQuery(client.responseXML).find('netinf\\:http_url').each(function(){
+					foundLocators++;
+					var $http_url = jQuery(this);
+					var hrefValue = $http_url.find('netinf\\:attributeValue').text();
+					// Chop off "String:" in the attributeValue
+					var pat = /String:(.*)/;
+					pat.exec(hrefValue);
+					hrefValue = RegExp.$1;
+					var fileExtension = hrefValue.split('.').pop().toUpperCase();
+					
+					if (fileExtension.indexOf("PDF") != -1) {
+						locatorsHtml += '<p><span class="pdf"><a href="' + hrefValue + '">Download as ' + fileExtension + '</a></span></p>';	
+					} else if (fileExtension.indexOf("JPG") != -1) {
+						locatorsHtml += '<p><span class="image"><a href="' + hrefValue + '">Download as ' + fileExtension + '</a></span></p>';	
+					} else if (fileExtension.indexOf("MP4") != -1) {
+						locatorsHtml += '<p><span class="video"><a href="' + hrefValue + '">Download as ' + fileExtension + '</a></span></p>';	
+					} else {
+						locatorsHtml += '<p><span class="default"><a href="' + hrefValue + '">Download as ' + fileExtension + '</a></span></p>';	
+					}
+					
+				});
+				
+				// generate popup window
+				var popupHtml = '<div id="RestPopup">';  
+				popupHtml += '<h1>Title</h1>'; 
+				popupHtml += '<a id="RestPopupClose">x</a>';  
+				popupHtml += locatorsHtml;  
+				popupHtml += '</div>';
+				
+				// remove if already existing anywhere (e.g. clicking again) ^^
+				jQuery('#RestPopup', docContext).remove();
+				
+				// append popup
+	            jQuery('body', docContext).append(popupHtml);
+	            
+	            // element position
+	            var $aElement = jQuery('a[href=ni:'+strIdentifier+']', docContext);
+	            var position = $aElement.position();
+	            var aElemWidth = $aElement.width();
+	            
+	            // apply position
+	            var windowWidth = document.documentElement.clientWidth;  
+	            var windowHeight = document.documentElement.clientHeight;
+	            var popupHeight = jQuery('#RestPopup', docContext).height(); 
+	            var popupWidth = jQuery('#RestPopup', docContext).width();
+	            
+	            var leftPos = 0;
+	            if (position.left < windowWidth/2) { // link is on left side
+	            	leftPos = position.left + aElemWidth;
+	            } else { // link is on right side
+	            	leftPos = position.left - popupWidth + aElemWidth;
+	            }
+	            
+	            jQuery('#RestPopup', docContext).css({  
+	            	"position": "absolute",  
+	            	"top": position.top - popupHeight,  
+	            	"left": leftPos  
+	            	}); 
+	            
+	            // register close event
+	            jQuery('#RestPopupClose', docContext).click(function(){
+	            	jQuery('#RestPopup', docContext).remove();
+	            	});  
+	            
+			} else if (client.readyState == 4 && client.status != 200) {
+				alert("IO could not be resolved...");
+			}
+		}
+		
 	},
 	
 	/* Sends a XMLHttpRequest to a NetInf node requesting the IO with Identifier strIdentifier.
