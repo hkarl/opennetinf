@@ -21,6 +21,8 @@ import netinf.node.resolution.mdht.dht.pastry.FreePastryDHT;
 
 import org.apache.log4j.Logger;
 
+import rice.p2p.commonapi.Id;
+
 import com.google.inject.Inject;
 
 /**
@@ -33,6 +35,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
    private static final Logger LOG = Logger.getLogger(MDHTResolutionService.class);
    private DatamodelFactory datamodelFactory;
    private NetworkCache networkCache;
+   private Map<Integer,InformationObject> openRequests;
    
    // table of MDHT levels
    private Map<Integer, DHT> dhts = new Hashtable<Integer, DHT>();
@@ -67,6 +70,9 @@ public class MDHTResolutionService extends AbstractResolutionService {
    @Inject
    public MDHTResolutionService(List<DHTConfiguration> configs) {
       super();
+      
+      // Initialize requests hash
+      this.openRequests = new Hashtable<Integer, InformationObject>();
       // Create DHTs
       for (DHTConfiguration config : configs) {
          try {
@@ -89,18 +95,18 @@ public class MDHTResolutionService extends AbstractResolutionService {
    }
 
    private DHT createDHT(DHTConfiguration config) throws IOException {
-      return new FreePastryDHT(config);
+      return new FreePastryDHT(config, this);
    }
 
    @Override
    public InformationObject get(Identifier identifier) {
       LOG.info("(MDHT ) Getting IO with Identifier " + identifier);
-      for (int level = 0; level < dhts.size(); level++) {
-         InformationObject result = dhts.get(level).get(identifier);
-         if (result != null) {
-            LOG.info("(MDHT ) Found IO at level " + level);
-            return result;
-         }
+//      this.openRequests.put(key, value)
+      InformationObject result = get(identifier, 0);
+      //InformationObject result = dhts.get(0).get(identifier);
+      if (result != null) {
+          LOG.info("(MDHT ) Found IO");
+          return result;
       }
       return null;
    }
@@ -170,6 +176,43 @@ public class MDHTResolutionService extends AbstractResolutionService {
       identity.setDefaultPriority(70);
       identity.setDescription("This is a mdht resolution service running on "); // TODO ? ...on what?
       return identity;
+   }
+   
+   /***
+    * get method to search for a specific IO by using a commonapi ID. This method is meant
+    * to be called from within a child DHT and not from within the MDHT itself
+    * @param id The NetInf identifier object to search for
+    * @param level The Ring/Level where the query should start
+    * @return The IO or {@code null} if not found in either ring
+    */
+   public InformationObject get(Id id, int level) {
+	   	   
+	   InformationObject result = null;
+	   if (level >= this.dhts.size()) return result;
+	   DHT crtLevel = dhts.get(level);
+	   
+	   if (crtLevel != null) {
+		   result = crtLevel.get(id, level);
+	   } 
+	   return result;
+   }
+   /***
+    * get method to search for a specific IO by using a corresponding NetInf Identifier. The
+    * method is only to be used internally in the MDHT
+    * @param id The NetInf identifier object to search for
+    * @param level The Ring/Level where the query should start
+    * @return The IO or {@code null} if not found in either ring
+    */
+   private InformationObject get(Identifier id, int level) {
+	   
+	   InformationObject result = null;
+	   if (level >= this.dhts.size()) return result;
+	   DHT crtLevel = dhts.get(level);
+	   
+	   if (crtLevel != null) {
+		   result = crtLevel.get(id, level);
+	   }
+	   return result;
    }
    
 }
