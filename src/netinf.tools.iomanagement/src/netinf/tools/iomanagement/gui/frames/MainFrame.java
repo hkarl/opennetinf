@@ -175,6 +175,8 @@ public final class MainFrame extends JFrame {
       // actually showing this frame
       pack();
       center();
+      setVisible(true); // really? -.- [EU]
+      
       log.debug("Showing main window");
       log.log(DemoLevel.DEMO, "(GUI  ) I'm ready");
    }
