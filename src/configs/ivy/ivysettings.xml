@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivysettings>
+    <settings defaultResolver="default" />
+    <resolvers>
+        <chain name="default">
+            <packager name="internal-repo" buildRoot="${user.home}/.ivy2/packager/build" 
+                    resourceCache="${user.home}/.ivy2/packager/cache">
+                <ivy pattern="file://${ivy.settings.dir}/internal-repo/[module]/ivy-[revision].xml" />
+                <artifact pattern="file://${ivy.settings.dir}/internal-repo/[module]/packager-[revision].xml" />
+            </packager>
+            <packager name="external-repo" buildRoot="${user.home}/.ivy2/packager/build" 
+                    resourceCache="${user.home}/.ivy2/packager/cache">
+                <ivy pattern="http://homepages.uni-paderborn.de/mmuehe/netinf/ivy/[module]/ivy-[revision].xml" />
+                <artifact pattern="http://homepages.uni-paderborn.de/mmuehe/netinf/ivy/[module]/packager-[revision].xml" />
+            </packager>
+            <ibiblio name="maven-restlet" root="http://maven.restlet.org" m2compatible="true" />
+            <ibiblio name="maven2" m2compatible="true" />
+        </chain>
+    </resolvers>
+</ivysettings>

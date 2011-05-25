@@ -1,0 +1,57 @@
+### General Settings
+
+# Home directory (contains .netinf folder)
+HM_LOC=/home/netinf
+
+# Location of OpenNetinf-Environment
+NI_LOC=${HM_LOC}/OpenNetinf
+
+# Location of Generic Path
+GP_LOC=${HM_LOC}/GenericPath
+
+# Location of OpenNetinf build directory
+BU_LOC=${NI_LOC}/opennetinf/build
+
+# Location for deployment
+DP_LOC=${BU_LOC}/dist
+
+# Interface to use for communication (eth0=host only, eth1=bridged)
+IF_COMM=eth0
+
+LOGSERVER=10.10.10.9
+LOGPORT=4560
+
+### Users and Passwords
+
+# Root password of SQL database (default: n3t1nf)
+DB_ROOTPW=n3t1nf
+
+DB_SDBUSER=sdbuser
+DB_SDBPASS=sdbpass
+DB_EVSUSER=augnet
+DB_EVSPASS=augnet
+
+
+### Scenario 1 Settings
+
+# IPs and Ports (IP=IP address, PO=TCP Port, PH=HTTP Port)
+SC1_IP_NODEA=10.10.10.1
+SC1_PO_NODEA=6001
+SC1_PH_NODEA=9081
+SC1_IP_NODEB=10.10.10.2
+SC1_PO_NODEB=6002
+SC1_PH_NODEB=9082
+SC1_IP_NODEC=10.10.10.3
+SC1_PO_NODEC=6003
+SC1_PH_NODEC=9083
+
+SC1_PO_GPSOCK=6666
+
+### Scenario 2 Settings
+
+# IPs and Ports
+SC2_PO_RS=5000
+
+
+# NO NEED TO EDIT BELOW
+IF_COMM_IP=`ifconfig ${IF_COMM} | grep "inet addr" | cut -f2 -d: | cut -f1 -d\ `
