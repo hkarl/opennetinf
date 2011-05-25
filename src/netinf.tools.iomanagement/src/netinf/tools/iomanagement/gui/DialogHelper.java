@@ -269,7 +269,8 @@ public class DialogHelper {
          log.trace(Constants.LOG_EXIT);
          return returnArray;
       }
+      // dialog canceled -> return expected null [EU]
       log.trace(Constants.LOG_EXIT);
-      return new String[0];
+      return null;
    }
 }
