@@ -1,5 +1,6 @@
 package netinf.node.resolution.mdht.dht;
 
+import rice.p2p.commonapi.Id;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
 
@@ -28,9 +29,19 @@ public interface DHT {
     * Attempts to get the InformationObject by the specified NetInf Identifier.
     * 
     * @param id The NetInf Identifier of the desired InformationObject
+    * @param level The level/ring at which this request should take place
     * @return The corresponding InformationObject if stored in DHT, {@code null} otherwise
     */
-   public InformationObject get(Identifier id);
+   public InformationObject get(Identifier id, int level);
+   
+   /**
+    * Attempts to get the InformationObject by the specified Commonapi Identifier.
+    * 
+    * @param id The Id (e.g. FreePastry ID) of the desired InformationObject
+    * @param level The level/ring at which this request should take place
+    * @return The corresponding InformationObject if stored in DHT, {@code null} otherwise
+    */
+   public InformationObject get(Id id, int level);
 
    /**
     * Leave the current DHT.
