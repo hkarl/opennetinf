@@ -40,6 +40,8 @@ package netinf.node.module;
 import netinf.access.HTTPServer;
 import netinf.access.NetInfServer;
 import netinf.access.TCPServer;
+import netinf.common.communication.MessageEncoder;
+import netinf.common.communication.MessageEncoderXML;
 import netinf.common.datamodel.rdf.module.DatamodelRdfModule;
 import netinf.common.datamodel.translation.module.DatamodelTranslationModule;
 import netinf.common.utils.Utils;
@@ -75,7 +77,8 @@ public class StandardNodeModule extends AbstractNodeModule {
    @Override
    protected void configure() {
       super.configure();
-
+      bind(MessageEncoder.class).to(MessageEncoderXML.class).in(Singleton.class);
+      
       // The datamodel
       install(new DatamodelRdfModule());
       install(new DatamodelTranslationModule());
@@ -98,6 +101,8 @@ public class StandardNodeModule extends AbstractNodeModule {
 
       // In-network Caching
       // install(new NetworkCacheModule());
+      
+      
    }
 
    /**
@@ -173,4 +178,5 @@ public class StandardNodeModule extends AbstractNodeModule {
    AccessServer[] provideAccessServers(RESTAccessServer rest) {
       return new AccessServer[] { rest };
    }
+   
 }
