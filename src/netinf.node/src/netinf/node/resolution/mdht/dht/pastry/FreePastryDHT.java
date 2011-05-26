@@ -1,7 +1,9 @@
 package netinf.node.resolution.mdht.dht.pastry;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
@@ -19,11 +21,8 @@ import rice.p2p.commonapi.Endpoint;
 import rice.p2p.commonapi.Id;
 import rice.p2p.commonapi.Message;
 import rice.p2p.commonapi.NodeHandle;
-import rice.p2p.commonapi.NodeHandleSet;
 import rice.p2p.commonapi.RouteMessage;
-import rice.p2p.past.Past;
 import rice.p2p.past.PastContent;
-import rice.p2p.past.PastImpl;
 import rice.pastry.NodeIdFactory;
 import rice.pastry.PastryNode;
 import rice.pastry.PastryNodeFactory;
@@ -36,6 +35,7 @@ import rice.persistence.MemoryStorage;
 import rice.persistence.Storage;
 import rice.persistence.StorageManager;
 import rice.persistence.StorageManagerImpl;
+
 
 /**
  * @author PG NetInf 3
@@ -144,23 +144,37 @@ public class FreePastryDHT implements DHT, Application{
 	      return retIO;
 	   }
 
-   public void NotifyParent(Id id, int level)
-   {
-	   InformationObject retIO = null;
+   /***
+    * Method used to notify parent to jump one ring above for the GET request
+    * @param id The Id of the stored PastContent
+    * @param level The level we are currently on 
+    */
+   public void NotifyParent(Id id, int level) {
+	   /*InformationObject retIO = */parent.get(id, level+1);
 	   LOG.info("Parent to be notified. Level is " + level);
+	   parent.switchRingUpwards(level);
 	 //Not found, instruct parent to look in next ring
 	 //retIO = parent.get(id, level+1);
-	 
+   }
+   
+   public void NotifyParentAck(Id id, InetAddress target) {
+	   parent.sendRemoteAck(target);
    }
 
    @Override
-   public void put(InformationObject io) {
+   public void put(InformationObject io, int level, int maxlevels, byte[] sourceAddr) {
       // build the past content
       // PastContent content = new DummyPastContent(pastryIdFactory.buildId(io.getIdentifier().toString()), (Serializable) io);
       MDHTPastContent content = new MDHTPastContent(pastryIdFactory.buildId(io.getIdentifier().toString()), io);
 
       ExternalContinuation<Boolean[], Exception> insertCont = new ExternalContinuation<Boolean[], Exception>();
-      past.insert(content, insertCont);
+      InetAddress inetAddr;
+	try {
+	  //Convert IP Address from string to InetAddress
+	  inetAddr = InetAddress.getByAddress(sourceAddr);
+	  
+	  //Create NetInfInsertMessage
+      past.insert(content, insertCont, level, maxlevels, inetAddr);
       insertCont.sleep();
 
       if (insertCont.exceptionThrown()) {
@@ -169,20 +183,11 @@ public class FreePastryDHT implements DHT, Application{
       } else {
          Boolean[] result = (Boolean[]) insertCont.getResult();
          LOG.info("(FreePastryDHT) " + result.length + " objects have been inserted at node ");
-         NodeHandleSet set = endpoint.replicaSet(content.getId(), 1);
-         if (set.size() > 0) {
-        	 LOG.info("(FreePastryDHT) Replica set contains " + set.size() + " copies: " + set);
-        	 LOG.info("(FreePastryDHT) Sending ACK messages to all nodes in replica set.");
-        	 for(int i = 0; i < set.size(); i++)
-        	 {
-        		 NodeHandle nh = set.getHandle(i);
-        		 this.routeMyMsgDirect(nh);
-        	 }
-         } else {
-        	 LOG.error("(FreePastryDHT) Replica set contains no copies!");
-         }
       }
-      
+	} catch (UnknownHostException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
    }
 
    @Override

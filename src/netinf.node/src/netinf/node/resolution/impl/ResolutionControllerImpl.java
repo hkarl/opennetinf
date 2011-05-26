@@ -58,6 +58,7 @@ import netinf.common.messages.RSGetRequest;
 import netinf.common.messages.RSGetResponse;
 import netinf.common.messages.RSGetServicesRequest;
 import netinf.common.messages.RSGetServicesResponse;
+import netinf.common.messages.RSMDHTAck;
 import netinf.common.messages.RSPutRequest;
 import netinf.common.messages.RSPutResponse;
 import netinf.common.security.SecurityManager;
@@ -317,7 +318,13 @@ public class ResolutionControllerImpl implements ResolutionController {
          RSGetServicesRequest rsGetServicesRequest = (RSGetServicesRequest) netInfMessage;
          return processRSGetServicesRequest(rsGetServicesRequest);
       }
-
+      // Added by NetInf 3 - New type of one-way message (MDHT ACK) received
+      if (netInfMessage instanceof RSMDHTAck) {
+    	  //RSMDHTAck rsMdhtAck = (RSMDHTAck) netInfMessage;
+    	  LOG.info("(Resolution Controller) Got ACK from Past Node");
+    	  //Explicit return null, in case somebody adds code after this
+    	  return null;
+      }
       return null;
    }
 

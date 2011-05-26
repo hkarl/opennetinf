@@ -62,6 +62,7 @@ import netinf.common.messages.ESFFetchMissedEventsResponse;
 import netinf.common.messages.NetInfMessage;
 import netinf.common.messages.RSGetRequest;
 import netinf.common.messages.RSGetResponse;
+import netinf.common.messages.RSMDHTAck;
 import netinf.common.messages.TCChangeTransferRequest;
 import netinf.common.messages.TCChangeTransferResponse;
 import netinf.common.messages.TCStartTransferRequest;
@@ -157,11 +158,18 @@ public class MessageEncoderXML extends MessageEncoderAbstract {
          encodeESFFetchMissedEventsRequest(xml, (ESFFetchMissedEventsRequest) m, serializeFormat);
       } else if (m instanceof ESFFetchMissedEventsResponse) {
          encodeESFFetchMissedEventsResponse(xml, (ESFFetchMissedEventsResponse) m, serializeFormat);
+      } else if (m instanceof RSMDHTAck) {
+          encodeRSMDHTAck(xml, (RSMDHTAck) m, serializeFormat);
       } else {
          throw new NetInfUncheckedException("Don't know how to encode this NetInfMessage");
       }
 
       return buildString(xml);
+   }
+
+   private void encodeRSMDHTAck(Document xml, RSMDHTAck m,
+		SerializeFormat serializeFormat) {
+	
    }
 
    private void encodeESFFetchMissedEventsResponse(Document xml, ESFFetchMissedEventsResponse m, SerializeFormat serializeFormat) {
@@ -297,6 +305,8 @@ public class MessageEncoderXML extends MessageEncoderAbstract {
             message = decodeESFFetchMissedEventsResponse(documentElement, serializeFormat);
          } else if (messageName.equals(ESFFetchMissedEventsRequest.class.getSimpleName())) {
             message = decodeESFFetchMissedEventsRequest(documentElement, serializeFormat);
+         } else if (messageName.equals(RSMDHTAck.class.getSimpleName())) {
+            message = decodeRSMDHTAck(documentElement, serializeFormat);
          } else {
             throw new NetInfUncheckedException("Don't know how to decode this NetInfMessage");
          }
@@ -331,7 +341,28 @@ public class MessageEncoderXML extends MessageEncoderAbstract {
       }
    }
 
-   /**
+   private NetInfMessage decodeRSMDHTAck(Node root,
+		SerializeFormat serializeFormat) {
+	   RSMDHTAck decodedMsg = new RSMDHTAck();
+	      Node sourceNode = getFirstElementByTagName(root, EL_PRIVATE_KEY);
+	      if (sourceNode != null) {
+	    	  decodedMsg.setErrorMessage(sourceNode.getTextContent());
+	      }
+	      decodedMsg.setPrivateKey(sourceNode.getTextContent());
+	      Node errorMsgNode = getFirstElementByTagName(root, EL_ERROR_MESSAGE);
+	      if (errorMsgNode != null) {
+	         decodedMsg.setErrorMessage(errorMsgNode.getTextContent());
+	      }
+
+	      Node idNode = getFirstElementByTagName(root, EL_IDENTITY);
+	      if (idNode != null) {
+	         decodedMsg.setErrorMessage(errorMsgNode.getTextContent());
+	      }
+
+	      return decodedMsg;
+}
+
+/**
     * Method is not yet 100% checked and correct. Use at your own risk
     * 
     * @param root

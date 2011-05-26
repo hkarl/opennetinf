@@ -1,10 +1,10 @@
 package netinf.node.resolution.mdht.dht;
 
 
-import java.util.logging.*;
+import java.net.InetAddress;
 
 import netinf.node.resolution.mdht.dht.pastry.FreePastryDHT;
-import netinf.node.resolution.mdht.dht.pastry.NetInfDHTMessage;
+import netinf.node.resolution.mdht.dht.pastry.NetInfInsertMessage;
 import netinf.node.resolution.mdht.dht.pastry.NetInfLookupMessage;
 import rice.p2p.commonapi.*;
 import rice.p2p.past.*;
@@ -12,8 +12,6 @@ import rice.*;
 import rice.Continuation.*;
 import rice.p2p.past.messaging.*;
 import rice.p2p.past.rawserialization.SocketStrategy;
-import rice.pastry.commonapi.PastryEndpoint;
-import rice.pastry.commonapi.PastryEndpointMessage;
 import rice.persistence.Cache;
 import rice.persistence.StorageManager;
 
@@ -55,17 +53,40 @@ public class NetInfPast extends PastImpl {
 		// TODO Auto-generated constructor stub
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void deliver(Id id, Message message) {
 		final PastMessage msg = (PastMessage) message;
 		if (msg.isResponse() == false && msg instanceof NetInfLookupMessage) {		
 				//Get the level
-			NetInfLookupMessage niMsg = (NetInfLookupMessage)msg;
-			int level = niMsg.getLevel();
+			final NetInfLookupMessage niMsg = (NetInfLookupMessage)msg;
+			final int level = niMsg.getLevel();
+			final Id objectId = id;
 				if(this.application instanceof FreePastryDHT) {
-					FreePastryDHT parent = (FreePastryDHT) application;
-					parent.NotifyParent(id, level);
-				}
-			 
+					final FreePastryDHT fpParent = (FreePastryDHT) application;
+					
+					// if the data is here, we send the reply, as well as push a cached copy
+			        // back to the previous node
+			        storage.getObject(niMsg.getId(), new StandardContinuation(getResponseContinuation(niMsg)) {
+			          public void receiveResult(Object o) {
+			            //LOG.info("Received object " + o + " for id " + lmsg.getId());
+			        	fpParent.NotifyParent(objectId, level);
+			            // send result back
+			            parent.receiveResult(o);
+			          }
+			        });	
+				}			 
+			} else {
+				if (msg instanceof NetInfInsertMessage) {
+			        final NetInfInsertMessage imsg = (NetInfInsertMessage) msg;
+			        if(this.application instanceof FreePastryDHT) {
+						final FreePastryDHT fpParent = (FreePastryDHT) application;
+						if(imsg.getLevel() == imsg.getMaxLevels())
+						{
+							fpParent.NotifyParentAck(id, imsg.getAddress());
+						}
+			        }
+			        
+			    }
 			}
 		super.deliver(id, message);
 		}
@@ -141,5 +162,32 @@ public class NetInfPast extends PastImpl {
 	        }
 	      }
 	    });
+	  }
+	/**
+	   * Inserts an object with the given ID into this instance of Past.
+	   * Asynchronously returns a PastException to command, if the
+	   * operation was unsuccessful.  If the operation was successful, a
+	   * Boolean[] is returned representing the responses from each of
+	   * the replicas which inserted the object.
+	   *
+	   * @param obj the object to be inserted
+	   * @param command Command to be performed when the result is received
+	   */
+	
+	  public void insert(final PastContent obj, final Continuation command, final int level, final int maxlevels, final InetAddress source) {
+	    doInsert(obj.getId(), new MessageBuilder() {
+	      public PastMessage buildMessage() {
+	        return new NetInfInsertMessage(getUID(), obj, getLocalNodeHandle(), obj.getId(), source, level, maxlevels);
+	      }
+	    }, new StandardContinuation(command) {
+	      public void receiveResult(final Object array) {
+	        cache(obj, new SimpleContinuation()  {
+	          public void receiveResult(Object o) {
+	            parent.receiveResult(array);
+	          }
+	        });
+	      }
+	    },
+	    socketStrategy.sendAlongSocket(SocketStrategy.TYPE_INSERT, obj));
 	  }
 }
