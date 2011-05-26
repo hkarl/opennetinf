@@ -13,6 +13,7 @@
                 <ivy pattern="http://homepages.uni-paderborn.de/mmuehe/netinf/ivy/[module]/ivy-[revision].xml" />
                 <artifact pattern="http://homepages.uni-paderborn.de/mmuehe/netinf/ivy/[module]/packager-[revision].xml" />
             </packager>
+            <ibiblio name="jboss" root="https://repository.jboss.org/nexus/content/repositories/releases/" m2compatible="true" />
             <ibiblio name="maven-restlet" root="http://maven.restlet.org" m2compatible="true" />
             <ibiblio name="maven2" m2compatible="true" />
         </chain>
