@@ -9,8 +9,10 @@ pref("extensions.infox.username", "generic");
 pref("extensions.infox.password", "generic");
 pref("extensions.infox.autoopen", true);
 pref("extensions.infox.colorizelinks", true);
-pref("extensions.infox.unrescolor", "#ffaaaa");
-pref("extensions.infox.rescolor", "#aaffaa");
+pref("extensions.infox.unrescolor", "#f5f5f5");
+pref("extensions.infox.rescolor", "#E6EFC2");
 
 pref("extensions.infox.restbehavior", true);
 pref("extensions.infox.restport", "8081");
+
+// don't forger to apply changes in 'InFox.resetPreferences()'
