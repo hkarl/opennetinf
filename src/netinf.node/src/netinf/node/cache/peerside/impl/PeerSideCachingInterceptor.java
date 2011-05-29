@@ -7,6 +7,12 @@ import netinf.node.resolution.ResolutionInterceptor;
 
 import com.google.inject.Inject;
 
+/**
+ * Interface of peer-side caching interceptor.
+ * 
+ * @author PG NetInf 3, University of Paderborn
+ */
+
 public class PeerSideCachingInterceptor implements ResolutionInterceptor {
 
 	private PeerSideCache cache;

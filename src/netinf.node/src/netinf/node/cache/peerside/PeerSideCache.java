@@ -2,6 +2,12 @@ package netinf.node.cache.peerside;
 
 import netinf.common.datamodel.DataObject;
 
+/**
+ * Interface of peer-side caching.
+ * 
+ * @author PG NetInf 3, University of Paderborn
+ */
+
 public interface PeerSideCache {
 
 	/**
@@ -10,6 +16,7 @@ public interface PeerSideCache {
 	 * @param dataObject
 	 * @return
 	 */
+
 	boolean contains(DataObject dataObject);
 
 	/**
@@ -20,6 +27,7 @@ public interface PeerSideCache {
 	 * @return true if a valid Object could be stored, false otherwise
 	 * @param dataObject
 	 */
+
 	boolean cache(DataObject dataObject);
 
 }
