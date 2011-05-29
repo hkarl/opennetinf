@@ -5,11 +5,16 @@ import java.io.File;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
-import netinf.common.datamodel.DataObject;
 import netinf.node.cache.peerside.CacheMemoryStoreEvictionPolicy;
 import netinf.node.cache.peerside.PeerSideCacheServer;
 
 import org.apache.log4j.Logger;
+
+/**
+ * Interface of peer-side caching server.
+ * 
+ * @author PG NetInf 3, University of Paderborn
+ */
 
 public class PeerSideCacheServerImpl implements PeerSideCacheServer {
 
@@ -24,6 +29,10 @@ public class PeerSideCacheServerImpl implements PeerSideCacheServer {
 	private Cache cache;
 
 	private CacheConfiguration cacheConfig;
+
+	/**
+	 * Default constructor.
+	 */
 
 	public PeerSideCacheServerImpl() {
 
@@ -40,6 +49,17 @@ public class PeerSideCacheServerImpl implements PeerSideCacheServer {
 		this.cache = new Cache(cacheConfig);
 
 	}
+
+	/**
+	 * 
+	 * @param cacheName
+	 * @param maxElementsInMemory
+	 * @param path
+	 * @param eternal
+	 * @param policy
+	 * @param maxElementsOnDisk
+	 * @param overflowToDisk
+	 */
 
 	public PeerSideCacheServerImpl(String cacheName, int maxElementsInMemory,
 			String path, Boolean eternal,
@@ -61,7 +81,7 @@ public class PeerSideCacheServerImpl implements PeerSideCacheServer {
 	}
 
 	@Override
-	public boolean contains(DataObject dataObject, String hash) {
+	public boolean contains(String hash) {
 
 		Element element = cache.getQuiet(hash);
 
@@ -81,6 +101,7 @@ public class PeerSideCacheServerImpl implements PeerSideCacheServer {
 
 	}
 
+	@Override
 	public String getURL(String hash) {
 
 		return cacheConfig.getDiskStorePath() + "/" + hash;

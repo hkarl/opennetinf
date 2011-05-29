@@ -8,6 +8,12 @@ import netinf.node.cache.peerside.impl.PeerSideCacheServerImpl;
 import com.google.inject.PrivateModule;
 import com.google.inject.Singleton;
 
+/**
+ * The Class PeerSideCacheModule.
+ * 
+ * @author PG NetInf 3, University of Paderborn
+ */
+
 public class PeerSideCacheModule extends PrivateModule {
 
 	@Override

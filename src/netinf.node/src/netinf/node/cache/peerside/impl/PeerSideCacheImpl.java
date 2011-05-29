@@ -21,17 +21,33 @@ import netinf.node.transfer.http.TransferJobHttp;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
+/**
+ * Implementation of peer-side caching.
+ * 
+ * @author PG NetInf 3, University of Paderborn
+ */
+
 public class PeerSideCacheImpl implements PeerSideCache {
 
 	private static final Logger LOG = Logger.getLogger(PeerSideCacheImpl.class);
 
 	private PeerSideCacheServer server;
 
+	/**
+	 * Constructor
+	 */
+
 	public PeerSideCacheImpl(PeerSideCacheServer server) {
 
 		this.server = server;
 
 	}
+
+	/**
+	 * Set the server.
+	 * 
+	 * @param server
+	 */
 
 	public void setServer(PeerSideCacheServer server) {
 
@@ -52,7 +68,7 @@ public class PeerSideCacheImpl implements PeerSideCache {
 			return false;
 
 		else
-			return server.contains(dataObject, hash);
+			return server.contains(hash);
 	}
 
 	@Override
@@ -135,6 +151,14 @@ public class PeerSideCacheImpl implements PeerSideCache {
 
 	}
 
+	/**
+	 * Gets the hash-value of a DataObject
+	 * 
+	 * @param d
+	 *            the DataObject
+	 * @return hash-value of the DO
+	 */
+
 	private String getHash(DataObject d) {
 
 		LOG.trace(null);
@@ -154,6 +178,11 @@ public class PeerSideCacheImpl implements PeerSideCache {
 		}
 
 	}
+
+	/**
+	 * 
+	 * @param dataObject
+	 */
 
 	private void addLocator(DataObject dataObject) {
 		String hash = getHash(dataObject);
@@ -179,6 +208,12 @@ public class PeerSideCacheImpl implements PeerSideCache {
 		}
 	}
 
+	/**
+	 * Get the path of temporary folder
+	 * 
+	 * @return pathToTemp path of temporary folder
+	 */
+
 	private String getTmpFolder() {
 
 		String pathToTmp = System.getProperty("java.io.tmpdir")
@@ -192,6 +227,11 @@ public class PeerSideCacheImpl implements PeerSideCache {
 		}
 	}
 
+	/**
+	 * Delete the temporary file.
+	 * 
+	 * @param path
+	 */
 	private void deleteTmpFile(String path) {
 
 		File file = new File(path);
