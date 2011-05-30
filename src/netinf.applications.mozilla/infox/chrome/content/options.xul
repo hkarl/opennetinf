@@ -107,7 +107,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 					<colorpicker type="button" id="rescolor" preference="infox-rescolor" />
 				</row>
 				<row>
-					<button label="Reset" oncommand="InFox.resetPreferences()" />
+					<button label="&reset;" oncommand="InFox.resetPreferences()" />
 				</row>
 				<row>
 				
