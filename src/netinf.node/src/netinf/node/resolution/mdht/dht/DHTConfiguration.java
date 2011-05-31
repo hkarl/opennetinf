@@ -11,6 +11,7 @@ public class DHTConfiguration {
       this.bootHost = bootHost;
       this.bootPort = bootPort;
       this.listenPort = listenPort;
+      this.level = level;
    }
 
    public String getBootHost() {
