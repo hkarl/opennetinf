@@ -8,5 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/netinf.common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/netinf.access"/>
 	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=ivy.xml&amp;confs=*&amp;ivySettingsPath=%24%7Bworkspace_loc%3Aconfigs%2Fivy%2Fivysettings.xml%7D&amp;loadSettingsOnDemand=false&amp;propertyFiles="/>
+	<classpathentry combineaccessrules="false" kind="src" path="/netinf.database"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

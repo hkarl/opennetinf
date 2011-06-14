@@ -51,6 +51,7 @@ import netinf.common.datamodel.rdf.DefinedRdfNames;
 import netinf.common.exceptions.NetInfSearchException;
 import netinf.common.search.DefinedQueryTemplates;
 import netinf.common.utils.Utils;
+import netinf.database.sdb.SDBStoreFactory;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.rdf.RDFResolutionService;
 import netinf.node.search.SearchController;
@@ -75,8 +76,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.sdb.SDBFactory;
 import com.hp.hpl.jena.sdb.Store;
-import com.hp.hpl.jena.sdb.StoreDesc;
-import com.hp.hpl.jena.sdb.sql.JDBC;
 import com.hp.hpl.jena.sdb.sql.SDBConnection;
 
 /**
@@ -114,13 +113,10 @@ public class SearchServiceRDF implements SearchService {
    private final SearchEsfConnector searchEsfConnector;
 
    @Inject
-   public SearchServiceRDF(final DatamodelFactory dmfactory, @Named("search_rdf_db_host") final String dbHost,
-         @Named("search_rdf_db_port") final String dbPort, @Named("search_rdf_db_dbname") final String dbName,
-         @Named("search_rdf_db_user") final String dbUser, @Named("search_rdf_db_pw") final String dbPassword,
-         @Named("search_rdf_db_layout") final String dbLayout, @Named("search_rdf_db_type") final String dbType,
-         @Named("search_rdf_db_driver") final String dbDriver, @Named("search_rdf_identifier") final String identifier,
-         @Named("search_rdf_privateKey") final String privateKey, @Named("search_rdf_publicKey") final String publicKey,
-         @Named("search_rdf_connect_to_esf") final String connectToEsf, final SearchEsfConnector searchEsfConnector) {
+   public SearchServiceRDF(final DatamodelFactory dmfactory, SDBStoreFactory sdbStoreFactory,
+         @Named("search_rdf_identifier") final String identifier, @Named("search_rdf_privateKey") final String privateKey,
+         @Named("search_rdf_publicKey") final String publicKey, @Named("search_rdf_connect_to_esf") final String connectToEsf,
+         final SearchEsfConnector searchEsfConnector) {
       LOG.trace(null);
 
       this.datamodelFactory = dmfactory;
@@ -137,28 +133,20 @@ public class SearchServiceRDF implements SearchService {
       this.model = null;
 
       boolean ready = false;
-      if (dbType.equals("MySQL")) {
-         try {
-            final StoreDesc storeDesc = new StoreDesc(dbLayout, dbType);
-            JDBC.loadDriver(dbDriver);
-            final String jdbcURL = "jdbc:" + dbType.toLowerCase() + "://" + dbHost + ":" + dbPort + "/" + dbName;
-            this.conn = new SDBConnection(jdbcURL, dbUser, dbPassword);
-            this.store = SDBFactory.connectStore(conn, storeDesc);
-            this.dataset = SDBFactory.connectDataset(this.store);
-            this.model = SDBFactory.connectDefaultModel(this.store);
-         } catch (Exception e) {
-            LOG.error("The following error occured while trying to connect to SDB store: " + e.getMessage());
-            LOG.error("Not connected to SDB store");
-            return;
-         }
-         if (!this.store.isClosed()) {
-            LOG.debug("Successfully connected to SDB store");
-            ready = true;
-         } else {
-            LOG.error("Could not establish connection to SDB store");
-         }
+      try {            
+         this.store = sdbStoreFactory.createStore();
+         this.dataset = SDBFactory.connectDataset(this.store);
+         this.model = SDBFactory.connectDefaultModel(this.store);
+      } catch (Exception e) {
+         LOG.error("The following error occured while trying to connect to SDB store: " + e.getMessage());
+         LOG.error("Not connected to SDB store");
+         return;
+      }
+      if (!this.store.isClosed()) {
+         LOG.debug("Successfully connected to SDB store");
+         ready = true;
       } else {
-         LOG.error("Database type '" + dbType + "' not supported");
+         LOG.error("Could not establish connection to SDB store");
       }
 
       if (ready) {
@@ -182,7 +170,6 @@ public class SearchServiceRDF implements SearchService {
             this.searchEsfConnector.start();
          }
       }
-
    }
 
    @Override
