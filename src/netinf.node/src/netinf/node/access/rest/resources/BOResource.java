@@ -1,9 +1,8 @@
 package netinf.node.access.rest.resources;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 
 import netinf.common.datamodel.DefinedAttributePurpose;
@@ -13,6 +12,8 @@ import netinf.common.datamodel.IdentifierLabel;
 import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.exceptions.NetInfCheckedException;
+import netinf.common.utils.DatamodelUtils;
+import netinf.node.transferDeluxe.TransferDispatcher;
 
 import org.apache.log4j.Logger;
 import org.restlet.data.MediaType;
@@ -71,14 +72,14 @@ public class BOResource extends NetInfResource {
          List<Attribute> locators = io.getAttributesForPurpose(
                DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
          if (!locators.isEmpty()) {
-            URL url;
-            for (Attribute locator: locators) {
+            for (Attribute locator : locators) {
                try {
-                  url = new URL(locator.getValue(String.class));
-                  URLConnection conn = url.openConnection();
-                  return new InputRepresentation(conn.getInputStream(),
-                        new MediaType(conn.getContentType()));
-               } catch (MalformedURLException mue) {
+                  TransferDispatcher tsDispatcher = new TransferDispatcher();
+                  InputStream IS = tsDispatcher.getStream(locator.getValue(String.class));
+                  MediaType mdType = new MediaType(DatamodelUtils.getContentType(io));
+                  return new InputRepresentation(IS, mdType);
+               }
+               catch (MalformedURLException mue) {
                   LOG.warn("Malformed locator URL", mue);
                   continue;
                } catch (IOException ioe) {

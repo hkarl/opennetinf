@@ -114,7 +114,6 @@ public class TransferJobHttp extends ExecutableTransferJob {
       try {
          URL url = new URL(this.getSource());
          URLConnection urlConnection = url.openConnection();
-         byte[] contentTypeBytes = urlConnection.getContentType().getBytes();
          is = urlConnection.getInputStream();
          file = new DataOutputStream(new FileOutputStream(this.getDestination()));
          byte[] buffer = new byte[4096];

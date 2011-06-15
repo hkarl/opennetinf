@@ -120,8 +120,10 @@ public class TransferControllerImpl implements TransferController {
    private NetInfMessage processTCGetServicesRequest(TCGetServicesRequest tcServicesRequest) {
       LOG.trace(null);
 
+      // create response
       TCGetServicesResponse tcGetServicesResponse = new TCGetServicesResponse();
 
+      // add available services to response
       for (TransferService transferService : transferServices.values()) {
          tcGetServicesResponse.addTransferService(transferService.getIdentity());
       }
@@ -251,7 +253,7 @@ public class TransferControllerImpl implements TransferController {
       if (toUse != null) {
          internal = toUse;
       } else {
-         if (this.transferServices.size() > 0) {
+         if (transferServices.size() > 0) {
 
             // TODO: Here a special selector might be used, in order to determine the best transferService.
             internal = transferServices.values().iterator().next();

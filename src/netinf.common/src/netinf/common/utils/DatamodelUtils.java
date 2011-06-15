@@ -389,8 +389,7 @@ public class DatamodelUtils {
             return false;
          }
       }
-      if (DefinedVersionKind.VERSIONED.name().equals(
-            identifier.getIdentifierLabel(DefinedLabelName.VERSION_KIND.getLabelName()))) {
+      if (DefinedVersionKind.VERSIONED.name().equals(identifier.getIdentifierLabel(DefinedLabelName.VERSION_KIND.getLabelName()))) {
          if (!identifier.getIdentifierLabels().contains(DefinedLabelName.VERSION_NUMBER.getLabelName())) {
             return false;
          }
@@ -472,7 +471,7 @@ public class DatamodelUtils {
 
          @Override
          public String getLabelName() {
-            return this.labelName;
+            return labelName;
          }
 
          @Override
@@ -482,7 +481,7 @@ public class DatamodelUtils {
 
          @Override
          public String getLabelValue() {
-            return this.labelValue;
+            return labelValue;
          }
 
          @Override
@@ -683,25 +682,25 @@ public class DatamodelUtils {
    }
 
    public static String toStringAttribute(Attribute attribute, String indent) {
-         String realIdent = indent;
+      String realIdent = indent;
 
-         if (realIdent == null) {
-            realIdent = "";
-         }
+      if (realIdent == null) {
+         realIdent = "";
+      }
 
-         StringBuilder stringBuilder = new StringBuilder();
+      StringBuilder stringBuilder = new StringBuilder();
 
-         stringBuilder.append(realIdent + "Identification: " + attribute.getIdentification());
-         stringBuilder.append("\n" + realIdent + "AttributePurpose: " + attribute.getAttributePurpose());
-         stringBuilder.append("\n" + realIdent + "Value: " + attribute.getValueRaw());
+      stringBuilder.append(realIdent + "Identification: " + attribute.getIdentification());
+      stringBuilder.append("\n" + realIdent + "AttributePurpose: " + attribute.getAttributePurpose());
+      stringBuilder.append("\n" + realIdent + "Value: " + attribute.getValueRaw());
 
-         List<Attribute> subattributes = attribute.getSubattributes();
+      List<Attribute> subattributes = attribute.getSubattributes();
 
-         for (Attribute subAttribute : subattributes) {
-            stringBuilder.append("\n" + realIdent + "Attribute: \n" + toStringAttribute(subAttribute, realIdent + INDENT));
-         }
+      for (Attribute subAttribute : subattributes) {
+         stringBuilder.append("\n" + realIdent + "Attribute: \n" + toStringAttribute(subAttribute, realIdent + INDENT));
+      }
 
-         return stringBuilder.toString();
+      return stringBuilder.toString();
    }
 
    public static String toStringIdentifier(Identifier identifier) {
@@ -728,5 +727,20 @@ public class DatamodelUtils {
       } else {
          return null;
       }
+   }
+
+   /**
+    * Gets the content type out of the IO
+    * 
+    * @param io
+    *           the Information-/DataObject
+    * @return the content type in string format
+    */
+   public static String getContentType(InformationObject io) {
+      List<Attribute> contentType = io.getAttribute(DefinedAttributeIdentification.CONTENT_TYPE.getURI());
+      for (Attribute attr : contentType) { // should be one entry
+         return attr.getValue(String.class);
+      }
+      return "application/octet-stream"; // undefined content type
    }
 }
