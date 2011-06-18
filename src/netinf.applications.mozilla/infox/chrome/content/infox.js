@@ -269,6 +269,14 @@ var InFox = {
 		}
 	},
 	
+	getRestAddress: function(asXML, identifier){
+		if (asXML === true) {
+			return 'http:/' + this.SERVER + ':' + this.RESTPORT + '/io/ni:' + identifier;
+		} else {
+			return 'http:/' + this.SERVER + ':' + this.RESTPORT + '/ni:' + identifier;
+		}
+	},
+	
 	/* Sends a HTTP request via the REST interface and handles the returned IO
 	 * 
 	 * @param strIdentifier String IO Identifier
@@ -277,7 +285,7 @@ var InFox = {
 	 */
 	sendRESTRequest: function(strIdentifier, htmlAnchor, showinfo) {
 		var client	= new XMLHttpRequest();
-		var url = 'http:/' + this.SERVER + ':' + this.RESTPORT + '/io/ni:' + strIdentifier;
+		var url = InFox.getRestAddress(true, strIdentifier);
 		
 		client.open("GET", url, true);
 		client.setRequestHeader("Content-type", "text/plain");
@@ -341,30 +349,49 @@ var InFox = {
 	 * Handles the via REST requested IO
 	 */
 	handleRESTIO: function(ioXML, strIdentifier, htmlAnchor) {
+		// generate and show popup
+		InFox.createPopup(ioXML, strIdentifier, htmlAnchor, false);
+		
+		// add referenced DOs, if existing
+		jQuery(ioXML).find('netinf\\:referenced_do').each(function(){
+			LOG.info("(REST ) adding referenced DOs");
+			var $uriOfDO = jQuery(this).find('netinf\\:attributeValue');
+			var uriOfDO = InFox.removeStringPrefix($uriOfDO.text());
+			InFox.addDOreference(uriOfDO);
+		});
+	},	
+	
+	/**
+	 * 
+	 */
+	createPopup: function(ioXML, strIdentifier, htmlAnchor, isIDO) {
 		// get name of the IO
-		var $ioName = jQuery(ioXML).find('netinf\\:name');
-		if($ioName.length === 0) {
+		var ioName = InFox.getAttributeValue(ioXML, 'netinf\\:name');
+		if (ioName === null) {
 			// no name found, take name of link
 			ioName = htmlAnchor.innerHTML;
-		} else {
-			ioName = this.removeStringPrefix($ioName.text());
 		}
+
 		// get description
-		var $ioDesc = jQuery(ioXML).find('netinf\\:description');
-		if($ioDesc.length === 0) {
+		var ioDesc = InFox.getAttributeValue(ioXML, 'netinf\\:description');
+		if(ioDesc === null) {
 			// no description found
-			ioDesc = '';
-		} else {
-			ioDesc = this.removeStringPrefix($ioDesc.text());
+			ioDesc = 'no description';
+		} 
+
+		// IdentityObject or IO?
+		var h3Class = 'informationObject';
+		if (isIDO === true) {
+			h3Class = 'identityObject';
 		}
+		
 		// build popup window
 		var popupHtml = '<div id="RestPopup">';  
-		popupHtml += '<h3>' + ioName + '</h3>';
+		popupHtml += '<h3><span class="' + h3Class + '">' + ioName + '</span></h3>';
 		popupHtml += '<a id="RestPopupClose">x</a>'; 
-		if (ioDesc !== '') {
-			popupHtml += '<div id="RestDescription">' + ioDesc + '</div>';
-		} 
+		popupHtml += '<div id="RestDescription">' + ioDesc + '</div>';
 		popupHtml += '<div id="RestPopupContent"></div>';
+		popupHtml += '<div id="RestPopupFooter"><a href="' + InFox.getRestAddress(true, strIdentifier) + '">show IO</a></div>';
 		popupHtml += '</div>';
 		
 		// remove if already existing anywhere (e.g. clicking again) ^^
@@ -397,19 +424,19 @@ var InFox = {
         	"left": leftPos  
         	}); 
         
-        // register close event
+        // register close event on (x)
         jQuery('#RestPopupClose', docContext).click(function(){
         	jQuery('#RestPopup', docContext).remove();
-        	});  
-		
-		// add referenced DOs, if existing
-		jQuery(ioXML).find('netinf\\:referenced_do').each(function(){
-			LOG.info("(REST ) adding referenced DOs");
-			var $uriOfDO = jQuery(this).find('netinf\\:attributeValue');
-			var uriOfDO = InFox.removeStringPrefix($uriOfDO.text());
-			InFox.addDOreference(uriOfDO);
+        });  
+        // close on click outside of popup
+		jQuery('body', docContext).click(function(e) {
+      		if (!jQuery(e.target).parents().andSelf().is('#RestPopup')) {
+            	jQuery('#RestPopup', docContext).remove();
+      		}
 		});
-	},		
+
+
+	},	
 	
 	/*
 	 * Adds referenced DOs to the popup of the IO
@@ -429,7 +456,7 @@ var InFox = {
 				// get content type
 				var contentType = InFox.getAttributeValue(doXML, 'netinf\\:content_type');
 				if (contentType === null) {
-					contentType = '';
+					contentType = 'application/octet-stream'; // unknown
 				}
 				
 				// build entry
@@ -441,6 +468,7 @@ var InFox = {
 				} else if (contentType.indexOf("pdf") != -1) {
 					spanClass = 'pdf';
 				}
+				
 				var linkToDO = 'http:/' + InFox.SERVER + ':' + InFox.RESTPORT + '/' + uriOfDO;
 				var doEntry = '<p><span class="' + spanClass + '"><a href="' + linkToDO + '">Download as ' + contentType + '</a></span></p>';
 				
@@ -485,16 +513,49 @@ var InFox = {
 	 * Handles the via REST requested iDO
 	 */
 	handleRESTiDO: function(idoXML, strIdentifier, htmlAnchor) {
-		LOG.info('(REST ) building url with the email of the iDO');
-		var email = jQuery(idoXML).find('netinf\\:e_mail_address');
-		var redirect = '';
-		if(email.length !== 0) { // if email entry exists
-			redirect = 'mailto:' + this.removeStringPrefix(email);
-		} else {
-			LOG.info('(REST ) email does not exist, redirecting to iDO in XML-format');
-			redirect = 'http:/' + this.SERVER + ':' + this.RESTPORT + '/io/ni:' + strIdentifier;
+		// generate and show popup
+		InFox.createPopup(idoXML, strIdentifier, htmlAnchor, true);
+		
+		// add email address
+		var email = InFox.getAttributeValue(idoXML, 'netinf\\:e_mail_address');
+		if (email !== null) { // if email entry exists
+			var emailLink = '<p><span><strong>E-Mail:</strong> ' + email + ' <a title="send E-Mail" href="mailto:' + email + '"><img src="chrome://infox/skin/icons/person/email.png" /></a></span></p>';
+			// append at popup
+			jQuery('#RestPopupContent', docContext).append(emailLink);
 		}
-		this.handleRedirect(redirect, htmlAnchor);
+		
+		// add phone
+		var phone = InFox.getAttributeValue(idoXML, 'netinf\\:person_phone');
+		if (phone !== null) {
+			var phoneLink = '<p><span><strong>Phone:</strong> ' + phone + '</span></p>';
+			// append at popup
+			jQuery('#RestPopupContent', docContext).append(phoneLink);
+		}
+		
+		// add address
+		var address = InFox.getAttributeValue(idoXML, 'netinf\\:person_address');
+		if (address !== null) {
+			var addressLink = '<p><span><strong>Address:</strong> ' + address + ' <a title="view in google maps" href="http://maps.google.de/?q=' + address +'"><img src="chrome://infox/skin/icons/person/google_maps.png" /></a></span></p>';
+			// append at popup
+			jQuery('#RestPopupContent', docContext).append(addressLink);
+		}
+		
+		// add homepage
+		var homepage = InFox.getAttributeValue(idoXML, 'netinf\\:person_homepage');
+		if (homepage !== null) {
+			var homepageLink = '<p><span><strong>Homepage:</strong> ' + homepage + ' <a title="open homepage" href="' + homepage + '"><img src="chrome://infox/skin/icons/person/homepage.png" /></a>';
+			// append at popup
+			jQuery('#RestPopupContent', docContext).append(homepageLink);
+		}
+		
+		// add birthday
+		var birthday = InFox.getAttributeValue(idoXML, 'netinf\\:person_birthday');
+		if (birthday !== null) {
+			var birthdayLink = '<p><span><strong>Birthday:</strong> ' + birthday + '</span></p>';
+			// append at popup
+			jQuery('#RestPopupContent', docContext).append(birthdayLink);
+		}
+
 	},
 	
 	/*

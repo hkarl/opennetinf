@@ -90,13 +90,22 @@ a.netinf-selected:active{
 	color: #454545;
 	font-size: 13px;
 	text-align: left;
-	min-width: 100px;
-	max-width: 300px;
+	min-width: 200px;
+	max-width: 340px;
 }
 #RestPopup h3 {
-	background: #F1F1F1;
-	padding: 7px 12px;
+	padding: 7px 12px 7px 6px;
 	margin: 0;
+	background: #F1F1F1;
+}
+#RestPopup h3 span {
+	padding-left: 24px;
+}
+#RestPopup h3 span.identityObject {
+	background: #F1F1F1 url("chrome://infox/skin/icons/iotypes/identityObject.png") no-repeat left center;
+}
+#RestPopup h3 span.informationObject {
+	background: #F1F1F1 url("chrome://infox/skin/icons/iotypes/informationObject.png") no-repeat left center;
 }
 #RestDescription {
 	font-style: italic;
@@ -108,32 +117,37 @@ a.netinf-selected:active{
 	padding: 5px 9px;
 	margin: 0;
 }
-#RestPopupContent a {
+#RestPopupContent a, #RestPopupFooter  a {
 	color: #0000C0;
 	text-decoration: underline;
 }
-#RestPopupContent a:hover {
+#RestPopupContent a:hover, #RestPopupFooter a:hover {
 	color: #333;
 	text-decoration: none;
 }
 #RestPopupContent span {
+	width: 100%;
 	margin: 4px 4px 4px 6px;
-	padding: 0 0 0 20px;
+	padding: 0;
 }
+/* Files */
 #RestPopup span.pdf {
-	background: url("chrome://infox/skin/fileicons/fileicon_pdf.png") no-repeat left center;
+	background: url("chrome://infox/skin/icons/file/file_pdf.png") no-repeat left center;
 }
 #RestPopup span.image {
-	background: url("chrome://infox/skin/fileicons/fileicon_image.png") no-repeat left center;
+	background: url("chrome://infox/skin/icons/file/file_image.png") no-repeat left center;
 }
 #RestPopup span.video {
-	background: url("chrome://infox/skin/fileicons/fileicon_video.png") no-repeat left center;
+	background: url("chrome://infox/skin/icons/file/file_video.png") no-repeat left center;
 }
 #RestPopup span.default {
-	background: url("chrome://infox/skin/fileicons/fileicon_default.png") no-repeat left center;
+	background: url("chrome://infox/skin/icons/file/file_default.png") no-repeat left center;
 }
 #RestPopup p {
 	margin: 5px;
+}
+#RestPopupContent img {
+	vertical-align: middle;
 }
 #RestPopupClose {
 	font-size: 16px;
@@ -144,4 +158,10 @@ a.netinf-selected:active{
 	display: block;
 	cursor: pointer;
 	text-decoration: none;
+}
+#RestPopupFooter {
+	margin: 0;
+	padding: 2px 4px;
+	text-align: right;
+	background: #F5F5F5;
 }

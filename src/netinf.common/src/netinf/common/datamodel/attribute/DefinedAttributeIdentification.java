@@ -51,6 +51,10 @@ public enum DefinedAttributeIdentification {
    // new by PG NetInf 3
    REFERENCED_DO("referenced_do", true),  // reference to a DO (inside an IO)
    CONTENT_TYPE("content_type", true),    // content-type of a DO (added as subattribute of referenced-do)
+   PERSON_PHONE("person_phone", true),
+   PERSON_ADDRESS("person_address", true),
+   PERSON_BIRTHDAY("person_birthday", true),
+   PERSON_HOMEPAGE("person_homepage", true),
    
    // TODO: The following lines should be URIs one day
    OWNER("owner", true),
