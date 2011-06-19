@@ -50,6 +50,8 @@ import netinf.node.access.rest.RESTAccessServer;
 import netinf.node.access.rest.module.RESTModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
+import netinf.node.resolution.bocaching.impl.BOCachingInterceptor;
+import netinf.node.resolution.bocaching.module.BOCachingModule;
 import netinf.node.resolution.rdf.RDFResolutionService;
 import netinf.node.resolution.rdf.module.RDFResolutionServiceModule;
 import netinf.node.search.SearchService;
@@ -78,7 +80,7 @@ public class StandardNodeModule extends AbstractNodeModule {
    protected void configure() {
       super.configure();
       bind(MessageEncoder.class).to(MessageEncoderXML.class).in(Singleton.class);
-      
+
       // The datamodel
       install(new DatamodelRdfModule());
       install(new DatamodelTranslationModule());
@@ -92,6 +94,7 @@ public class StandardNodeModule extends AbstractNodeModule {
 
       // Caching Storage
       // install(new LocalIOCachingModule());
+      install(new BOCachingModule());
 
       // RESTful API
       install(new RESTModule());
@@ -101,8 +104,6 @@ public class StandardNodeModule extends AbstractNodeModule {
 
       // In-network Caching
       // install(new NetworkCacheModule());
-      
-      
    }
 
    /**
@@ -135,8 +136,8 @@ public class StandardNodeModule extends AbstractNodeModule {
    // ResolutionInterceptor[] provideResolutionInterceptors(IOCacheImpl ioCache, LocatorSelectorImpl locatorSelector) {
    // return new ResolutionInterceptor[] { ioCache, locatorSelector };
    // }
-   ResolutionInterceptor[] provideResolutionInterceptors() {
-      return new ResolutionInterceptor[] {};
+   ResolutionInterceptor[] provideResolutionInterceptors(BOCachingInterceptor boCaching) {
+      return new ResolutionInterceptor[] { boCaching };
    }
 
    /**
@@ -178,5 +179,5 @@ public class StandardNodeModule extends AbstractNodeModule {
    AccessServer[] provideAccessServers(RESTAccessServer rest) {
       return new AccessServer[] { rest };
    }
-   
+
 }

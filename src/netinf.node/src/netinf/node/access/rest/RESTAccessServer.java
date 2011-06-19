@@ -16,19 +16,18 @@ import com.google.inject.name.Named;
  * A RESTAccessServer is a AccessServer providing a RESTful interface to a NetInf node.
  * 
  * @author PG NetInf 3, University of Paderborn
- *
  */
 public class RESTAccessServer implements AccessServer {
 
    private static final Logger LOG = Logger.getLogger(RESTAccessServer.class);
-   
+
    private Component component;
 
    @Inject
    public RESTAccessServer(@Named("node.access.rest.port") int port, LocalNodeConnection connection, DatamodelFactory factory) {
       component = new Component();
       component.getServers().add(Protocol.HTTP, port);
-      
+
       Application application = new RESTApplication(connection, factory);
 
       component.getDefaultHost().attach(application);

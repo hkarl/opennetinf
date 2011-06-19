@@ -37,6 +37,10 @@
  */
 package netinf.common.utils;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +48,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import netinf.common.datamodel.DatamodelFactory;
+import netinf.common.datamodel.DefinedAttributePurpose;
 import netinf.common.datamodel.DefinedLabelName;
 import netinf.common.datamodel.DefinedVersionKind;
 import netinf.common.datamodel.Identifier;
@@ -573,10 +578,7 @@ public class DatamodelUtils {
          return false;
       }
       String labelValue = versionKindLabel.getLabelValue();
-      if (versionKindLabel == null) {
-         // TODO handle this case correctly! (throw and catch exception?)
-         return false;
-      }
+
       return !DefinedVersionKind.UNVERSIONED.equals(DefinedVersionKind.getVersionKind(labelValue));
    }
 
@@ -741,6 +743,25 @@ public class DatamodelUtils {
       for (Attribute attr : contentType) { // should be one entry
          return attr.getValue(String.class);
       }
-      return "application/octet-stream"; // undefined content type
+
+      // otherwise try to get the type by locator
+      String loc = "";
+      List<Attribute> locators = io.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
+      for (Attribute locator : locators) {
+         loc = locator.getValue(String.class);
+         URL url;
+         try {
+            url = new URL(loc);
+            URLConnection urlc = url.openConnection();
+            return urlc.getContentType();
+         } catch (MalformedURLException e) {
+            continue;
+         } catch (IOException e) {
+            continue;
+         }
+      }
+
+      // undefined content type
+      return "application/octet-stream";
    }
 }
