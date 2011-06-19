@@ -48,6 +48,7 @@ import java.net.UnknownHostException;
 
 import netinf.common.exceptions.NetInfCheckedException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
@@ -60,7 +61,7 @@ import com.sun.net.httpserver.HttpServer;
 /**
  * Serves files from the specified directory, used for caching of Binary Objects
  * 
- * @author PG Augnet 2, University of Paderborn
+ * @author PG NetInf 3, University of Paderborn
  */
 public class HTTPFileServer implements HttpHandler {
    private static final Logger LOG = Logger.getLogger(HTTPFileServer.class);
@@ -85,6 +86,11 @@ public class HTTPFileServer implements HttpHandler {
       cacheFolder.mkdir();
    }
 
+   /**
+    * Starts the Server
+    * 
+    * @throws NetInfCheckedException
+    */
    public void start() throws NetInfCheckedException {
       LOG.trace(null);
 
@@ -95,7 +101,6 @@ public class HTTPFileServer implements HttpHandler {
          LOG.error("Error encountered while initializing the HTTPFileServer on port " + port, e);
          throw new NetInfCheckedException(e);
       }
-
       server.start();
    }
 
@@ -122,7 +127,7 @@ public class HTTPFileServer implements HttpHandler {
 
             OutputStream os = httpExchange.getResponseBody();
 
-            // problems with the RESTlet interface =/
+            // problems with the RESTlet interface =/ writing the buffer is too slow?
             // int bytesRead;
             // byte[] buffer = new byte[BUFFER_SIZE];
             // do {
@@ -130,27 +135,56 @@ public class HTTPFileServer implements HttpHandler {
             // os.write(buffer, 0, bytesRead);
             // } while (bytesRead != -1);
 
-            byte[] fileContent = new byte[(int) file.length()];
-            stream.read(fileContent);
-            os.write(fileContent);
-            os.close();
+            if (file.length() <= Integer.MAX_VALUE) {
+               byte[] fileContent = new byte[(int) file.length()];
+               stream.read(fileContent);
+               os.write(fileContent);
+            } else { // file is too large :-(
+               throw new IOException("File is too large");
+            }
+
+            // close streams
+            IOUtils.closeQuietly(os);
+            IOUtils.closeQuietly(stream);
          }
       }
       httpExchange.close();
    }
 
+   /**
+    * Returns the port of the server.
+    * 
+    * @return The port.
+    */
    public int getPort() {
       return port;
    }
 
+   /**
+    * Sets the port of the server.
+    * 
+    * @param port
+    *           The specified port.
+    */
    public void setPort(int port) {
       this.port = port;
    }
 
+   /**
+    * Returns the related directory of the server where the files are stored.
+    * 
+    * @return The directory name.
+    */
    public String getDirectory() {
       return directory;
    }
 
+   /**
+    * Sets the related directory of the server where the files are stored.
+    * 
+    * @param directory
+    *           The name or path of the directory.
+    */
    public void setDirectory(String directory) {
       this.directory = directory;
    }
@@ -167,7 +201,6 @@ public class HTTPFileServer implements HttpHandler {
       } catch (UnknownHostException e) {
          return null;
       }
-
    }
 
 }
