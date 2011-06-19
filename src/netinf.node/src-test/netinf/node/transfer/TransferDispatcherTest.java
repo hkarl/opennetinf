@@ -35,23 +35,47 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package netinf.node.transfer.http;
+package netinf.node.transfer;
 
+import java.io.File;
+import java.io.IOException;
+
+import junit.framework.Assert;
+import netinf.node.transferDeluxe.TransferDispatcher;
+import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
+
+import org.junit.AfterClass;
 import org.junit.Test;
 
 /**
- * The Class TransferJobHttpTest.
+ * Test routines for the {@link TransferDispatcher}
  * 
- * @author PG Augnet 2, University of Paderborn
+ * @author PG NetInf 3, University of Paderborn
  */
-public class TransferJobHttpTest {
+public class TransferDispatcherTest {
 
    @Test
-   public void testStartTransferJob() {
-      TransferJobHttp job = new TransferJobHttp("1", "http://www.uni-paderborn.de/uploads/pics/Resounding_Tinkle.JPG",
-            "./Resounding_Tinkle.JPG");
-      job.startTransferJob();
+   public void testGetStreamAndSave() {
+      try {
+         String url = "http://www.uni-paderborn.de/uploads/pics/Resounding_Tinkle.JPG";
+         String destination = "Resounding_Tinkle.JPG";
+         TransferDispatcher dispatcher = new TransferDispatcher();
+         dispatcher.getStreamAndSave(url, destination, false);
+         File f = new File(destination);
+         Assert.assertTrue(f.exists());
+      } catch (NetInfNoStreamProviderFoundException e) {
+         Assert.fail();
+      } catch (IOException e) {
+         Assert.fail();
+      }
+   }
 
+   @AfterClass
+   public static void cleanUp() {
+      File f = new File("Resounding_Tinkle.JPG");
+      if (f.exists()) {
+         f.delete();
+      }
    }
 
 }

@@ -64,11 +64,10 @@ public class HashingTest {
          byte[] result = Hashing.hashSHA1(fis);
          Assert.assertTrue(SHA1_HASH_OF_TEST_FILE.equalsIgnoreCase(Utils.hexStringFromBytes(result)));
       } catch (Exception ex) {
-
+         Assert.fail();
       } finally {
          IOUtils.closeQuietly(fis);
       }
-
    }
 
 }

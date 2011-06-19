@@ -41,6 +41,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -78,20 +79,24 @@ public class HTTPFileServer implements HttpHandler {
       this.port = port;
       this.directory = directory;
       this.ip = ip;
+
+      // create folder if not existing
+      File cacheFolder = new File(directory);
+      cacheFolder.mkdir();
    }
 
    public void start() throws NetInfCheckedException {
       LOG.trace(null);
 
       try {
-         this.server = HttpServer.create(new InetSocketAddress(this.port), MAX_CONNECTIONS);
-         this.server.createContext("/", this);
+         server = HttpServer.create(new InetSocketAddress(port), MAX_CONNECTIONS);
+         server.createContext("/", this);
       } catch (IOException e) {
-         LOG.error("Error encountered while initializing the HTTPFileServer on port " + this.port, e);
+         LOG.error("Error encountered while initializing the HTTPFileServer on port " + port, e);
          throw new NetInfCheckedException(e);
       }
 
-      this.server.start();
+      server.start();
    }
 
    @Override
@@ -101,7 +106,7 @@ public class HTTPFileServer implements HttpHandler {
       if (!requestPath.matches(REQUEST_PATH_PATTERN)) {
          httpExchange.sendResponseHeaders(403, 0);
       } else {
-         File file = new File(this.directory + requestPath);
+         File file = new File(directory + requestPath);
          if (!file.exists()) {
             httpExchange.sendResponseHeaders(404, 0);
          } else if (!file.canRead()) {
@@ -114,20 +119,28 @@ public class HTTPFileServer implements HttpHandler {
             stream.read(stringBuffer);
             h.set("Content-Type", new String(stringBuffer));
             httpExchange.sendResponseHeaders(200, file.length());
-            int bytesRead;
-            byte[] buffer = new byte[BUFFER_SIZE];
-            do {
-               bytesRead = stream.read(buffer);
-               httpExchange.getResponseBody().write(buffer, 0, bytesRead);
-            } while (bytesRead != -1);
+
+            OutputStream os = httpExchange.getResponseBody();
+
+            // problems with the RESTlet interface =/
+            // int bytesRead;
+            // byte[] buffer = new byte[BUFFER_SIZE];
+            // do {
+            // bytesRead = stream.read(buffer);
+            // os.write(buffer, 0, bytesRead);
+            // } while (bytesRead != -1);
+
+            byte[] fileContent = new byte[(int) file.length()];
+            stream.read(fileContent);
+            os.write(fileContent);
+            os.close();
          }
       }
-
       httpExchange.close();
    }
 
    public int getPort() {
-      return this.port;
+      return port;
    }
 
    public void setPort(int port) {
@@ -135,7 +148,7 @@ public class HTTPFileServer implements HttpHandler {
    }
 
    public String getDirectory() {
-      return this.directory;
+      return directory;
    }
 
    public void setDirectory(String directory) {
@@ -145,11 +158,11 @@ public class HTTPFileServer implements HttpHandler {
    public String getUrlForHash(String hash) {
       InetAddress thisIp = null;
       try {
-         if (this.ip == null || this.ip.trim().isEmpty()) {
+         if (ip == null || ip.trim().isEmpty()) {
             thisIp = InetAddress.getLocalHost();
             return "http://" + thisIp.getHostAddress() + ":" + getPort() + '/' + hash;
          } else {
-            return "http://" + this.ip + ":" + getPort() + '/' + hash;
+            return "http://" + ip + ":" + getPort() + '/' + hash;
          }
       } catch (UnknownHostException e) {
          return null;
