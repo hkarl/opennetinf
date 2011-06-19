@@ -140,7 +140,8 @@ public class HTTPServerCommunicationTest implements AsyncReceiveHandler {
          String data = "<?xml version='1.0' encoding='UTF-8'?>\n"
                + "<RSGetRequest>\n"
                + "\t<SerializeFormat>RDF</SerializeFormat>\n"
-               + "\t<Identifier>ni:HASH_OF_PK=8c4e559d464e38c68ac6a9760f4aad371470ccf9~HASH_OF_PK_IDENT=SHA1~VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=DEMOPAGE</Identifier>\n"
+               + "\t<Identifier>ni:HASH_OF_PK=8c4e559d464e38c68ac6a9760f4aad371470ccf9"
+               + "~HASH_OF_PK_IDENT=SHA1~VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=DEMOPAGE</Identifier>\n"
                + "\t<UserName>testUser</UserName>\n" + "\t<PrivateKey>testKey</PrivateKey>\n"
                + "\t<FetchAllVersions>true</FetchAllVersions>\n" + "\t<DownloadBinaryObject>true</DownloadBinaryObject>\n"
                + "</RSGetRequest>";
