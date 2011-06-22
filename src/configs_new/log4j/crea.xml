@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+  <appender name="A1" class="org.apache.log4j.ConsoleAppender"> 
+    <param name="Target" value="System.out"/> 
+	<param name="Threshold" value="debug"/>
+    <layout class="org.apache.log4j.PatternLayout"> 
+      <param name="ConversionPattern" value="%m%n"/> 
+    </layout>
+    <filter class="netinf.common.log.demo.DemoFilter">
+		<param name="showBadThings" value="true"/>
+	</filter>
+  </appender>
+
+  <appender name="SOCK" class="org.apache.log4j.net.SocketAppender">
+    <param name="RemoteHost" value="netinf-log.cs.uni-paderborn.de"/>
+    <param name="Port" value="4560"/>
+    <param name="LocationInfo" value="true"/>
+    <param name="Application" value="crea"/>
+    <layout class="org.apache.log4j.PatternLayout"> 
+      <param name="ConversionPattern" value="%m%n"/> 
+    </layout>
+    <filter class="netinf.common.log.demo.DemoFilter">
+		<param name="showBadThings" value="true"/>
+	</filter>
+  </appender>
+  
+  <root> 
+    <priority value ="trace" />
+    <appender-ref ref="A1" />
+    <appender-ref ref="SOCK" />
+  </root>
+  
+</log4j:configuration>
