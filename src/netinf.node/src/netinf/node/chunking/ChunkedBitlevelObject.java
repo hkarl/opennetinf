@@ -1,5 +1,7 @@
 package netinf.node.chunking;
 
+package netinf.node.chunking;
+
 /**
  * The Objects, which are chunked and consists of several chunks.
  * 
