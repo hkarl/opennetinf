@@ -42,27 +42,27 @@ public class SDBStoreFactory {
       this.dbName = name;
    }
    
-   @Inject(optional=true)
+   @Inject(optional = true)
    public void setHost(@Named("rdf.db.sdbHost") String host) {
       this.host = host;
    }
    
-   @Inject(optional=true)
+   @Inject(optional = true)
    public void setUser(@Named("rdf.db.sdbUser") String user) {
       this.user = user;
    }
    
-   @Inject(optional=true)
+   @Inject(optional = true)
    public void setPassword(@Named("rdf.db.sdbPassword") String pwd) {
       this.password = pwd;
    }
    
-   @Inject(optional=true)
+   @Inject(optional = true)
    public void setDriver(@Named("rdf.db.driver") String driver) {
       this.driver = driver;
    }
    
-   @Inject(optional=true)
+   @Inject(optional = true)
    public void setJdbcURL(@Named("rdf.db.jdbcURL") String jdbcURL) {
       this.jdbcURL = jdbcURL;
    }

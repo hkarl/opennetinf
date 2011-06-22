@@ -11,6 +11,8 @@ import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
 
+import com.mysql.jdbc.log.Log;
+
 /**
  * Resource to search for an identifier.
  * 
@@ -52,7 +54,7 @@ public class SearchResource extends NetInfResource {
                String identStr = ident.toString();
                if (identStr.length() > 60) {
                   html.append(identStr.substring(0, 30) + "..."
-                        + identStr.substring(identStr.length()-30));
+                        + identStr.substring(identStr.length() - 30));
                } else {
                   html.append(identStr);
                }
