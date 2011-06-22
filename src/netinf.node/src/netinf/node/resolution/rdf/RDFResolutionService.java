@@ -48,6 +48,7 @@ import netinf.common.datamodel.rdf.DatamodelFactoryRdf;
 import netinf.common.datamodel.rdf.DefinedRdfNames;
 import netinf.common.datamodel.translation.DatamodelTranslator;
 import netinf.common.exceptions.NetInfResolutionException;
+import netinf.database.sdb.SDBStoreFactory;
 import netinf.node.resolution.AbstractResolutionService;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.search.rdf.SearchServiceRDF;
@@ -55,7 +56,6 @@ import netinf.node.search.rdf.SearchServiceRDF;
 import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -74,8 +74,6 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.sdb.SDBFactory;
 import com.hp.hpl.jena.sdb.Store;
-import com.hp.hpl.jena.sdb.StoreDesc;
-import com.hp.hpl.jena.sdb.sql.JDBC;
 import com.hp.hpl.jena.sdb.sql.SDBConnection;
 import com.hp.hpl.jena.util.ResourceUtils;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -109,10 +107,7 @@ public class RDFResolutionService extends AbstractResolutionService implements R
 
    @Inject
    public RDFResolutionService(final DatamodelFactory dmfactory, final DatamodelTranslator datamodelTranslator,
-         @Named("resolution_rdf_db_host") final String dbHost, @Named("resolution_rdf_db_port") final String dbPort,
-         @Named("resolution_rdf_db_dbname") final String dbName, @Named("resolution_rdf_db_user") final String dbUser,
-         @Named("resolution_rdf_db_pw") final String dbPassword, @Named("resolution_rdf_db_layout") final String dbLayout,
-         @Named("resolution_rdf_db_type") final String dbType, @Named("resolution_rdf_db_driver") final String dbDriver) {
+            SDBStoreFactory sdbStoreFactory) {
       super();
       LOG.trace(null);
       this.overallDatamodelFactory = dmfactory;
@@ -124,28 +119,21 @@ public class RDFResolutionService extends AbstractResolutionService implements R
       this.dataset = null;
       this.model = null;
 
-      if (dbType.equals("MySQL")) {
-         try {
-            final StoreDesc storeDesc = new StoreDesc(dbLayout, dbType);
-            JDBC.loadDriver(dbDriver);
-            final String jdbcURL = "jdbc:" + dbType.toLowerCase() + "://" + dbHost + ":" + dbPort + "/" + dbName;
-            this.conn = new SDBConnection(jdbcURL, dbUser, dbPassword);
-            this.store = SDBFactory.connectStore(conn, storeDesc);
-            this.dataset = SDBFactory.connectDataset(this.store);
-            this.model = SDBFactory.connectDefaultModel(this.store);
-            this.model.setNsPrefix(DefinedRdfNames.NETINF_NAMESPACE_NAME, DefinedRdfNames.NETINF_RDF_SCHEMA_URI);
-         } catch (Exception e) {
-            LOG.error("The following error occured while trying to connect to SDB store: " + e.getMessage());
-            LOG.error("Not connected to SDB store");
-            return;
-         }
-         if (!this.store.isClosed()) {
-            LOG.debug("Successfully connected to SDB store");
-         } else {
-            LOG.error("Could not establish connection to SDB store");
-         }
+      try {
+         this.store = sdbStoreFactory.createStore();
+         this.dataset = SDBFactory.connectDataset(this.store);
+         this.model = SDBFactory.connectDefaultModel(this.store);            
+         this.model.setNsPrefix(DefinedRdfNames.NETINF_NAMESPACE_NAME, DefinedRdfNames.NETINF_RDF_SCHEMA_URI);
+      } catch (Exception e) {
+         LOG.error("The following error occured while trying to connect to SDB store: " + e.getMessage());
+         LOG.error("Not connected to SDB store");
+         return;
+      }
+      
+      if (!this.store.isClosed()) {
+         LOG.debug("Successfully connected to SDB store");
       } else {
-         LOG.error("Database type '" + dbType + "' not supported");
+         LOG.error("Could not establish connection to SDB store");
       }
    }
 

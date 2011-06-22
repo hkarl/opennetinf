@@ -14,7 +14,8 @@ import netinf.common.log.demo.DemoLevel;
 import netinf.common.security.Hashing;
 import netinf.common.utils.Utils;
 import netinf.node.cache.network.NetworkCache;
-import netinf.node.transfer.http.TransferJobHttp;
+import netinf.node.transferDeluxe.TransferDispatcher;
+import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -30,6 +31,7 @@ public class NetInfCacheImpl implements NetworkCache {
 
    private static final Logger LOG = Logger.getLogger(NetInfCacheImpl.class); // Logger
    private CacheServer cacheServer; // adapter for the used cache server
+   private TransferDispatcher transferDispatcher;
 
    // decisions:
    // key = hash of BO
@@ -38,7 +40,7 @@ public class NetInfCacheImpl implements NetworkCache {
     * Constructor
     */
    NetInfCacheImpl() {
-
+      transferDispatcher = new TransferDispatcher();
    }
 
    @Inject
@@ -58,31 +60,33 @@ public class NetInfCacheImpl implements NetworkCache {
                String url = attribute.getValue(String.class);
 
                try {
-                  if (url.startsWith("http://")) {
-                     String destination = getTmpFolder() + File.separator + hashOfBO + ".tmp";
-                     TransferJobHttp job = new TransferJobHttp(hashOfBO, url, destination);
-                     job.startCacheJob();
+                  // download
+                  String destination = getTmpFolder() + File.separator + hashOfBO + ".tmp";
+                  transferDispatcher.getStreamAndSave(url, destination, false);
 
-                     FileInputStream fis = new FileInputStream(destination);
-                     byte[] hashBytes = Hashing.hashSHA1(fis);
-                     IOUtils.closeQuietly(fis);
+                  // get hash
+                  FileInputStream fis = new FileInputStream(destination);
+                  byte[] hashBytes = Hashing.hashSHA1(fis);
+                  IOUtils.closeQuietly(fis);
 
-                     if (hashOfBO.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
-                        boolean success = cacheServer.cacheBO(hashBytes, hashOfBO);
-                        if (success) {
-                           addLocator(dataObject, urlPath);
-                           deleteTmpFile(destination); // deleting tmp file
-                           LOG.info("DO cached...");
-                        }
-                     } else {
-                        LOG.info("Hash of file: " + hashOfBO + " -- Other: " + Utils.hexStringFromBytes(hashBytes));
-                        LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is invalid. Trying next locator");
+                  if (hashOfBO.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
+                     boolean success = cacheServer.cacheBO(hashBytes, hashOfBO);
+                     if (success) {
+                        addLocator(dataObject, urlPath);
+                        deleteTmpFile(destination); // deleting tmp file
+                        LOG.info("DO cached...");
                      }
+                  } else {
+                     LOG.info("Hash of file: " + hashOfBO + " -- Other: " + Utils.hexStringFromBytes(hashBytes));
+                     LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is invalid. Trying next locator");
                   }
+
                } catch (FileNotFoundException ex) {
                   LOG.warn("FileNotFound:" + url);
                } catch (IOException e) {
                   LOG.warn("IOException:" + url);
+               } catch (NetInfNoStreamProviderFoundException no) {
+                  LOG.warn("No StreamProvider found for: " + url);
                }
             } // end for
          } else {

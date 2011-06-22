@@ -41,12 +41,14 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 import netinf.common.exceptions.NetInfCheckedException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
@@ -59,7 +61,7 @@ import com.sun.net.httpserver.HttpServer;
 /**
  * Serves files from the specified directory, used for caching of Binary Objects
  * 
- * @author PG Augnet 2, University of Paderborn
+ * @author PG NetInf 3, University of Paderborn
  */
 public class HTTPFileServer implements HttpHandler {
    private static final Logger LOG = Logger.getLogger(HTTPFileServer.class);
@@ -78,20 +80,28 @@ public class HTTPFileServer implements HttpHandler {
       this.port = port;
       this.directory = directory;
       this.ip = ip;
+
+      // create folder if not existing
+      File cacheFolder = new File(directory);
+      cacheFolder.mkdir();
    }
 
+   /**
+    * Starts the Server
+    * 
+    * @throws NetInfCheckedException
+    */
    public void start() throws NetInfCheckedException {
       LOG.trace(null);
 
       try {
-         this.server = HttpServer.create(new InetSocketAddress(this.port), MAX_CONNECTIONS);
-         this.server.createContext("/", this);
+         server = HttpServer.create(new InetSocketAddress(port), MAX_CONNECTIONS);
+         server.createContext("/", this);
       } catch (IOException e) {
-         LOG.error("Error encountered while initializing the HTTPFileServer on port " + this.port, e);
+         LOG.error("Error encountered while initializing the HTTPFileServer on port " + port, e);
          throw new NetInfCheckedException(e);
       }
-
-      this.server.start();
+      server.start();
    }
 
    @Override
@@ -101,7 +111,7 @@ public class HTTPFileServer implements HttpHandler {
       if (!requestPath.matches(REQUEST_PATH_PATTERN)) {
          httpExchange.sendResponseHeaders(403, 0);
       } else {
-         File file = new File(this.directory + requestPath);
+         File file = new File(directory + requestPath);
          if (!file.exists()) {
             httpExchange.sendResponseHeaders(404, 0);
          } else if (!file.canRead()) {
@@ -114,30 +124,67 @@ public class HTTPFileServer implements HttpHandler {
             stream.read(stringBuffer);
             h.set("Content-Type", new String(stringBuffer));
             httpExchange.sendResponseHeaders(200, file.length());
-            int bytesRead;
-            byte[] buffer = new byte[BUFFER_SIZE];
-            do {
-               bytesRead = stream.read(buffer);
-               httpExchange.getResponseBody().write(buffer, 0, bytesRead);
-            } while (bytesRead != -1);
+
+            OutputStream os = httpExchange.getResponseBody();
+
+            // problems with the RESTlet interface =/ writing the buffer is too slow?
+            // int bytesRead;
+            // byte[] buffer = new byte[BUFFER_SIZE];
+            // do {
+            // bytesRead = stream.read(buffer);
+            // os.write(buffer, 0, bytesRead);
+            // } while (bytesRead != -1);
+
+            if (file.length() <= Integer.MAX_VALUE) {
+               byte[] fileContent = new byte[(int) file.length()];
+               stream.read(fileContent);
+               os.write(fileContent);
+            } else { // file is too large :-(
+               throw new IOException("File is too large");
+            }
+
+            // close streams
+            IOUtils.closeQuietly(os);
+            IOUtils.closeQuietly(stream);
          }
       }
-
       httpExchange.close();
    }
 
+   /**
+    * Returns the port of the server.
+    * 
+    * @return The port.
+    */
    public int getPort() {
-      return this.port;
+      return port;
    }
 
+   /**
+    * Sets the port of the server.
+    * 
+    * @param port
+    *           The specified port.
+    */
    public void setPort(int port) {
       this.port = port;
    }
 
+   /**
+    * Returns the related directory of the server where the files are stored.
+    * 
+    * @return The directory name.
+    */
    public String getDirectory() {
-      return this.directory;
+      return directory;
    }
 
+   /**
+    * Sets the related directory of the server where the files are stored.
+    * 
+    * @param directory
+    *           The name or path of the directory.
+    */
    public void setDirectory(String directory) {
       this.directory = directory;
    }
@@ -145,16 +192,15 @@ public class HTTPFileServer implements HttpHandler {
    public String getUrlForHash(String hash) {
       InetAddress thisIp = null;
       try {
-         if (this.ip == null || this.ip.trim().isEmpty()) {
+         if (ip == null || ip.trim().isEmpty()) {
             thisIp = InetAddress.getLocalHost();
             return "http://" + thisIp.getHostAddress() + ":" + getPort() + '/' + hash;
          } else {
-            return "http://" + this.ip + ":" + getPort() + '/' + hash;
+            return "http://" + ip + ":" + getPort() + '/' + hash;
          }
       } catch (UnknownHostException e) {
          return null;
       }
-
    }
 
 }

@@ -23,7 +23,7 @@ public interface DHT {
     * 
     * @param io The InformationObject to be stored
     */
-   public void put(InformationObject io);
+   public void put(InformationObject io, int level, int maxlevels, byte[] sourceAddress);
 
    /**
     * Attempts to get the InformationObject by the specified NetInf Identifier.

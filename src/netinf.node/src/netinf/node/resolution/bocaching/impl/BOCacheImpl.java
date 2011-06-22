@@ -55,7 +55,7 @@ import netinf.common.log.demo.DemoLevel;
 import netinf.common.security.Hashing;
 import netinf.common.utils.Utils;
 import netinf.node.resolution.bocaching.BOCache;
-import netinf.node.transfer.http.TransferJobHttp;
+import netinf.node.transferDeluxe.TransferDispatcher;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -75,23 +75,29 @@ public class BOCacheImpl implements BOCache {
 
    private final Set<String> cached;
 
+   private TransferDispatcher transferDispatcher;
+
    @Inject
    public BOCacheImpl(HTTPFileServer server) throws NetInfCheckedException {
       super();
       this.server = server;
       this.server.start();
-      this.cached = new HashSet<String>();
+      cached = new HashSet<String>();
       rebuildCache();
+
+      transferDispatcher = new TransferDispatcher();
    }
 
    @Override
    public boolean cache(DataObject dataObject) {
       if (!contains(dataObject)) {
          String hash = getHash(dataObject);
-         String directory = server.getDirectory().replace('\\', '/');
-         if (!directory.endsWith("/")) {
-            directory += "/";
+         String directory = server.getDirectory(); // .replace('\\', '/')
+
+         if (!directory.endsWith(File.separator)) {
+            directory += File.separator;
          }
+
          if (hash == null) {
             LOG.info("DataObject has no Hash and will not be cached");
             return false;
@@ -101,41 +107,43 @@ public class BOCacheImpl implements BOCache {
             DataInputStream fis = null;
             String url = attr.getValue(String.class);
             try {
-               if (url.startsWith("http://")) {
-                  String destination = directory + hash + ".tmp";
-                  // TODO Implement Transfer service and use it here....
-                  TransferJobHttp job = new TransferJobHttp(hash, url, destination);
-                  job.startTransferJob();
-                  fis = new DataInputStream(new FileInputStream(destination));
-                  int skipSize = fis.readInt();
-                  for (int i = 0; i < skipSize; i++) {
-                     fis.read();
-                  }
-                  byte[] hashBytes = Hashing.hashSHA1(fis);
-                  IOUtils.closeQuietly(fis);
-                  if (hash.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
-                     LOG.info("Hash of downloaded file is valid: " + url);
-                     LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is valid. Will be cached.");
-                     File old = new File(destination);
-                     File newFile = new File(destination.substring(0, destination.lastIndexOf('.')));
-                     old.renameTo(newFile);
-                     addLocator(dataObject);
-                     cached.add(newFile.getName());
-                     return true;
-                  } else {
-                     LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is invalid. Trying next locator");
-                     LOG.warn("Hash of downloaded file is not valid: " + url);
-                     LOG.warn("Trying next locator");
-                  }
+               String destination = directory + hash + ".tmp";
+               transferDispatcher.getStreamAndSave(url, destination, true);
+
+               // start reading
+               fis = new DataInputStream(new FileInputStream(destination));
+
+               // skip manually added content-type
+               int skipSize = fis.readInt();
+               for (int i = 0; i < skipSize; i++) {
+                  fis.read();
                }
+
+               byte[] hashBytes = Hashing.hashSHA1(fis);
+               IOUtils.closeQuietly(fis);
+               if (hash.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
+                  LOG.info("Hash of downloaded file is valid: " + url);
+                  LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is valid. Will be cached.");
+                  File old = new File(destination);
+                  File newFile = new File(destination.substring(0, destination.lastIndexOf('.')));
+                  old.renameTo(newFile);
+                  addLocator(dataObject);
+                  cached.add(newFile.getName());
+                  return true;
+               } else {
+                  LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is invalid. Trying next locator");
+                  LOG.warn("Hash of downloaded file is not valid: " + url);
+                  LOG.warn("Trying next locator");
+               }
+
             } catch (FileNotFoundException ex) {
                LOG.warn("Error downloading:" + url);
             } catch (IOException e) {
                LOG.warn("Error hashing:" + url);
             } catch (Exception e) {
-		LOG.warn("Error hashing, but file was OK: " + url);
-//		e.printStackTrace();
-	    } finally {
+               LOG.warn("Error hashing, but file was OK: " + url);
+               // e.printStackTrace();
+            } finally {
                IOUtils.closeQuietly(fis);
                rebuildCache();
             }
@@ -191,7 +199,6 @@ public class BOCacheImpl implements BOCache {
       } else {
          return attributes.get(0).getValue(String.class);
       }
-
    }
 
    private void addLocator(DataObject dataObject) {
