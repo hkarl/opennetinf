@@ -59,7 +59,7 @@ public class TransferDispatcherTest {
       try {
          String url = "http://www.uni-paderborn.de/uploads/pics/Resounding_Tinkle.JPG";
          String destination = "Resounding_Tinkle.JPG";
-         TransferDispatcher dispatcher = new TransferDispatcher();
+         TransferDispatcher dispatcher = TransferDispatcher.getInstance();
          dispatcher.getStreamAndSave(url, destination, false);
          File f = new File(destination);
          Assert.assertTrue(f.exists());

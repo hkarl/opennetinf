@@ -334,7 +334,7 @@ public class InformationObjectImpl extends NetInfObjectWrapperImpl implements In
       if (getIdentifier() != null) {
          buf.append(getIdentifier().describe());
       } else {
-         // TODO: What to do then? (eddy)
+         LOG.warn("Identifier is null, cannot describe IO");
       }
       return buf.toString();
    }

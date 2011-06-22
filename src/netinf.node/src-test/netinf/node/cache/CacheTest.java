@@ -102,9 +102,4 @@ public class CacheTest {
       Assert.assertFalse(result);
    }
 
-   @Test
-   public void testContainsTrue() {
-      ;
-   }
-
 }

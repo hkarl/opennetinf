@@ -58,7 +58,7 @@ public class ApplicationTest {
    public static final String PROPERTIES_JAVA = "../configs/testing/testing_common.application_JAVA.properties";
    public static final String PROPERTIES_RDF = "../configs/testing/testing_common.application_RDF.properties";
    public static final String PROPERTIES_EMPTY = "../configs/testing/testing_common.application_EMPTY.properties";
-   public static Injector injector;
+   private static Injector injector;
 
    @Test
    public void testApplicationModuleJava() {

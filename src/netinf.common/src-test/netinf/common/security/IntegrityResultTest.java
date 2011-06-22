@@ -1,10 +1,14 @@
 package netinf.common.security;
 
 import static org.junit.Assert.assertEquals;
-import netinf.common.security.IntegrityResult;
 
 import org.junit.Test;
 
+/**
+ * Test for IntegrityResult
+ * 
+ * @author PG NetInf 3
+ */
 public class IntegrityResultTest {
 
    @Test
