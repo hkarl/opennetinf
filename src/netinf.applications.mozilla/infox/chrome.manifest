@@ -1,0 +1,8 @@
+content     infox    chrome/content/
+content     infox    chrome/content/ contentaccessible=yes
+overlay chrome://browser/content/browser.xul chrome://infox/content/browser.xul
+
+locale	infox	en-US	locale/en-US/
+
+skin	infox	classic/1.0	skin/
+style	chrome://global/content/customizeToolbar.xul	chrome://infox/skin/skin.css
