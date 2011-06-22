@@ -50,10 +50,11 @@ import com.google.inject.Singleton;
  */
 public class BOCachingModule extends PrivateModule {
 
-	@Override
-	protected void configure() {
-		bind(BOCache.class).to(BOCacheImpl.class).in(Singleton.class);
-		expose(BOCache.class);
-	}
+   @Override
+   protected void configure() {
+      bind(BOCache.class).to(BOCacheImpl.class).in(Singleton.class);
+      expose(BOCache.class);
+
+   }
 
 }

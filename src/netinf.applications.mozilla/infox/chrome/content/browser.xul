@@ -39,30 +39,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <?xml-stylesheet href="chrome://infox/skin/skin.css" type="text/css"?> 
 <!DOCTYPE infox SYSTEM "chrome://infox/locale/translations.dtd">
-<overlay id="sample" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<overlay id="infox-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-		<script src="infox.js" />
+	<script type="application/x-javascript" src="chrome://infox/content/infox.js" />
 		
-		<popup id="contentAreaContextMenu">
-			<menuitem id="infox-anchor-contextmenu" label="&showio;" oncommand="InFox.getURI(gContextMenu)"/>
-		</popup>
+	<popup id="contentAreaContextMenu">
+		<menuitem id="infox-anchor-contextmenu" label="&showio;" oncommand="InFox.getURI(gContextMenu)"/>
+	</popup>
 		
-		<!--
-		<keyset>
-			<key id="infox-run-key" modifiers="accel alt shift" key="N" oncommand="InFox.requestAll()"/>
-		</keyset>
-		-->
-		
-		<statusbar id="status-bar">
-			<statusbarpanel id="infox-statusbar-status" class="statusbarpanel-iconic" width="15" src="chrome://infox/skin/oni16.png" />
-			<statusbarpanel id="infox-statusbar-text" label="init" />
-		</statusbar>
+	<statusbar id="status-bar">
+		<statusbarpanel id="infox-statusbar-status" class="statusbarpanel-iconic" width="15" src="chrome://infox/skin/oni16.png" />
+		<statusbarpanel id="infox-statusbar-text" label="init" />
+	</statusbar>
 
-		<toolbarpalette id="BrowserToolbarPalette">
-			<toolbaritem id="infox-gp-label" flex="1">
-				<textbox id="infox-gp-target" multiline="false" label="&switchdevice;" />
-				<toolbarbutton id="infox-gp-switchdevice-button" label="&switchdevice;" oncommand="InFox.tcChangeRequest();"/>
-			</toolbaritem>
-		</toolbarpalette>
+	<toolbarpalette id="BrowserToolbarPalette">
+		<toolbaritem id="infox-gp-label" flex="1">
+			<textbox id="infox-gp-target" multiline="false" label="&switchdevice;" />
+			<toolbarbutton id="infox-gp-switchdevice-button" label="&switchdevice;" oncommand="InFox.tcChangeRequest();"/>
+		</toolbaritem>
+	</toolbarpalette>
 		
 </overlay>

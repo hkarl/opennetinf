@@ -48,7 +48,7 @@ import java.util.List;
  */
 public class ESFFetchMissedEventsResponse extends NetInfMessage {
    private final List<ESFEventMessage> eventMessages = new ArrayList<ESFEventMessage>();
-   private transient final int prime = 31;
+   private final transient int prime = 31;
 
    public void addEventMessage(final ESFEventMessage eventMessage) {
       this.eventMessages.add(eventMessage);

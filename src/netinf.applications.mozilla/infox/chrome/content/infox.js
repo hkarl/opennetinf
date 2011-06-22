@@ -41,8 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 var LOG = {
 	info: function(strMessage) {
-		var consoleService	= 	Components.classes["@mozilla.org/consoleservice;1"]
-								.getService(Components.interfaces.nsIConsoleService);
+		var consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
 		consoleService.logStringMessage("InFox: " + strMessage);
 	},
 	
@@ -71,9 +70,7 @@ var InFox = {
 	/* Initializes the InFox object (initializes all preferences).
 	 */
 	init: function() {
-		this.prefManager	= Components.classes["@mozilla.org/preferences-service;1"]
-								.getService(Components.interfaces.nsIPrefService)
-         						.getBranch("extensions.infox.");
+		this.prefManager = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.infox.");
 		
 		this.prefManager.QueryInterface(Components.interfaces.nsIPrefBranch2);
 		this.prefManager.addObserver("", this, false);
@@ -97,6 +94,15 @@ var InFox = {
 		
 		this.GPJobId		= "";
 		
+		// load jQuery library
+		var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+		jsLoader.loadSubScript("chrome://infox/content/jquery/jquery-1.3.2.min.js");
+		jQuery.noConflict();
+		docContext = window.content.document;
+		
+		// other settings
+		TIMEOUT_TIME = 5000; // 5 seconds
+		ERROR_PAGE = "http://www.netinf.org/infoxerror/";
 		
 		this.updateUI();
 	},
@@ -109,7 +115,9 @@ var InFox = {
 	 */
 	observe: function(aSubject, aTopic, aData)
 	{
-	  if(aTopic != "nsPref:changed") return;
+	  if (aTopic != "nsPref:changed") {
+		  return;
+	  }
 	  //LOG.info("preferences changed. Reinitializing.");
 	  this.init();
 	},
@@ -129,7 +137,7 @@ var InFox = {
 		var pattern = /^ni:(.*)/;
 		var patternfound = false;
 		
-		var isNetInfAnchor = event.target instanceof HTMLAnchorElement && (pattern.test(event.target.getAttributeNode("href").nodeValue) || pattern.test(event.target.getAttributeNode("ni").nodeValue))
+		var isNetInfAnchor = event.target instanceof HTMLAnchorElement && (pattern.test(event.target.getAttributeNode("href").nodeValue) || pattern.test(event.target.getAttributeNode("ni").nodeValue));
 	
 		document.getElementById("infox-anchor-contextmenu").hidden = !isNetInfAnchor;
 		
@@ -160,34 +168,41 @@ var InFox = {
 			}
 			
 			if (!style) {
+				// main style sheed
 				style	= content.document.createElement("link");
-				
 				style.id	= "netinfox-style";
 				style.type	= "text/css";
 				style.rel	= "stylesheet";
 				style.href	= "chrome://infox/skin/skin.css";
-				
 				head.appendChild(style);
+				
+				// add style for unresolved links
+				var unresColorStyle = content.document.createElement('style');
+				unresColorStyle.type = 'text/css';
+				unresColorStyle.innerHTML = '.unresolved { background-color: ' + this.unrescolor + '; }';
+				head.appendChild(unresColorStyle);
+		
+				// add style for resolved links
+				var resColorStyle = content.document.createElement('style');
+				resColorStyle.type = 'text/css';
+				resColorStyle.innerHTML = '.resolved { background-color: ' + this.rescolor + '; }';
+				head.appendChild(resColorStyle);
 			}
 			
 			if (patternfound) {
 				// Style as NetInf link
-				if (this.colorize_links)
-				{
-					//LOG.info("Styling link");
-					netinfLink.className = "netinf-selected";
-					netinfLink.style.background = this.unrescolor + " url(\"chrome://infox/skin/oni16.png\") no-repeat";
-				}
-								
+				if (this.colorize_links) {
+					netinfLink.className = "netinf-selected unresolved";
+					//netinfLink.style.backgroundColor = this.unrescolor;
+				}			
 				foundLinks++;
 			}
 		}
 		
 		// Statusbar output
-		if (foundLinks == 0) {
+		if (foundLinks === 0) {
 			document.getElementById('infox-statusbar-text').label = "No unresolved NetInf links";
-		}
-		else {
+		} else {
 			document.getElementById('infox-statusbar-text').label = foundLinks + " unresolved NetInf links";
 		}
 		
@@ -218,17 +233,15 @@ var InFox = {
 				var strIdentifier;
 				
 				// check id- and href attribute. Resolved links just have the id left to distinguish them from usual links
-				if (event.target.getAttributeNode("id") != null) {
+				if (event.target.getAttributeNode("id") !== null) {
 					patternfound = pattern.test(event.target.getAttributeNode("id").nodeValue);
 					pattern.exec(event.target.getAttributeNode("id").nodeValue);
 					strIdentifier = RegExp.$1;
-				}
-				else if (event.target.getAttributeNode("ni") != null) {
+				} else if (event.target.getAttributeNode("ni") !== null) {
 					patternfound = pattern.test(event.target.getAttributeNode("ni").nodeValue);
 					pattern.exec(event.target.getAttributeNode("ni").nodeValue);
 					strIdentifier = RegExp.$1;
-				}
-				else {
+				} else {
 					patternfound = pattern.test(event.target.getAttributeNode("href").nodeValue);
 					pattern.exec(event.target.getAttributeNode("href").nodeValue);
 					strIdentifier = RegExp.$1;
@@ -240,118 +253,349 @@ var InFox = {
 						showinfo = true;
 					}
 
-					if (InFox.restbehavior) {
-						InFox.sendRESTRequest(strIdentifier, event);
-					}
-					else { // standard behavior
-						InFox.sendRequest(strIdentifier, event.target, showinfo);
+					// request found URI
+					if (InFox.restbehavior) { // request via REST
+						LOG.info("Sending request via RESTful interface");
+						InFox.sendRESTRequest(strIdentifier, event.target, showinfo);
+					} else { // request via NetInfMessage (standard)
+						LOG.info("Sending request via standard HTTP interface (NetInfMessage");
+						InFox.sendNetInfMessageRequest(strIdentifier, event.target, showinfo);
 					}
 				}
-			} else {
-				// do nothing
-			}
-			
+			} // else do nothing
 			
 		} else { // neither context menu nor left click
 			return;
 		}
 	},
 	
-	sendRESTRequest: function(strIdentifier, clickEvent) {
+	getRestAddress: function(asXML, identifier){
+		if (asXML === true) {
+			return 'http:/' + this.SERVER + ':' + this.RESTPORT + '/io/ni:' + identifier;
+		} else {
+			return 'http:/' + this.SERVER + ':' + this.RESTPORT + '/ni:' + identifier;
+		}
+	},
+	
+	/* Sends a HTTP request via the REST interface and handles the returned IO
+	 * 
+	 * @param strIdentifier String IO Identifier
+	 * @param htmlAnchor HTMLAnchorElement Link that was clicked
+	 * @param showinfo Showing the IO in a dialog or not
+	 */
+	sendRESTRequest: function(strIdentifier, htmlAnchor, showinfo) {
 		var client	= new XMLHttpRequest();
-		//var url = "http://localhost:8081/io/ni:" + strIdentifier;
-		var url = 'http://localhost:' + this.RESTPORT + '/io/ni:' + strIdentifier;
+		var url = InFox.getRestAddress(true, strIdentifier);
 		
 		client.open("GET", url, true);
 		client.setRequestHeader("Content-type", "text/plain");
 		client.send(null);
 		client.onreadystatechange = function() {
 			if(client.readyState == 4 && client.status == 200) {
-				// load jQuery
-				var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-				jsLoader.loadSubScript("chrome://infox/content/jquery/jquery-1.3.2.min.js");
-				jQuery.noConflict();
-				var docContext = window.content.document;
-					    				
-				var foundLocators = 0;
-				var locatorsHtml = '';
-				jQuery(client.responseXML).find('netinf\\:http_url').each(function(){
-					foundLocators++;
-					var $http_url = jQuery(this);
-					var hrefValue = $http_url.find('netinf\\:attributeValue').text();
-					// Chop off "String:" in the attributeValue
-					var pat = /String:(.*)/;
-					pat.exec(hrefValue);
-					hrefValue = RegExp.$1;
-					var fileExtension = hrefValue.split('.').pop().toUpperCase();
-					
-					if (fileExtension.indexOf("PDF") != -1) {
-						locatorsHtml += '<p><span class="pdf"><a href="' + hrefValue + '">Download as ' + fileExtension + '</a></span></p>';	
-					} else if (fileExtension.indexOf("JPG") != -1) {
-						locatorsHtml += '<p><span class="image"><a href="' + hrefValue + '">Download as ' + fileExtension + '</a></span></p>';	
-					} else if (fileExtension.indexOf("MP4") != -1) {
-						locatorsHtml += '<p><span class="video"><a href="' + hrefValue + '">Download as ' + fileExtension + '</a></span></p>';	
-					} else {
-						locatorsHtml += '<p><span class="default"><a href="' + hrefValue + '">Download as ' + fileExtension + '</a></span></p>';	
-					}
-					
-				});
+				LOG.info('(REST ) IO received');
+				var ioXML = client.responseXML;
 				
-				// generate popup window
-				var popupHtml = '<div id="RestPopup">';  
-				popupHtml += '<h1>Title</h1>'; 
-				popupHtml += '<a id="RestPopupClose">x</a>';  
-				popupHtml += locatorsHtml;  
-				popupHtml += '</div>';
+				// if rightclick -> open InfoDialog
+				if (showinfo === true) {
+					InFox.showIO(ioXML, true);
+					return;
+				} // else continue
 				
-				// remove if already existing anywhere (e.g. clicking again) ^^
-				jQuery('#RestPopup', docContext).remove();
+				// check IO type and handle it
+				var ioType = jQuery(ioXML).find('netinf\\:ioType').text();
+				LOG.info('(REST ) type is ' + ioType);
+				switch (ioType) {
+					case 'netinf.common.datamodel.rdf.InformationObjectRdf':
+						LOG.info('(REST ) handling like an IO');
+						InFox.handleRESTIO(ioXML, strIdentifier, htmlAnchor);
+						break;
+					case 'netinf.common.datamodel.rdf.DataObjectRdf':
+						LOG.info('(REST ) handling like a DO');
+						InFox.handleRESTDO(strIdentifier, htmlAnchor);
+						break;
+					case 'netinf.common.datamodel.rdf.identity.IdentityObjectRdf':
+						LOG.info('(REST ) handling like an iDO');
+						InFox.handleRESTiDO(ioXML, strIdentifier, htmlAnchor);
+						break;
+					default:
+						LOG.info("(REST ) Unkown Information Object Type \'" + ioType + "\'");
+						break;
+				}
 				
-				// append popup
-	            jQuery('body', docContext).append(popupHtml);
-	            
-	            // element position
-	            var $aElement = jQuery('a[href=ni:'+strIdentifier+']', docContext);
-	            var position = $aElement.position();
-	            var aElemWidth = $aElement.width();
-	            
-	            // apply position
-	            var windowWidth = document.documentElement.clientWidth;  
-	            var windowHeight = document.documentElement.clientHeight;
-	            var popupHeight = jQuery('#RestPopup', docContext).height(); 
-	            var popupWidth = jQuery('#RestPopup', docContext).width();
-	            
-	            var leftPos = 0;
-	            if (position.left < windowWidth/2) { // link is on left side
-	            	leftPos = position.left + aElemWidth;
-	            } else { // link is on right side
-	            	leftPos = position.left - popupWidth + aElemWidth;
-	            }
-	            
-	            jQuery('#RestPopup', docContext).css({  
-	            	"position": "absolute",  
-	            	"top": position.top - popupHeight,  
-	            	"left": leftPos  
-	            	}); 
-	            
-	            // register close event
-	            jQuery('#RestPopupClose', docContext).click(function(){
-	            	jQuery('#RestPopup', docContext).remove();
-	            	});  
-	            
 			} else if (client.readyState == 4 && client.status != 200) {
-				alert("IO could not be resolved...");
-			}
+				LOG.info("(REST ) No IO received...");
+				client.abort();
+				InFox.goToErrorPage();		
+	    	}
+		};
+		
+		// set timeout
+		var httpTimeout = setTimeout(function(){
+			LOG.info("(REST ) request timed out after " + TIMEOUT_TIME + "seconds...");
+			client.abort();
+		}, TIMEOUT_TIME);
+
+	},
+	
+	/*
+	 * Forwards to the specified error page
+	 */
+	goToErrorPage: function() {
+		LOG.info("Forwarding to http://www.netinf.org/infoxerror/");
+		content.location.href = ERROR_PAGE;
+	},
+	
+	/*
+	 * Handles the via REST requested IO
+	 */
+	handleRESTIO: function(ioXML, strIdentifier, htmlAnchor) {
+		// generate and show popup
+		InFox.createPopup(ioXML, strIdentifier, htmlAnchor, false);
+		
+		// add referenced DOs, if existing
+		jQuery(ioXML).find('netinf\\:referenced_do').each(function(){
+			LOG.info("(REST ) adding referenced DOs");
+			var $uriOfDO = jQuery(this).find('netinf\\:attributeValue');
+			var uriOfDO = InFox.removeStringPrefix($uriOfDO.text());
+			InFox.addDOreference(uriOfDO);
+		});
+	},	
+	
+	/**
+	 * 
+	 */
+	createPopup: function(ioXML, strIdentifier, htmlAnchor, isIDO) {
+		// get name of the IO
+		var ioName = InFox.getAttributeValue(ioXML, 'netinf\\:name');
+		if (ioName === null) {
+			// no name found, take name of link
+			ioName = htmlAnchor.innerHTML;
+		}
+
+		// get description
+		var ioDesc = InFox.getAttributeValue(ioXML, 'netinf\\:description');
+		if(ioDesc === null) {
+			// no description found
+			ioDesc = 'no description';
+		} 
+
+		// IdentityObject or IO?
+		var h3Class = 'informationObject';
+		if (isIDO === true) {
+			h3Class = 'identityObject';
 		}
 		
+		// build popup window
+		var popupHtml = '<div id="RestPopup">';  
+		popupHtml += '<h3><span class="' + h3Class + '">' + ioName + '</span></h3>';
+		popupHtml += '<a id="RestPopupClose">x</a>'; 
+		popupHtml += '<div id="RestDescription">' + ioDesc + '</div>';
+		popupHtml += '<div id="RestPopupContent"></div>';
+		popupHtml += '<div id="RestPopupFooter"><a href="' + InFox.getRestAddress(true, strIdentifier) + '">show IO</a></div>';
+		popupHtml += '</div>';
+		
+		// remove if already existing anywhere (e.g. clicking again) ^^
+		jQuery('#RestPopup', docContext).remove();
+		
+		// append popup
+        jQuery('body', docContext).append(popupHtml);
+        
+        // element position
+        var $aElement = jQuery('a[href=ni:' + strIdentifier + ']', docContext);
+        var position = $aElement.position();
+        var aElemWidth = $aElement.width();
+        
+        // apply position
+        var windowWidth = document.documentElement.clientWidth;  
+        var windowHeight = document.documentElement.clientHeight;
+        var popupHeight = jQuery('#RestPopup', docContext).height(); 
+        var popupWidth = jQuery('#RestPopup', docContext).width();
+        
+        var leftPos = 0;
+        if (position.left < windowWidth/2) { // link is on left side
+        	leftPos = position.left + aElemWidth;
+        } else { // link is on right side
+        	leftPos = position.left - popupWidth + aElemWidth;
+        }
+        
+        jQuery('#RestPopup', docContext).css({  
+        	"position": "absolute",  
+        	"top": position.top - popupHeight,  
+        	"left": leftPos  
+        	}); 
+        
+        // register close event on (x)
+        jQuery('#RestPopupClose', docContext).click(function(){
+        	jQuery('#RestPopup', docContext).remove();
+        });  
+        // close on click outside of popup
+		jQuery('body', docContext).click(function(e) {
+      		if (!jQuery(e.target).parents().andSelf().is('#RestPopup')) {
+            	jQuery('#RestPopup', docContext).remove();
+      		}
+		});
+
+
+	},	
+	
+	/*
+	 * Adds referenced DOs to the popup of the IO
+	 */
+	addDOreference: function(uriOfDO) {
+		LOG.info("(REST ) requesting " + uriOfDO);
+		var client	= new XMLHttpRequest();
+		var url = 'http:/' + this.SERVER + ':' + this.RESTPORT + '/io/' + uriOfDO;
+		
+		client.open("GET", url, true);
+		client.setRequestHeader("Content-type", "text/plain");
+		client.send(null);
+		client.onreadystatechange = function() {
+			if (client.readyState == 4 && client.status == 200) {
+				LOG.info('(REST ) referenced DO received');
+				var doXML = client.responseXML;
+				// get content type
+				var contentType = InFox.getAttributeValue(doXML, 'netinf\\:content_type');
+				if (contentType === null) {
+					contentType = 'application/octet-stream'; // unknown
+				}
+				
+				// build entry
+				var spanClass = 'default';
+				if (contentType.indexOf("video") != -1) {
+					spanClass = 'video';
+				} else if (contentType.indexOf("image") != -1) {
+					spanClass = 'image';
+				} else if (contentType.indexOf("pdf") != -1) {
+					spanClass = 'pdf';
+				}
+				
+				var linkToDO = 'http:/' + InFox.SERVER + ':' + InFox.RESTPORT + '/' + uriOfDO;
+				var doEntry = '<p><span class="' + spanClass + '"><a href="' + linkToDO + '">Download as ' + contentType + '</a></span></p>';
+				
+				// append at popup
+				jQuery('#RestPopupContent', docContext).append(doEntry);
+			} else if (client.readyState == 4 && client.status != 200) {
+				LOG.info("(REST ) No DO received...");
+				client.abort();
+	    	}
+		};
+		
+		// set timeout
+		var httpTimeout = setTimeout(function(){
+			LOG.info("(REST ) request timed out after " + TIMEOUT_TIME + "seconds...");
+			client.abort();
+		}, TIMEOUT_TIME);
+	},
+	
+	/*
+	 * Returns the value of a given attribute in a XML document 
+	 */
+	getAttributeValue: function(xml, attribute) {
+		var $value = jQuery(xml).find(attribute);
+		if($value.length === 0) {
+			// no value found, return null
+			return null;
+		} else {
+			return this.removeStringPrefix($value.text());
+		}
+	},
+	
+	/*
+	 * Handles the via REST requested DO
+	 */
+	handleRESTDO: function(strIdentifier, htmlAnchor) {
+		LOG.info('(REST ) building RESTified url - RESTful interface will choose appropriate locator');
+		var redirect = 'http:/' + this.SERVER + ':' + this.RESTPORT + '/ni:' + strIdentifier;
+		this.handleRedirect(redirect, htmlAnchor);
+	},
+	
+	/*
+	 * Handles the via REST requested iDO
+	 */
+	handleRESTiDO: function(idoXML, strIdentifier, htmlAnchor) {
+		// generate and show popup
+		InFox.createPopup(idoXML, strIdentifier, htmlAnchor, true);
+		
+		// add email address
+		var email = InFox.getAttributeValue(idoXML, 'netinf\\:e_mail_address');
+		if (email !== null) { // if email entry exists
+			var emailLink = '<p><span><strong>E-Mail:</strong> ' + email + ' <a title="send E-Mail" href="mailto:' + email + '"><img src="chrome://infox/skin/icons/person/email.png" /></a></span></p>';
+			// append at popup
+			jQuery('#RestPopupContent', docContext).append(emailLink);
+		}
+		
+		// add phone
+		var phone = InFox.getAttributeValue(idoXML, 'netinf\\:person_phone');
+		if (phone !== null) {
+			var phoneLink = '<p><span><strong>Phone:</strong> ' + phone + '</span></p>';
+			// append at popup
+			jQuery('#RestPopupContent', docContext).append(phoneLink);
+		}
+		
+		// add address
+		var address = InFox.getAttributeValue(idoXML, 'netinf\\:person_address');
+		if (address !== null) {
+			var addressLink = '<p><span><strong>Address:</strong> ' + address + ' <a title="view in google maps" href="http://maps.google.de/?q=' + address +'"><img src="chrome://infox/skin/icons/person/google_maps.png" /></a></span></p>';
+			// append at popup
+			jQuery('#RestPopupContent', docContext).append(addressLink);
+		}
+		
+		// add homepage
+		var homepage = InFox.getAttributeValue(idoXML, 'netinf\\:person_homepage');
+		if (homepage !== null) {
+			var homepageLink = '<p><span><strong>Homepage:</strong> ' + homepage + ' <a title="open homepage" href="' + homepage + '"><img src="chrome://infox/skin/icons/person/homepage.png" /></a>';
+			// append at popup
+			jQuery('#RestPopupContent', docContext).append(homepageLink);
+		}
+		
+		// add birthday
+		var birthday = InFox.getAttributeValue(idoXML, 'netinf\\:person_birthday');
+		if (birthday !== null) {
+			var birthdayLink = '<p><span><strong>Birthday:</strong> ' + birthday + '</span></p>';
+			// append at popup
+			jQuery('#RestPopupContent', docContext).append(birthdayLink);
+		}
+
+	},
+	
+	/*
+	 * Handles the redirect the specified href, or refreshes the UI by that
+	 */
+	handleRedirect: function(href, htmlAnchor) {
+		if (this.auto_open) { // redirect to new URI
+			LOG.info("(REST ) redirecting to " + href);
+			content.location.href = href;
+		} else {
+			LOG.info("(REST ) updating UI with new link: " + href);
+			// just update the link's URI (and style it if enabled)
+			htmlAnchor.getAttributeNode("href").nodeValue = href;
+			if (this.colorize_links) {
+				htmlAnchor.className = "netinf-selected resolved";
+				//htmlAnchor.style.backgroundColor = this.rescolor;
+			}
+			
+			this.updateUI();
+		}
+	},
+	
+	/*
+	 * Removes the prefix 'String:' of a given value
+	 */
+	removeStringPrefix: function(text) {
+		// Chop off "String:" in the attributeValue
+		var pat = /String:(.*)/;
+		pat.exec(text);
+		text = RegExp.$1;
+		return text;
 	},
 	
 	/* Sends a XMLHttpRequest to a NetInf node requesting the IO with Identifier strIdentifier.
 	 * 
 	 * @param 	strIdentifier String IO Identifier
 	 * @param	htmlAnchor HTMLAnchorElement Link that was clicked 
+	 * @param showinfo Showing the IO in a dialog or not
 	 */
-	sendRequest: function(strIdentifier, htmlAnchor, showinfo) {
+	sendNetInfMessageRequest: function(strIdentifier, htmlAnchor, showinfo) {
 		
 		var http	= new XMLHttpRequest();
 		var url 	= 'http://' + this.SERVER + ':' + this.PORT;
@@ -392,32 +636,33 @@ var InFox = {
 					if (http.status == 200) {
 						msg = "Request is successfully completed";
 					} else {
-						msg = "Request unsuccessfull. HTTP status: " + http.status
+						msg = "Request unsuccessfull. HTTP status: " + http.status;
 						LOG.info(msg);
 						//return;
 					}
 					break;
 				default:
 					msg = "undefined";
+					break;
 			}
 	    	LOG.info(msg);
 			
 	    	if(http.readyState == 4 && http.status == 200) {
-	    		//LOG.info(http.responseText); // ugly output
-	    		if (showinfo == false) {
-	    			InFox.handleIO(http.responseXML, htmlAnchor)
+	    		if (showinfo === false) {
+	    			InFox.handleIO(http.responseXML, htmlAnchor);
 	    		} else {
-	    			InFox.showIO(http.responseXML);
+	    			InFox.showIO(http.responseXML, false);
 	    		}
 	    	} else if (http.readyState == 4 && http.status != 200) {
-			content.location.href = "http://www.netinf.org/infoxerror/";		
+	    		InFox.goToErrorPage();		
 	    	}
 	    };
 
-	    var requestTimer = setTimeout(function() {
-       	    http.abort();
-            LOG.info("Request Timeout");
-     	    }, 5000);
+		// set timeout
+		var httpTimeout = setTimeout(function(){
+			LOG.info("request timed out after " + TIMEOUT_TIME + "seconds...");
+			client.abort();
+		}, TIMEOUT_TIME);
 		
 	    //http.send(params);
 	
@@ -438,21 +683,19 @@ var InFox = {
 		// The actually transfered IO looks like a RDF packaged into an XML. So we unpack it. I am not sure if this is necessary...		
 		var xmlDoc = informationObject;
 		var nsResolver = xmlDoc.createNSResolver( xmlDoc.ownerDocument == null ? xmlDoc.documentElement : xmlDoc.ownerDocument.documentElement);
-		var netinfMsg = xmlDoc.evaluate('//InformationObject', xmlDoc, nsResolver, XPathResult.ANY_TYPE, null )
-								.iterateNext().textContent;
+		var netinfMsg = xmlDoc.evaluate('//InformationObject', xmlDoc, nsResolver, XPathResult.ANY_TYPE, null ).iterateNext().textContent;
 		
 		var parser = new DOMParser();
 		var rdfIO = parser.parseFromString(netinfMsg, "text/xml");
 		
 		var nsResolver2 = rdfIO.createNSResolver( rdfIO.ownerDocument == null ? rdfIO.documentElement : rdfIO.ownerDocument.documentElement);
-		var type = rdfIO.evaluate('//netinf:ioType', rdfIO, nsResolver2, XPathResult.ANY_TYPE, null )
-		.iterateNext().textContent;
+		var type = rdfIO.evaluate('//netinf:ioType', rdfIO, nsResolver2, XPathResult.ANY_TYPE, null ).iterateNext().textContent;
 		
 		//LOG.info("Received InformationObject (Type: " + type + "):\n\n" + netinfMsg);
 		
 		switch (type) {
 			case "netinf.common.datamodel.rdf.InformationObjectRdf":
-				this.showIO(informationObject);
+				this.showNetInfWrappedIO(informationObject);
 				break;
 			case "netinf.common.datamodel.rdf.DataObjectRdf":
 				this.updateURI(rdfIO,"netinf:http_url" , htmlAnchor, "");
@@ -462,6 +705,7 @@ var InFox = {
 				break;
 			default:
 				LOG.info("Unkown Information Object Type \'" + type + "\'");
+				break;
 		}
 	
 	},
@@ -478,7 +722,7 @@ var InFox = {
 		// Open the link, if auto_open is enabled and we got a locator
 		if (htmlAnchor instanceof HTMLAnchorElement) {
 			
-			if (rdfIO.getElementsByTagName(netinfAttribute).length == 0) {
+			if (rdfIO.getElementsByTagName(netinfAttribute).length === 0) {
 				LOG.error("InformationObject contains no Attribute:" + netinfAttribute);
 			}
 			
@@ -487,8 +731,7 @@ var InFox = {
 				var newhref = this.selectLocator(rdfIO);
 			} else {
 				var nsResolver = rdfIO.createNSResolver( rdfIO.ownerDocument == null ? rdfIO.documentElement : rdfIO.ownerDocument.documentElement);
-				var newhref = rdfIO.evaluate( '//' + netinfAttribute + '/netinf:attributeValue', rdfIO, nsResolver, XPathResult.ANY_TYPE, null )
-								.iterateNext().textContent;
+				newhref = rdfIO.evaluate( '//' + netinfAttribute + '/netinf:attributeValue', rdfIO, nsResolver, XPathResult.ANY_TYPE, null ).iterateNext().textContent;
 			}
 			
 			// Chop off "String:" in the attributeValue
@@ -509,7 +752,7 @@ var InFox = {
 				this.tcStartRequest(strSource);
 			} else {		
 				// No GP-link, so just update the anchor
-				if (this.auto_open == true) {			
+				if (this.auto_open === true) {			
 					//direct redirect to new URI
 					LOG.info("redirect to new URI from InformationObject");
 					content.location.href = newhref;
@@ -518,8 +761,8 @@ var InFox = {
 					//just update the link's URI (and style it if enabled)
 					htmlAnchor.getAttributeNode("href").nodeValue = newhref;
 					if (this.colorize_links) {
-						htmlAnchor.className = "netinf-selected";
-						htmlAnchor.style.background = this.rescolor + " url(\"chrome://infox/skin/oni16.png\") no-repeat";
+						htmlAnchor.className = "netinf-selected resolved";
+						// htmlAnchor.style.backgroundColor = this.rescolor;
 					}
 					this.updateUI();
 					LOG.info("just update the URI from InformationObject");
@@ -549,12 +792,12 @@ var InFox = {
 		
 		// Firstly push the privileged/cached locators
 		while (ploc = itPrivilegedLocators.iterateNext()) {
-	    	arrLocators.push(ploc)
+	    	arrLocators.push(ploc);
 		}		
 		
 		// Secondly push the unprivileged locators;
 		while (loc = itLocators.iterateNext()) {
-	    	arrLocators.push(loc)
+	    	arrLocators.push(loc);
 		}
 		
 		for (var i in arrLocators) {
@@ -580,36 +823,33 @@ var InFox = {
 	 *
 	 * @param informationObject the RDF/XML formatted InformationObject
 	 */
-	showIO: function(informationObject) {
+	showIO: function(informationObject, isWrappedXML) {
+		LOG.info("Show the InformationObject info dialog");
 		
 		if (informationObject.getElementsByTagName("ErrorMessage").length > 0) {
 			LOG.error(informationObject.getElementsByTagName("ErrorMessage")[0].firstChild.nodeValue);
 			return;
 		}
-		
+
 		// The actually transfered IO looks like a RDF packaged into an XML. So we unpack it. I am not sure if this is necessary...		
 		var xmlDoc = informationObject;
-		var nsResolver = xmlDoc.createNSResolver( xmlDoc.ownerDocument == null ? xmlDoc.documentElement : xmlDoc.ownerDocument.documentElement);
-		var netinfMsg = xmlDoc.evaluate('//InformationObject', xmlDoc, nsResolver, XPathResult.ANY_TYPE, null )
-								.iterateNext().textContent;
 		
-		//LOG.info(netinfMsg); //ugly output
+		if (isWrappedXML === false) {
+			var nsResolver = xmlDoc.createNSResolver( xmlDoc.ownerDocument == null ? xmlDoc.documentElement : xmlDoc.ownerDocument.documentElement);
+			var netinfMsg = xmlDoc.evaluate('//InformationObject', xmlDoc, nsResolver, XPathResult.ANY_TYPE, null).iterateNext().textContent;
 		
-		var parser = new DOMParser();
-		var rdfIO = parser.parseFromString(netinfMsg, "text/xml");
-	
-		LOG.info("Show the InformationObject info dialog");
-		var params = {inn:{io:rdfIO, enabled:true}, out:null};       
+			var parser = new DOMParser();
+			xmlDoc = parser.parseFromString(netinfMsg, "text/xml");
+		}
 		
+		var params = {inn:{io:xmlDoc, enabled:true, isPureXML:isWrappedXML}, out:null};       
 		window.openDialog("chrome://infox/content/informationObject.xul", "", "chrome, centerscreen", params).focus();
 	  
 		if (params.out) {
 			// User clicked ok. Process changed arguments; e.g. write them to disk or whatever
 			return;
-		}
-		else {
-			// User clicked cancel. Typically, nothing is done here.
-		}
+		} // else User clicked cancel. Typically, nothing is done here.
+
 	},
 	
 	/* Starts a TransferRequest (using Generic Path Integration)
@@ -652,13 +892,14 @@ var InFox = {
 					if (http.status == 200) {
 						msg = "Request is successfully completed";
 					} else {
-						msg = "Request unsuccessfull. HTTP status: " + http.status
+						msg = "Request unsuccessfull. HTTP status: " + http.status;
 						LOG.info(msg);
 						return;
 					}
 					break;
 				default:
 					msg = "undefined";
+					break;
 			}
 	    	LOG.info(msg);
 			
@@ -666,8 +907,7 @@ var InFox = {
 	    		//LOG.info(http.responseText); // ugly output
 	    		var rdfIO = http.responseXML;
 				var nsResolver = rdfIO.createNSResolver( rdfIO.ownerDocument == null ? rdfIO.documentElement : rdfIO.ownerDocument.documentElement);
-				InFox.GPJobId = rdfIO.evaluate( '//JobId', rdfIO, nsResolver, XPathResult.ANY_TYPE, null )
-								.iterateNext().textContent;
+				InFox.GPJobId = rdfIO.evaluate( '//JobId', rdfIO, nsResolver, XPathResult.ANY_TYPE, null ).iterateNext().textContent;
 				LOG.info("GP Job ID is: " + InFox.GPJobId);
 				
 				// Update GP Toolbar
@@ -728,13 +968,14 @@ var InFox = {
 					if (http.status == 200) {
 						msg = "Request is successfully completed";
 					} else {
-						msg = "Request unsuccessfull. HTTP status: " + http.status
+						msg = "Request unsuccessfull. HTTP status: " + http.status;
 						LOG.info(msg);
 						return;
 					}
 					break;
 				default:
 					msg = "undefined";
+					break;
 			}
 	    	LOG.info(msg);
 			
@@ -746,16 +987,35 @@ var InFox = {
 	    	}
 	    };
 
-            var requestTimer = setTimeout(function() {
-            http.abort();
-            LOG.info("Request Timeout");
-            }, 5000);
-		
-	    //http.send(params);
+        var requestTimer = setTimeout(function() {
+	        http.abort();
+	        LOG.info("Request Timeout");
+        }, 5000);
 	},
+	
+	/**
+	 * resets the preferences to default values
+	 */
+	resetPreferences: function() {
+		LOG.info("Reset preferences");
+		var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.infox.");
+		
+		// very stupid way, but its not possible on an other way in FF3
+		prefs.setCharPref('server', 'nn1.testbed.netinf.org');
+		prefs.setCharPref('port', '8080');
+		prefs.setCharPref('username', 'generic');
+		prefs.setCharPref('password', 'generic');
+		prefs.setBoolPref('autoopen', true);
+		prefs.setBoolPref('colorizelinks', true);
+		prefs.setCharPref('unrescolor', '#f5f5f5');
+		prefs.setCharPref('rescolor', '#E6EFC2');
+		prefs.setBoolPref('restbehavior', true);
+		prefs.setCharPref('restport', '8081');
+	}
 
 };
 
 // When Firefox is loaded, we initialize the InFox instance
 window.addEventListener("load", function(e) { InFox.startup(); }, false);
 //window.addEventListener("unload", function(e) { InFox.shutdown(); }, false);
+

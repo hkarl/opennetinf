@@ -43,20 +43,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
      title="InFox Preferences"
      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
  
+ <script type="application/x-javascript" src="chrome://infox/content/infox.js" />
+ 
 	<prefpane label="InFox Preferences">
 		<preferences>
 			<preference id="infox-server" 			name="extensions.infox.server" type="string"/>
 			<preference id="infox-port" 			name="extensions.infox.port" type="string"/>
+			<preference id="infox-restport" 		name="extensions.infox.restport" type="string"/>
 			<preference id="infox-username" 		name="extensions.infox.username" type="string"/>
 			<preference id="infox-password" 		name="extensions.infox.password" type="string"/>
+			<preference id="infox-restbehavior" 	name="extensions.infox.restbehavior" type="bool"/>
 			<preference id="infox-autorun" 			name="extensions.infox.autorun" type="bool"/>
 			<preference id="infox-autoopen" 		name="extensions.infox.autoopen" type="bool"/>
 			<preference id="infox-colorizelinks" 	name="extensions.infox.colorizelinks" type="bool"/>
 			<preference id="infox-unrescolor" 		name="extensions.infox.unrescolor" type="string"/>
 			<preference id="infox-rescolor" 		name="extensions.infox.rescolor" type="string"/>
-			<preference id="infox-restbehavior" 	name="extensions.infox.restbehavior" type="bool"/>
-			<preference id="infox-restport" 		name="extensions.infox.restport" type="string"/>
-			
 		</preferences>
 
 		<grid>
@@ -74,12 +75,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 					<textbox id="port" rows="15" preference="infox-port" />
 				</row>
 				<row>
+					<label control="restport" value="&restport;" />
+					<textbox id="restport" rows="15" preference="infox-restport" />
+				</row>
+				<row>
 					<label control="username" value="&username;" />
 					<textbox id="username" rows="15" preference="infox-username" />
 				</row>
 				<row>
 					<label control="password" value="&password;" />
 					<textbox id="password" rows="15" preference="infox-password" />
+				</row>
+				<row>
+					<label control="restbehavior" value="&restbehavior;" />
+					<checkbox id="restbehavior"  preference="infox-restbehavior" />
 				</row>
 				<row>
 					<label control="autoopen" value="&autoopen;" />
@@ -98,12 +107,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 					<colorpicker type="button" id="rescolor" preference="infox-rescolor" />
 				</row>
 				<row>
-					<label control="restbehavior" value="&restbehavior;" />
-					<checkbox id="restbehavior"  preference="infox-restbehavior" />
-				</row>
-				<row>
-					<label control="restport" value="&restport;" />
-					<textbox id="restport" rows="15" preference="infox-restport" />
+					<button label="&reset;" oncommand="InFox.resetPreferences()" />
 				</row>
 				<row>
 				

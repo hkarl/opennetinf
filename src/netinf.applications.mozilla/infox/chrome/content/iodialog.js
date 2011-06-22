@@ -36,47 +36,48 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-/* Logging for the Information Object Dialog
+/*
+ * Logging for the Information Object Dialog
  */
 function log(strMessage) {
-		var consoleService	= 	Components.classes["@mozilla.org/consoleservice;1"]
-								.getService(Components.interfaces.nsIConsoleService);
+		var consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
 		consoleService.logStringMessage("InFox: " + strMessage);
-
 }
 
-/* Called once the Information Object Dialog is loading. Checks if the Node-side security check
+/*
+ * Called once the Information Object Dialog is loading. Checks if the Node-side security check
  * was successful and lists all first-level attributes of the IO.
  */
 function onLoad() {
- 
-	var rdfIO = window.arguments[0].inn.io;
+	// read parameters
+ 	var rdfIO = window.arguments[0].inn.io;
+ 	
 	var nsResolver = rdfIO.createNSResolver( rdfIO.ownerDocument == null ? rdfIO.documentElement : rdfIO.ownerDocument.documentElement);
-	  
+
 	var securitycheckfailed = rdfIO.evaluate('//netinf:securityCheckFailed', rdfIO, nsResolver, XPathResult.ANY_TYPE, null );
-	
+		
 	var verificationbox = document.getElementById("verificationbox");
 	if (securitycheckfailed.length > 0) {
-		verificationbox.className = "invalid";
+			verificationbox.className = "invalid";
 		document.getElementById("verificationstatus-text").value = "Failed";
 	} else {
 		verificationbox.className = "valid";
 	}
-	
-	
+		
 	var attribute = rdfIO.evaluate('//netinf:attributeValue/parent::*', rdfIO, nsResolver, XPathResult.ANY_TYPE, null );
 	var attributepurpose = rdfIO.evaluate('//netinf:attributePurpose', rdfIO, nsResolver, XPathResult.ANY_TYPE, null );
 	var attributevalue = rdfIO.evaluate('//netinf:attributeValue', rdfIO, nsResolver, XPathResult.ANY_TYPE, null );
-		
+			
 	var tree = document.getElementById("attribrows");
-	
+		
 	addAttributeRows(rdfIO, tree);
-	
-	window.resizeTo(window.screen.availWidth/2, window.screen.availHeight/2);
 
+ 	
+	window.resizeTo(window.screen.availWidth/2, window.screen.availHeight/2);
 }
 
-/* Adds all child attributes to a attribute list item.
+/*
+ * Adds all child attributes to a attribute list item.
  * 
  * @param xmlNode xml node of the attribute
  * @param list tree item
@@ -107,7 +108,8 @@ function addChildAttribute(xmlNode, tree) {
 	}
 }
 
-/* Adds the first-level attributes to the list
+/*
+ * Adds the first-level attributes to the list
  */
 function addAttributeRows(rdfIO, tree) {
 	
@@ -121,13 +123,14 @@ function addAttributeRows(rdfIO, tree) {
 	for(var i = 0; i < attribute.snapshotLength; i++) {  
 		 a[i] = attribute.snapshotItem(i);  
 	}
-	
+
 	var tree = document.getElementById("attribrows");
 
 	addChildAttribute(a, tree);
 }
 
-/* Called once if and only if the user clicks OK
+/*
+ * Called once if and only if the user clicks OK
  */
 function onOK() {
    // Return the changed arguments.
@@ -137,5 +140,6 @@ function onOK() {
 		   name:document.getElementById("name").value,
 		   description:document.getElementById("description").value
    };
+   
    return true;
 }
