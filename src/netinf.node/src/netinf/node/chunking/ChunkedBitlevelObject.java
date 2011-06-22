@@ -1,25 +1,44 @@
 package netinf.node.chunking;
 
+package netinf.node.chunking;
+
+/**
+ * The Objects, which are chunked and consists of several chunks.
+ * 
+ * @author PG NetInf 3, University of Paderborn
+ */
+
 public class ChunkedBitlevelObject {
 
    private Chunk first_chunk;
    private Unit transfer_type;
    private byte[] buffer;
-   private Unit sizeInKB;
+   private float sizeInKB;
    private Chunk[] orderedChunkContainer;
 
+   private Unit unit;
+
+   /**
+    * Default constructor.
+    */
    public ChunkedBitlevelObject() {
 
    }
 
-   public ChunkedBitlevelObject(Chunk first_chunk, Unit transfer_type, byte[] buffer, Unit sizeInKB,
-         Chunk[] orderedChunkContainer) {
+   /**
+    * Constructor.
+    * 
+    * @param currentChunkedBOsTransferring
+    */
+   public ChunkedBitlevelObject(Chunk first_chunk, Unit transfer_type, byte[] buffer, float sizeInKB,
+         Chunk[] orderedChunkContainer, Unit unit) {
       super();
       this.first_chunk = first_chunk;
       this.transfer_type = transfer_type;
       this.buffer = buffer;
       this.sizeInKB = sizeInKB;
       this.orderedChunkContainer = orderedChunkContainer;
+      this.unit = unit;
    }
 
    public Chunk getFirst_chunk() {
@@ -46,11 +65,11 @@ public class ChunkedBitlevelObject {
       this.buffer = buffer;
    }
 
-   public Unit getSizeInKB() {
+   public float getSizeInKB() {
       return sizeInKB;
    }
 
-   public void setSizeInKB(Unit sizeInKB) {
+   public void setSizeInKB(float sizeInKB) {
       this.sizeInKB = sizeInKB;
    }
 
