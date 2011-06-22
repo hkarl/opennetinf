@@ -159,7 +159,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
       }
       
       for (int level = 0; level < dhts.size(); level++) {
-         dhts.get(level).put(informationObject, level, dhts.size()-1, this.localNodeIp.getAddress());
+         dhts.get(level).put(informationObject, level, dhts.size() - 1, this.localNodeIp.getAddress());
          LOG.info("(MDHT ) Put IO at level " + level);
       }
    }
@@ -171,7 +171,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
          levels = dhts.size();
       }
       for (int level = 0; level < levels; level++) {
-         dhts.get(level).put(io, level, levels-1, this.localNodeIp.getAddress());
+         dhts.get(level).put(io, level, levels - 1, this.localNodeIp.getAddress());
          LOG.info("(MDHT ) Put IO at level " + level);
       }
    }
@@ -209,7 +209,9 @@ public class MDHTResolutionService extends AbstractResolutionService {
    public InformationObject get(Id id, int level) {
 	   	   
 	   InformationObject result = null;
-	   if (level >= this.dhts.size()) return result;
+	   if (level >= this.dhts.size()) {
+		   return result;
+	   }
 	   DHT crtLevel = dhts.get(level);
 	   
 	   if (crtLevel != null) {
@@ -227,7 +229,9 @@ public class MDHTResolutionService extends AbstractResolutionService {
    private InformationObject get(Identifier id, int level) {
 	   
 	   InformationObject result = null;
-	   if (level >= this.dhts.size()) return result;
+	   if (level >= this.dhts.size()) { 
+		   return result; 
+	   }
 	   DHT crtLevel = dhts.get(level);
 	   
 	   if (crtLevel != null) {
@@ -238,7 +242,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
    
    
    public void switchRingUpwards(int nextLevel) {
-	   LOG.info("(MDHT) Switching ring from " + (nextLevel-1) + " to " + nextLevel);
+	   LOG.info("(MDHT) Switching ring from " + (nextLevel - 1) + " to " + nextLevel);
 	   //TODO: Not yet implemented
    }
    public void sendRemoteAck(final InetAddress targetNodeAddr) {
@@ -249,7 +253,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
 		   
 		   //Timeout is 1 second
 		   socket.bind(null);
-		   socket.connect(new InetSocketAddress(targetNodeAddr, serverPort),1000);
+		   socket.connect(new InetSocketAddress(targetNodeAddr, serverPort), 1000);
 		   Connection conn = new TCPConnection(socket);
 		   
 		   //Build NetInf Message

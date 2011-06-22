@@ -23,7 +23,7 @@ public interface DHT {
     * 
     * @param io The InformationObject to be stored
     */
-   public void put(InformationObject io, int level, int maxlevels, byte[] sourceAddress);
+   void put(InformationObject io, int level, int maxlevels, byte[] sourceAddress);
 
    /**
     * Attempts to get the InformationObject by the specified NetInf Identifier.
@@ -32,7 +32,7 @@ public interface DHT {
     * @param level The level/ring at which this request should take place
     * @return The corresponding InformationObject if stored in DHT, {@code null} otherwise
     */
-   public InformationObject get(Identifier id, int level);
+   InformationObject get(Identifier id, int level);
    
    /**
     * Attempts to get the InformationObject by the specified Commonapi Identifier.
@@ -41,7 +41,7 @@ public interface DHT {
     * @param level The level/ring at which this request should take place
     * @return The corresponding InformationObject if stored in DHT, {@code null} otherwise
     */
-   public InformationObject get(Id id, int level);
+   InformationObject get(Id id, int level);
 
    /**
     * Leave the current DHT.

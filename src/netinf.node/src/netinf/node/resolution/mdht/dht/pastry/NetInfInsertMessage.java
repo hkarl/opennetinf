@@ -7,6 +7,11 @@ import rice.p2p.commonapi.NodeHandle;
 import rice.p2p.past.PastContent;
 import rice.p2p.past.messaging.InsertMessage;
 
+/***
+ * Custom InsertMessage for the NetInfPast application. Triggered when an object (IO) is inserted in the PAST layer
+ * @author PG NetInf3
+ *
+ */
 public class NetInfInsertMessage extends InsertMessage {
 
 	private static final long serialVersionUID = 283952122270522339L;
@@ -25,11 +30,11 @@ public class NetInfInsertMessage extends InsertMessage {
 		return this.sourceAddr;
 	}
 	
-	public int getLevel(){
+	public int getLevel() {
 		return this.level;
 	}
 	
-	public int getMaxLevels(){
+	public int getMaxLevels() {
 		return this.maxlevels;
 	}
 

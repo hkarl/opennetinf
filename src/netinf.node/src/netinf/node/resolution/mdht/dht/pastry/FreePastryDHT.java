@@ -40,7 +40,7 @@ import rice.persistence.StorageManagerImpl;
 /**
  * @author PG NetInf 3
  */
-public class FreePastryDHT implements DHT, Application{
+public class FreePastryDHT implements DHT, Application {
 
    private static final Logger LOG = Logger.getLogger(FreePastryDHT.class);
    private PastryNode pastryNode;
@@ -57,7 +57,8 @@ public class FreePastryDHT implements DHT, Application{
    private Endpoint endpoint;
    
 
-   public FreePastryDHT(int listenPort, String bootHost, int bootPort, String pastName, MDHTResolutionService pParent) throws IOException {
+   public FreePastryDHT(int listenPort, String bootHost, int bootPort, String pastName, MDHTResolutionService pParent) 
+   throws IOException {
 	   // Set the reference to the parent MDHT
 	  this.parent = pParent;
 	  
@@ -84,7 +85,7 @@ public class FreePastryDHT implements DHT, Application{
    }
    
    public FreePastryDHT(DHTConfiguration config, MDHTResolutionService pParent) throws IOException {
-      this(config.getListenPort(), config.getBootHost(), config.getBootPort(), "Level-" + config.getLevel(),pParent);
+      this(config.getListenPort(), config.getBootHost(), config.getBootPort(), "Level-" + config.getLevel(), pParent);
    }
 
    @Override
@@ -120,7 +121,7 @@ public class FreePastryDHT implements DHT, Application{
          }
       }
     //Not found, instruct parent to look in next ring
-      retIO = parent.get(lookupId, level+1);
+      retIO = parent.get(lookupId, level + 1);
       return retIO;
    }
    
@@ -140,7 +141,7 @@ public class FreePastryDHT implements DHT, Application{
 	         }
 	      }
 	      //Not found, instruct parent to look in next ring
-	      retIO = parent.get(id, level+1);
+	      retIO = parent.get(id, level + 1);
 	      return retIO;
 	   }
 
@@ -149,15 +150,15 @@ public class FreePastryDHT implements DHT, Application{
     * @param id The Id of the stored PastContent
     * @param level The level we are currently on 
     */
-   public void NotifyParent(Id id, int level) {
-	   /*InformationObject retIO = */parent.get(id, level+1);
+   public void notifyParent(Id id, int level) {
+	   /*InformationObject retIO = */parent.get(id, level + 1);
 	   LOG.info("Parent to be notified. Level is " + level);
 	   parent.switchRingUpwards(level);
 	 //Not found, instruct parent to look in next ring
 	 //retIO = parent.get(id, level+1);
    }
    
-   public void NotifyParentAck(Id id, InetAddress target) {
+   public void notifyParentAck(Id id, InetAddress target) {
 	   parent.sendRemoteAck(target);
    }
 
@@ -205,7 +206,7 @@ public class FreePastryDHT implements DHT, Application{
 @Override
 public void deliver(Id id, Message msg) {
 	
-	if(msg instanceof NetInfDHTMessage) {
+	if (msg instanceof NetInfDHTMessage) {
 		LOG.info("(FreePastryDHT) Received ACK message " + msg + " on node with id " + id);
 	} else if (msg instanceof PastryEndpointMessage) {
 		LOG.info("(FreePastryDHT) Received Endpoint message " + msg + " on node with id " + id);

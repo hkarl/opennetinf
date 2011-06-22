@@ -14,7 +14,8 @@
  * Copyright (C) 2009,2010 Steffen Weber <stwe@mail.upb.de>
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that 
+ * the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -87,9 +88,9 @@ public class PastryTestModule extends AbstractModule {
       try {
          props.load(new FileInputStream("../configs/testing.properties"));
       } catch (FileNotFoundException e) {
-
+    	  System.out.write(-1);
       } catch (IOException e) {
-
+    	  System.out.write(-2);
       }
       bind(Properties.class).toInstance(props);
       Names.bindProperties(binder(), props);
