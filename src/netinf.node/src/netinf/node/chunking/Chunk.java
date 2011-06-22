@@ -1,5 +1,11 @@
 package netinf.node.chunking;
 
+/**
+ * The basic part for Chunking.
+ * 
+ * @author PG NetInf 3, University of Paderborn
+ */
+
 public class Chunk {
 
    private byte[] data;
@@ -8,6 +14,18 @@ public class Chunk {
 
    private Unit unit;
 
+   /**
+    * Default constructor.
+    */
+   public Chunk() {
+
+   }
+
+   /**
+    * Constructor.
+    * 
+    * @param currentChunkedBOsTransferring
+    */
    public Chunk(Unit unit, byte[] data, long chunk_size, long number) {
 
       this.unit = unit;
