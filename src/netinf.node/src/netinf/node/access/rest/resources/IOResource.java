@@ -36,7 +36,7 @@ public class IOResource extends NetInfResource {
     * Initializes the context of a IOResource.
     */
    @Override
-   protected void doInit() throws ResourceException {
+   protected void doInit() {
       super.doInit();
       hashOfPK = getQuery().getFirstValue("HASH_OF_PK", true);
       hashOfPKIdent = getQuery().getFirstValue("HASH_OF_PK_IDENT", true);

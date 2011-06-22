@@ -73,7 +73,7 @@ public class BOResource extends NetInfResource {
          if (!locators.isEmpty()) {
             for (Attribute locator : locators) {
                try {
-                  TransferDispatcher tsDispatcher = new TransferDispatcher();
+                  TransferDispatcher tsDispatcher = TransferDispatcher.getInstance();
                   InputStream inStream = tsDispatcher.getStream(locator.getValue(String.class));
                   MediaType mdType = new MediaType(DatamodelUtils.getContentType(io));
                   
