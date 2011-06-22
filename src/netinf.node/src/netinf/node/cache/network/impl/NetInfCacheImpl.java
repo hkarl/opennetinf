@@ -40,7 +40,7 @@ public class NetInfCacheImpl implements NetworkCache {
     * Constructor
     */
    NetInfCacheImpl() {
-      transferDispatcher = new TransferDispatcher();
+      transferDispatcher = TransferDispatcher.getInstance();
    }
 
    @Inject

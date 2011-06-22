@@ -24,17 +24,30 @@ import org.apache.log4j.Logger;
 /**
  * @author PG NetInf 3
  */
-public class TransferDispatcher {
+public final class TransferDispatcher {
 
    private static final Logger LOG = Logger.getLogger(TransferDispatcher.class);
    private List<StreamProvider> streamProviders;
 
-   public TransferDispatcher() {
+   // singleton
+   private static TransferDispatcher instance;
+
+   private TransferDispatcher() {
+      addStreamProviders();
+   }
+
+   private void addStreamProviders() {
       streamProviders = new ArrayList<StreamProvider>();
 
-      // add available StreamProviders
-      streamProviders.add(new HTTPStreamProvider());
       streamProviders.add(new FTPStreamProvider());
+      streamProviders.add(new HTTPStreamProvider());
+   }
+
+   public static synchronized TransferDispatcher getInstance() {
+      if (instance == null) {
+         instance = new TransferDispatcher();
+      }
+      return instance;
    }
 
    public InputStream getStream(String url) throws IOException, NetInfNoStreamProviderFoundException {

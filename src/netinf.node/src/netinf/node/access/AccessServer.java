@@ -11,11 +11,11 @@ public interface AccessServer {
    /**
     * Starts the AccessServer
     */
-   public void start();
+   void start();
 
    /**
     * Stops the AccessServer
     */
-   public void stop();
+   void stop();
 
 }

@@ -40,9 +40,9 @@ public class AbstractEsfConnectorImpTest {
    private Provider<MockErrorCommunicator> provider;
    private Injector injector;
 
-   String port = "5000";
-   String host = "127.0.0.1";
-   AbstractEsfConnectorImp esfConnector;
+   private String port = "5000";
+   private String host = "127.0.0.1";
+   private AbstractEsfConnectorImp esfConnector;
 
    @Before
    public void setUp() throws Exception {

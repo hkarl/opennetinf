@@ -10,6 +10,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import netinf.common.communication.AtomicMessage;
+import netinf.common.communication.Connection;
+import netinf.common.communication.MessageEncoderXML;
+import netinf.common.communication.TCPConnection;
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
@@ -24,10 +28,6 @@ import netinf.node.resolution.AbstractResolutionService;
 import netinf.node.resolution.mdht.dht.DHT;
 import netinf.node.resolution.mdht.dht.DHTConfiguration;
 import netinf.node.resolution.mdht.dht.pastry.FreePastryDHT;
-
-
-import netinf.common.communication.*;
-
 
 import org.apache.log4j.Logger;
 

@@ -93,6 +93,7 @@ public class GPNodeModule extends AbstractNodeModule {
          try {
             MockGPServer.main(null);
          } catch (IOException e) {
+
          }
       }
    }

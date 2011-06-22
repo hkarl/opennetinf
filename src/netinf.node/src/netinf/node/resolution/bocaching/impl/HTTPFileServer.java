@@ -64,9 +64,10 @@ import com.sun.net.httpserver.HttpServer;
  * @author PG NetInf 3, University of Paderborn
  */
 public class HTTPFileServer implements HttpHandler {
+
    private static final Logger LOG = Logger.getLogger(HTTPFileServer.class);
+
    private static final String REQUEST_PATH_PATTERN = "/[0-9a-zA-Z]+";
-   private static final int BUFFER_SIZE = 4096;
    private static final int MAX_CONNECTIONS = 10;
 
    private int port;
@@ -119,33 +120,21 @@ public class HTTPFileServer implements HttpHandler {
          } else {
             Headers h = httpExchange.getResponseHeaders();
             DataInputStream stream = new DataInputStream(new FileInputStream(file));
+
+            // read content type and send
             int contentTypeSize = stream.readInt();
             byte[] stringBuffer = new byte[contentTypeSize];
             stream.read(stringBuffer);
             h.set("Content-Type", new String(stringBuffer));
+
             httpExchange.sendResponseHeaders(200, file.length());
 
             OutputStream os = httpExchange.getResponseBody();
-
-            // problems with the RESTlet interface =/ writing the buffer is too slow?
-            // int bytesRead;
-            // byte[] buffer = new byte[BUFFER_SIZE];
-            // do {
-            // bytesRead = stream.read(buffer);
-            // os.write(buffer, 0, bytesRead);
-            // } while (bytesRead != -1);
-
-            if (file.length() <= Integer.MAX_VALUE) {
-               byte[] fileContent = new byte[(int) file.length()];
-               stream.read(fileContent);
-               os.write(fileContent);
-            } else { // file is too large :-(
-               throw new IOException("File is too large");
-            }
+            IOUtils.copy(stream, os);
 
             // close streams
-            IOUtils.closeQuietly(os);
             IOUtils.closeQuietly(stream);
+            IOUtils.closeQuietly(os);
          }
       }
       httpExchange.close();

@@ -72,9 +72,7 @@ public class BOCacheImpl implements BOCache {
    private static final Logger LOG = Logger.getLogger(BOCacheImpl.class);
 
    private final HTTPFileServer server;
-
    private final Set<String> cached;
-
    private TransferDispatcher transferDispatcher;
 
    @Inject
@@ -85,7 +83,7 @@ public class BOCacheImpl implements BOCache {
       cached = new HashSet<String>();
       rebuildCache();
 
-      transferDispatcher = new TransferDispatcher();
+      transferDispatcher = TransferDispatcher.getInstance();
    }
 
    @Override
@@ -97,11 +95,11 @@ public class BOCacheImpl implements BOCache {
          if (!directory.endsWith(File.separator)) {
             directory += File.separator;
          }
-
          if (hash == null) {
             LOG.info("DataObject has no Hash and will not be cached");
             return false;
          }
+         
          List<Attribute> locators = dataObject.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
          for (Attribute attr : locators) {
             DataInputStream fis = null;
