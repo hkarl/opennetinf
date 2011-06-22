@@ -6,15 +6,26 @@ import java.net.InetAddress;
 import netinf.node.resolution.mdht.dht.pastry.FreePastryDHT;
 import netinf.node.resolution.mdht.dht.pastry.NetInfInsertMessage;
 import netinf.node.resolution.mdht.dht.pastry.NetInfLookupMessage;
-import rice.p2p.commonapi.*;
-import rice.p2p.past.*;
-import rice.*;
-import rice.Continuation.*;
-import rice.p2p.past.messaging.*;
+import rice.Continuation;
+import rice.Continuation.StandardContinuation;
+import rice.p2p.commonapi.Application;
+import rice.p2p.commonapi.Id;
+import rice.p2p.commonapi.Message;
+import rice.p2p.commonapi.Node;
+import rice.p2p.past.PastContent;
+import rice.p2p.past.PastContentHandle;
+import rice.p2p.past.PastImpl;
+import rice.p2p.past.PastPolicy;
+import rice.p2p.past.messaging.PastMessage;
 import rice.p2p.past.rawserialization.SocketStrategy;
 import rice.persistence.Cache;
 import rice.persistence.StorageManager;
 
+/***
+ * Customized PAST application on top of FreePastry
+ * @author PG NetInf3
+ *
+ */
 public class NetInfPast extends PastImpl {
 
 	private Application application;
@@ -58,10 +69,10 @@ public class NetInfPast extends PastImpl {
 		final PastMessage msg = (PastMessage) message;
 		if (msg.isResponse() == false && msg instanceof NetInfLookupMessage) {		
 				//Get the level
-			final NetInfLookupMessage niMsg = (NetInfLookupMessage)msg;
+			final NetInfLookupMessage niMsg = (NetInfLookupMessage) msg;
 			final int level = niMsg.getLevel();
 			final Id objectId = id;
-				if(this.application instanceof FreePastryDHT) {
+				if (this.application instanceof FreePastryDHT) {
 					final FreePastryDHT fpParent = (FreePastryDHT) application;
 					
 					// if the data is here, we send the reply, as well as push a cached copy
@@ -69,7 +80,7 @@ public class NetInfPast extends PastImpl {
 			        storage.getObject(niMsg.getId(), new StandardContinuation(getResponseContinuation(niMsg)) {
 			          public void receiveResult(Object o) {
 			            //LOG.info("Received object " + o + " for id " + lmsg.getId());
-			        	fpParent.NotifyParent(objectId, level);
+			        	fpParent.notifyParent(objectId, level);
 			            // send result back
 			            parent.receiveResult(o);
 			          }
@@ -78,11 +89,10 @@ public class NetInfPast extends PastImpl {
 			} else {
 				if (msg instanceof NetInfInsertMessage) {
 			        final NetInfInsertMessage imsg = (NetInfInsertMessage) msg;
-			        if(this.application instanceof FreePastryDHT) {
+			        if (this.application instanceof FreePastryDHT) {
 						final FreePastryDHT fpParent = (FreePastryDHT) application;
-						if(imsg.getLevel() == imsg.getMaxLevels())
-						{
-							fpParent.NotifyParentAck(id, imsg.getAddress());
+						if (imsg.getLevel() == imsg.getMaxLevels()) {
+							fpParent.notifyParentAck(id, imsg.getAddress());
 						}
 			        }
 			        
@@ -100,7 +110,8 @@ public class NetInfPast extends PastImpl {
 	          command.receiveResult(o);
 	        } else {
 	          // send the request across the wire, and see if the result is null or not
-	          sendRequest(id, new NetInfLookupMessage(getUID(), id, getLocalNodeHandle(), id, level), new NamedContinuation("NetInf LookupMessage for " + id, this) {
+	          sendRequest(id, new NetInfLookupMessage(getUID(), id, getLocalNodeHandle(), id, level), 
+	        		  new NamedContinuation("NetInf LookupMessage for " + id, this) {
 	            public void receiveResult(final Object o) {
 	              // if we have an object, we return it
 	              // otherwise, we must check all replicas in order to make sure that
@@ -117,11 +128,11 @@ public class NetInfPast extends PastImpl {
 	                  command.receiveResult(o);                            
 	                }
 	              } else {
-	                lookupHandles(id, replicationFactor+1, new Continuation() {
+	                lookupHandles(id, replicationFactor + 1, new Continuation() {
 	                  public void receiveResult(Object o) {
 	                    PastContentHandle[] handles = (PastContentHandle[]) o;
 
-	                    for (int i=0; i<handles.length; i++) {
+	                    for (int i = 0; i < handles.length; i++) {
 	                      if (handles[i] != null) {
 	                        fetch(handles[i], new StandardContinuation(parent) {
 	                          public void receiveResult(final Object o) {
@@ -174,7 +185,9 @@ public class NetInfPast extends PastImpl {
 	   * @param command Command to be performed when the result is received
 	   */
 	
-	  public void insert(final PastContent obj, final Continuation command, final int level, final int maxlevels, final InetAddress source) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void insert(final PastContent obj, final Continuation command, final int level, final int maxlevels, 
+			  final InetAddress source) {
 	    doInsert(obj.getId(), new MessageBuilder() {
 	      public PastMessage buildMessage() {
 	        return new NetInfInsertMessage(getUID(), obj, getLocalNodeHandle(), obj.getId(), source, level, maxlevels);

@@ -94,12 +94,12 @@ public class NetInfPastryParameters implements Parameters {
 
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public Enumeration enumerateDefaults() {
 		return defaults.keys();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public Enumeration enumerateNonDefaults() {
 		return properties.keys();
 	}
