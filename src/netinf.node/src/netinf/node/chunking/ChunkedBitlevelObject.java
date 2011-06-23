@@ -1,7 +1,5 @@
 package netinf.node.chunking;
 
-package netinf.node.chunking;
-
 /**
  * The Objects, which are chunked and consists of several chunks.
  * 
@@ -10,8 +8,8 @@ package netinf.node.chunking;
 
 public class ChunkedBitlevelObject {
 
-   private Chunk first_chunk;
-   private Unit transfer_type;
+   private Chunk firstChunk;
+   private Unit transferType;
    private byte[] buffer;
    private float sizeInKB;
    private Chunk[] orderedChunkContainer;
@@ -30,31 +28,31 @@ public class ChunkedBitlevelObject {
     * 
     * @param currentChunkedBOsTransferring
     */
-   public ChunkedBitlevelObject(Chunk first_chunk, Unit transfer_type, byte[] buffer, float sizeInKB,
+   public ChunkedBitlevelObject(Chunk firstChunk, Unit transferType, byte[] buffer, float sizeInKB,
          Chunk[] orderedChunkContainer, Unit unit) {
       super();
-      this.first_chunk = first_chunk;
-      this.transfer_type = transfer_type;
+      this.firstChunk = firstChunk;
+      this.transferType = transferType;
       this.buffer = buffer;
       this.sizeInKB = sizeInKB;
       this.orderedChunkContainer = orderedChunkContainer;
       this.unit = unit;
    }
 
-   public Chunk getFirst_chunk() {
-      return first_chunk;
+   public Chunk getFirstChunk() {
+      return firstChunk;
    }
 
-   public void setFirst_chunk(Chunk first_chunk) {
-      this.first_chunk = first_chunk;
+   public void setFirstChunk(Chunk firstChunk) {
+      this.firstChunk = firstChunk;
    }
 
-   public Unit getTransfer_type() {
-      return transfer_type;
+   public Unit getTransferType() {
+      return transferType;
    }
 
-   public void setTransfer_type(Unit transfer_type) {
-      this.transfer_type = transfer_type;
+   public void setTransferType(Unit transferType) {
+      this.transferType = transferType;
    }
 
    public byte[] getBuffer() {

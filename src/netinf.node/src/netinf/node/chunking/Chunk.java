@@ -9,7 +9,7 @@ package netinf.node.chunking;
 public class Chunk {
 
    private byte[] data;
-   private float chunk_size;
+   private float chunkSize;
    private float number;
 
    private Unit unit;
@@ -30,7 +30,7 @@ public class Chunk {
 
       this.unit = unit;
       this.data = data;
-      this.chunk_size = chunk_size;
+      this.chunkSize = chunk_size;
       this.number = number;
 
    }
@@ -44,11 +44,11 @@ public class Chunk {
    }
 
    public float getChunk_size() {
-      return chunk_size;
+      return chunkSize;
    }
 
    public void setChunk_size(long chunk_size) {
-      this.chunk_size = chunk_size;
+      this.chunkSize = chunk_size;
    }
 
    public float getNumber() {

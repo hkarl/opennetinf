@@ -8,8 +8,6 @@ import net.sf.ehcache.config.CacheConfiguration;
 import netinf.node.cache.peerside.CacheMemoryStoreEvictionPolicy;
 import netinf.node.cache.peerside.PeerSideCacheServer;
 
-import org.apache.log4j.Logger;
-
 import com.google.inject.Inject;
 
 /**
@@ -20,10 +18,8 @@ import com.google.inject.Inject;
 
 public class PeerSideCacheServerImpl implements PeerSideCacheServer {
 
-   private static final Logger LOG = Logger.getLogger(PeerSideCacheServerImpl.class);
-
+   // not read locally private static final Logger LOG = Logger.getLogger(PeerSideCacheServerImpl.class);
    // private static String DEFAULT_CACHE_CONFIG_PATH = "configs/ehcache_config.xml";
-
    // private CacheManager cacheManager;
 
    private Cache cache;
@@ -46,7 +42,6 @@ public class PeerSideCacheServerImpl implements PeerSideCacheServer {
       cacheConfig.setOverflowToDisk(true);
 
       cache = new Cache(cacheConfig);
-
    }
 
    /**
@@ -73,32 +68,24 @@ public class PeerSideCacheServerImpl implements PeerSideCacheServer {
       cacheConfig.setOverflowToDisk(overflowToDisk);
 
       cache = new Cache(cacheConfig);
-
    }
 
    @Override
    public boolean contains(String hash) {
-
-      Element element = cache.getQuiet(hash);
-
-      if (element == null) {
-         return false;
-      } else {
+      if (cache.getQuiet(hash) != null) {
          return true;
       }
+      return false;
    }
 
    @Override
    public void cache(byte[] hashBytes, String hash) {
-
       Element element = new Element(hash, hashBytes);
       cache.put(element);
-
    }
 
    @Override
    public String getURL(String hash) {
-
       return cacheConfig.getDiskStorePath() + "/" + hash;
    }
 

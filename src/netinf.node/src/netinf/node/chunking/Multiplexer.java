@@ -46,7 +46,7 @@ public class Multiplexer {
     */
    public int getChunkNumberStartOffset(Unit unit, int i) {
 
-      return (Integer) null;
+      return 0;
    }
 
    /**
@@ -58,7 +58,7 @@ public class Multiplexer {
     */
    public int getChunkNumberEndOffset(Unit unit, int i) {
 
-      return (Integer) null;
+      return 0;
    }
 
    /**
@@ -90,29 +90,19 @@ public class Multiplexer {
 
       int d;
 
-      if (unit == Unit.BIT)
-
+      if (unit == Unit.BIT) {
          d = i / (1024 * 1024);
-
-      else if (unit == Unit.BYTE)
-
+      } else if (unit == Unit.BYTE) {
          d = i / 1024;
-
-      else if (unit == Unit.KILOBYTE)
-
+      } else if (unit == Unit.KILOBYTE) {
          d = i;
-
-      else if (unit == Unit.MEGABYTE)
-
+      } else if (unit == Unit.MEGABYTE) {
          d = i * 1024;
-
-      else if (unit == Unit.GIGABYTE)
-
+      } else if (unit == Unit.GIGABYTE) {
          d = i * 1024 * 1024;
-
-      else
-
+      } else {
          d = i * 1024 * 1024 * 1024;
+      }
 
       return d;
    }

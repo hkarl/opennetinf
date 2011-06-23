@@ -16,7 +16,8 @@ import netinf.common.security.Hashing;
 import netinf.common.utils.Utils;
 import netinf.node.cache.peerside.PeerSideCache;
 import netinf.node.cache.peerside.PeerSideCacheServer;
-import netinf.node.transfer.http.TransferJobHttp;
+import netinf.node.transferDeluxe.TransferDispatcher;
+import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -32,29 +33,16 @@ import com.google.inject.Inject;
 public class PeerSideCacheImpl implements PeerSideCache {
 
    private static final Logger LOG = Logger.getLogger(PeerSideCacheImpl.class);
-
    private PeerSideCacheServer server;
+   private TransferDispatcher transferDispatcher;
 
    /**
     * Constructor
     */
    @Inject
    public PeerSideCacheImpl(PeerSideCacheServer server) {
-
       this.server = server;
-
-   }
-
-   /**
-    * Set the server.
-    * 
-    * @param server
-    */
-   @Inject
-   public void setServer(PeerSideCacheServer server) {
-
-      this.server = server;
-
+      transferDispatcher = TransferDispatcher.getInstance();
    }
 
    @Override
@@ -89,38 +77,36 @@ public class PeerSideCacheImpl implements PeerSideCache {
             DataInputStream fis = null;
             String url = attr.getValue(String.class);
             try {
-               if (url.startsWith("http://")) {
-                  String destination = getTmpFolder() + File.separator + hash + ".tmp";
+               String destination = getTmpFolder() + File.separator + hash + ".tmp";
 
-                  // TODO Implement Transfer service and use it here....
-                  TransferJobHttp job = new TransferJobHttp(hash, url, destination);
-                  job.startTransferJob();
-                  fis = new DataInputStream(new FileInputStream(destination));
-                  int skipSize = fis.readInt();
-                  for (int i = 0; i < skipSize; i++) {
-                     fis.read();
-                  }
-                  byte[] hashBytes = Hashing.hashSHA1(fis);
-                  IOUtils.closeQuietly(fis);
-                  if (hash.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
-                     LOG.info("Hash of downloaded file is valid: " + url);
-                     LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is valid. Will be cached.");
+               transferDispatcher.getStreamAndSave(url, destination, false);
 
-                     server.cache(hashBytes, hash);
-                     addLocator(dataObject);
-                     deleteTmpFile(destination);
+               // get hash
+               fis = new DataInputStream(new FileInputStream(destination));
+               byte[] hashBytes = Hashing.hashSHA1(fis);
+               IOUtils.closeQuietly(fis);
 
-                     return true;
-                  } else {
-                     LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is invalid. Trying next locator");
-                     LOG.warn("Hash of downloaded file is not valid: " + url);
-                     LOG.warn("Trying next locator");
-                  }
+               if (hash.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
+                  LOG.info("Hash of downloaded file is valid: " + url);
+                  LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is valid. Will be cached.");
+
+                  server.cache(hashBytes, hash);
+                  addLocator(dataObject);
+                  deleteTmpFile(destination);
+
+                  return true;
+               } else {
+                  LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is invalid. Trying next locator");
+                  LOG.warn("Hash of downloaded file is not valid: " + url);
+                  LOG.warn("Trying next locator");
                }
+
             } catch (FileNotFoundException ex) {
                LOG.warn("Error downloading:" + url);
             } catch (IOException e) {
                LOG.warn("Error hashing:" + url);
+            } catch (NetInfNoStreamProviderFoundException no) {
+               LOG.warn("No StreamProvider found for: " + url);
             } catch (Exception e) {
                LOG.warn("Error hashing, but file was OK: " + url);
 
@@ -139,7 +125,6 @@ public class PeerSideCacheImpl implements PeerSideCache {
 
          return true;
       }
-
    }
 
    /**
@@ -149,7 +134,6 @@ public class PeerSideCacheImpl implements PeerSideCache {
     *           the DataObject
     * @return hash-value of the DO
     */
-
    private String getHash(DataObject d) {
 
       LOG.trace(null);
@@ -159,19 +143,14 @@ public class PeerSideCacheImpl implements PeerSideCache {
 
          LOG.trace("No hash of data found");
          return null;
-
       } else {
-
          return attributes.get(0).getValue(String.class);
-
       }
-
    }
 
    /**
     * @param dataObject
     */
-
    private void addLocator(DataObject dataObject) {
       String hash = getHash(dataObject);
       Attribute attribute = dataObject.getDatamodelFactory().createAttribute();
@@ -194,7 +173,6 @@ public class PeerSideCacheImpl implements PeerSideCache {
     * 
     * @return pathToTemp path of temporary folder
     */
-
    private String getTmpFolder() {
 
       String pathToTmp = System.getProperty("java.io.tmpdir") + File.separator + "peerSideCache";
@@ -213,7 +191,6 @@ public class PeerSideCacheImpl implements PeerSideCache {
     * @param path
     */
    private void deleteTmpFile(String path) {
-
       File file = new File(path);
       file.delete();
    }
