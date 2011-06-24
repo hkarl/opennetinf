@@ -41,7 +41,6 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -128,13 +127,10 @@ public class HTTPFileServer implements HttpHandler {
             h.set("Content-Type", new String(stringBuffer));
 
             httpExchange.sendResponseHeaders(200, file.length());
-
-            OutputStream os = httpExchange.getResponseBody();
-            IOUtils.copy(stream, os);
+            IOUtils.copy(stream, httpExchange.getResponseBody());
 
             // close streams
             IOUtils.closeQuietly(stream);
-            IOUtils.closeQuietly(os);
          }
       }
       httpExchange.close();

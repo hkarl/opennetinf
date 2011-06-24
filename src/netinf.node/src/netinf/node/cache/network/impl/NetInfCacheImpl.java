@@ -166,8 +166,12 @@ public class NetInfCacheImpl implements NetworkCache {
    }
 
    /**
+    * Adds a new locator to the DataObject
+    * 
     * @param dataObject
+    *           The given DataObject
     * @param url
+    *           The URL of the locator
     */
    private void addLocator(DataObject dataObject, String url) {
       Attribute attribute = dataObject.getDatamodelFactory().createAttribute();
@@ -179,6 +183,12 @@ public class NetInfCacheImpl implements NetworkCache {
       }
    }
 
+   /**
+    * Deletes the given file
+    * 
+    * @param path
+    *           The path of the file
+    */
    private void deleteTmpFile(String path) {
       File file = new File(path);
       file.delete();

@@ -91,12 +91,12 @@ public class CapabilityParser {
       Capability result = new Capability();
       result.setName(name);
 
-      // Check existence
-      String propertyString = properties.getProperty(capabilityKey);
-
       if (properties == null) {
          return result;
       }
+      
+      // Check existence
+      String propertyString = properties.getProperty(capabilityKey);
 
       // Parse rest
       String[] singleProperties = parseString(propertyString);

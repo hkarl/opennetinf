@@ -1,5 +1,7 @@
 package netinf.node.chunking;
 
+import org.apache.log4j.Logger;
+
 /**
  * The basic part for Chunking.
  * 
@@ -8,63 +10,50 @@ package netinf.node.chunking;
 
 public class Chunk {
 
+   private static final Logger LOG = Logger.getLogger(Chunk.class);
+
    private byte[] data;
    private float chunkSize;
-   private float number;
-
-   private Unit unit;
-
-   /**
-    * Default constructor.
-    */
-   public Chunk() {
-
-   }
+   private int number;
+   private int totalNumberOfChunks;
+   private String hash;
 
    /**
     * Constructor.
     * 
     * @param currentChunkedBOsTransferring
     */
-   public Chunk(Unit unit, byte[] data, long chunk_size, long number) {
-
-      this.unit = unit;
+   public Chunk(String hash, byte[] data, long chunkSize, int number) {
+      this.hash = hash;
       this.data = data;
-      this.chunkSize = chunk_size;
+      this.chunkSize = chunkSize;
       this.number = number;
 
+      LOG.debug("Chunk created with HASH: " + hash + " SIZE: " + chunkSize + " NUMBER: " + number);
    }
 
    public byte[] getData() {
       return data;
    }
-   
-   public void setData(byte[] data) {
-      this.data = data;
-   }
 
-   public float getChunk_size() {
+   public float getChunkSize() {
       return chunkSize;
    }
 
-   public void setChunk_size(long chunk_size) {
-      this.chunkSize = chunk_size;
-   }
-
-   public float getNumber() {
+   public int getNumber() {
       return number;
    }
 
-   public void setNumber(long number) {
-      this.number = number;
+   public String getHash() {
+      return hash;
    }
 
-   public Unit getUnit() {
-      return unit;
+   public void setTotalNumberOfChunks(int total) {
+      totalNumberOfChunks = total;
    }
-
-   public void setUnit(Unit unit) {
-      this.unit = unit;
+   
+   public int getTotalNumberOfChunks() {
+      return totalNumberOfChunks;
    }
 
 }

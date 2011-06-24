@@ -94,6 +94,7 @@ public class EhCacheServerImpl implements CacheServer {
             HttpResponse response = client.execute(httpGet);
             HttpEntity entity = response.getEntity();
             if (entity != null) {
+               // TODO: eddy, replace with IOUtils?
                InputStream is = entity.getContent(); // message body
                ByteArrayOutputStream byteOS = new ByteArrayOutputStream();
                byte[] bo = null;

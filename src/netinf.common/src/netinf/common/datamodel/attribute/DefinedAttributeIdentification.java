@@ -56,6 +56,11 @@ public enum DefinedAttributeIdentification {
    PERSON_BIRTHDAY("person_birthday", true),
    PERSON_HOMEPAGE("person_homepage", true),
    
+   CHUNK("chunk", true),
+   HASH_OF_CHUNK("hash_of_chunk", true),
+   NUMBER_OF_CHUNK("number_of_chunk", true),
+   TOTAL_NUMBER_OF_CHUNKS("total_number_of_chunks", true),
+   
    // TODO: The following lines should be URIs one day
    OWNER("owner", true),
    PARENT_VERSION("parent_version", true),
