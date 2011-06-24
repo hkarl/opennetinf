@@ -73,11 +73,8 @@ public final class TransferDispatcher {
             dos.write(contentTypeBytes);
          }
 
-         byte[] buffer = new byte[4096];
-         int readBytes = -1;
-         while ((readBytes = is.read(buffer)) != -1) {
-            dos.write(buffer, 0, readBytes);
-         }
+         IOUtils.copy(is, dos);
+
       } catch (MalformedURLException e) {
          LOG.warn("Could not download data from: " + url);
       } catch (IOException e) {

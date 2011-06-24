@@ -8,7 +8,7 @@ package netinf.node.chunking;
 
 public class Multiplexer {
 
-   private ChunkedBitlevelObject[] currentChunkedBOsTransferring;
+   private ChunkedBO[] currentChunkedBOsTransferring;
 
    /**
     * Default constructor.
@@ -22,7 +22,7 @@ public class Multiplexer {
     * 
     * @param currentChunkedBOsTransferring
     */
-   public Multiplexer(ChunkedBitlevelObject[] currentChunkedBOsTransferring) {
+   public Multiplexer(ChunkedBO[] currentChunkedBOsTransferring) {
 
       this.currentChunkedBOsTransferring = currentChunkedBOsTransferring;
    }
@@ -66,7 +66,7 @@ public class Multiplexer {
     * 
     * @return currentChunkedBOsTransferring
     */
-   public ChunkedBitlevelObject[] getCurrentChunkedBOsTransferring() {
+   public ChunkedBO[] getCurrentChunkedBOsTransferring() {
       return currentChunkedBOsTransferring;
    }
 
@@ -75,7 +75,7 @@ public class Multiplexer {
     * 
     * @param currentChunkedBOsTransferring
     */
-   public void setCurrentChunkedBOsTransferring(ChunkedBitlevelObject[] currentChunkedBOsTransferring) {
+   public void setCurrentChunkedBOsTransferring(ChunkedBO[] currentChunkedBOsTransferring) {
       this.currentChunkedBOsTransferring = currentChunkedBOsTransferring;
    }
 
