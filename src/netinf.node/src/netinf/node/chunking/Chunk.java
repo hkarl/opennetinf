@@ -13,7 +13,7 @@ public class Chunk {
    private static final Logger LOG = Logger.getLogger(Chunk.class);
 
    private byte[] data;
-   private float chunkSize;
+   private int size;
    private int number;
    private int totalNumberOfChunks;
    private String hash;
@@ -23,21 +23,21 @@ public class Chunk {
     * 
     * @param currentChunkedBOsTransferring
     */
-   public Chunk(String hash, byte[] data, long chunkSize, int number) {
+   public Chunk(String hash, byte[] data, int size, int number) {
       this.hash = hash;
       this.data = data;
-      this.chunkSize = chunkSize;
+      this.size = size;
       this.number = number;
 
-      LOG.debug("Chunk created with HASH: " + hash + " SIZE: " + chunkSize + " NUMBER: " + number);
+      LOG.debug("Chunk created with HASH: " + hash + " SIZE: " + size + " NUMBER: " + number);
    }
 
    public byte[] getData() {
       return data;
    }
 
-   public float getChunkSize() {
-      return chunkSize;
+   public int getSize() {
+      return size;
    }
 
    public int getNumber() {
@@ -51,7 +51,7 @@ public class Chunk {
    public void setTotalNumberOfChunks(int total) {
       totalNumberOfChunks = total;
    }
-   
+
    public int getTotalNumberOfChunks() {
       return totalNumberOfChunks;
    }
