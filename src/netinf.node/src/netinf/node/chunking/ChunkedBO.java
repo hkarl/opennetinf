@@ -24,7 +24,7 @@ public class ChunkedBO {
 
    private Unit transferType;
    private byte[] buffer;
-   private float sizeInKB;
+   private int chunkSize;
    private List<Chunk> orderedChunkContainer;
 
    /**
@@ -35,6 +35,7 @@ public class ChunkedBO {
    public ChunkedBO(String filePath, int sizeInBytes) throws FileNotFoundException {
       orderedChunkContainer = new ArrayList<Chunk>();
       buffer = new byte[sizeInBytes];
+      chunkSize = sizeInBytes;
 
       // generate Chunks
       File file = new File(filePath);
@@ -95,12 +96,12 @@ public class ChunkedBO {
       this.transferType = transferType;
    }
 
-   public float getSizeInKB() {
-      return sizeInKB;
+   public int getChunkSize() {
+      return chunkSize;
    }
 
-   public void setSizeInKB(float sizeInKB) {
-      this.sizeInKB = sizeInKB;
+   public void setChunkSize(int chunkSize) {
+      this.chunkSize = chunkSize;
    }
 
 }
