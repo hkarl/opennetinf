@@ -14,4 +14,6 @@ public interface StreamProvider {
    InputStream getStream(String url) throws IOException;
 
    boolean canHandle(String url);
+   
+   String describe();
 }

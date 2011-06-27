@@ -24,18 +24,19 @@ public class ChunkedBO {
 
    private Unit transferType;
    private byte[] buffer;
-   private int chunkSize;
+   private int chunkSizeInBytes;
    private List<Chunk> orderedChunkContainer;
 
    /**
-    * Default constructor.
-    * 
+    * Constructor
+    * @param filePath
+    * @param sizeInBytes
     * @throws FileNotFoundException
     */
    public ChunkedBO(String filePath, int sizeInBytes) throws FileNotFoundException {
       orderedChunkContainer = new ArrayList<Chunk>();
       buffer = new byte[sizeInBytes];
-      chunkSize = sizeInBytes;
+      chunkSizeInBytes = sizeInBytes;
 
       // generate Chunks
       File file = new File(filePath);
@@ -72,22 +73,6 @@ public class ChunkedBO {
       return orderedChunkContainer;
    }
 
-   /**
-    * Constructor.
-    * 
-    * @param currentChunkedBOsTransferring
-    */
-   // public ChunkedBitlevelObject(Chunk firstChunk, Unit transferType, byte[] buffer, float sizeInKB,
-   // Chunk[] orderedChunkContainer, Unit unit) {
-   // super();
-   // this.firstChunk = firstChunk;
-   // this.transferType = transferType;
-   // this.buffer = buffer;
-   // this.sizeInKB = sizeInKB;
-   // this.orderedChunkContainer = orderedChunkContainer;
-   // this.unit = unit;
-   // }
-
    public Unit getTransferType() {
       return transferType;
    }
@@ -97,11 +82,11 @@ public class ChunkedBO {
    }
 
    public int getChunkSize() {
-      return chunkSize;
+      return chunkSizeInBytes;
    }
 
    public void setChunkSize(int chunkSize) {
-      this.chunkSize = chunkSize;
+      this.chunkSizeInBytes = chunkSize;
    }
 
 }
