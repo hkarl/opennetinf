@@ -66,7 +66,7 @@ public class HTTPFileServer implements HttpHandler {
 
    private static final Logger LOG = Logger.getLogger(HTTPFileServer.class);
 
-   private static final String REQUEST_PATH_PATTERN = "/[0-9a-zA-Z]+";
+   private static final String REQUEST_PATH_PATTERN = "/[0-9a-zA-Z_]+";
    private static final int MAX_CONNECTIONS = 10;
 
    private int port;
@@ -121,11 +121,13 @@ public class HTTPFileServer implements HttpHandler {
             DataInputStream stream = new DataInputStream(new FileInputStream(file));
 
             // read content type and send
-            int contentTypeSize = stream.readInt();
-            byte[] stringBuffer = new byte[contentTypeSize];
-            stream.read(stringBuffer);
-            h.set("Content-Type", new String(stringBuffer));
-
+            if (!requestPath.contains("chunk")) {
+               int contentTypeSize = stream.readInt();
+               byte[] stringBuffer = new byte[contentTypeSize];
+               stream.read(stringBuffer);
+               h.set("Content-Type", new String(stringBuffer));
+            }
+            
             httpExchange.sendResponseHeaders(200, file.length());
             IOUtils.copy(stream, httpExchange.getResponseBody());
 

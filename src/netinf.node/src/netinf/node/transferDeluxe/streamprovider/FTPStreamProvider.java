@@ -10,6 +10,8 @@ import java.net.URLConnection;
  */
 public class FTPStreamProvider implements StreamProvider {
 
+   private String providerName = "FTP Streamprovider";
+   
    @Override
    public InputStream getStream(String url) throws IOException {
       URL conn = new URL(url);
@@ -23,6 +25,11 @@ public class FTPStreamProvider implements StreamProvider {
          return true;
       }
       return false;
+   }
+
+   @Override
+   public String describe() {
+      return providerName;
    }
 
 }

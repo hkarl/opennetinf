@@ -12,6 +12,8 @@ import java.net.URL;
  */
 public class HTTPStreamProvider implements StreamProvider {
 
+   private String providerName = "HTTP Streamprovider";
+   
    @Override
    public InputStream getStream(String url) throws IOException {
       URL conn = new URL(url);
@@ -24,6 +26,11 @@ public class HTTPStreamProvider implements StreamProvider {
          return true;
       }
       return false;
+   }
+
+   @Override
+   public String describe() {
+      return providerName;
    }
 
 }

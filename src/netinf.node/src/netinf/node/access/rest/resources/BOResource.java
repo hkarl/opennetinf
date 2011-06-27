@@ -71,24 +71,28 @@ public class BOResource extends NetInfResource {
       if (io != null) {
          List<Attribute> locators = io.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
          if (!locators.isEmpty()) {
-            for (Attribute locator : locators) {
+            //for (Attribute locator : locators) {
                try {
                   TransferDispatcher tsDispatcher = TransferDispatcher.getInstance();
-                  InputStream inStream = tsDispatcher.getStream(locator.getValue(String.class));
+                  // InputStream inStream = tsDispatcher.getStream(locator.getValue(String.class));
+                  InputStream inStream = tsDispatcher.getStream(io);
                   MediaType mdType = new MediaType(DatamodelUtils.getContentType(io));
                   
                   return new InputRepresentation(inStream, mdType);
                } catch (MalformedURLException muehe) {
                   LOG.warn("Malformed locator URL", muehe);
-                  continue;
+                  //continue;
                } catch (IOException ioe) {
                   LOG.warn("Could not open URL connection", ioe);
-                  continue;
+                  //continue;
                } catch (NetInfNoStreamProviderFoundException no) {
                   LOG.warn("No StreamProvider found", no);
-                  continue;
+                  //continue;
+               } catch (Exception e) {
+                  // TODO Auto-generated catch block
+                  e.printStackTrace();
                }
-            }
+            //}
          }
       }
       throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND);
