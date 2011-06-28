@@ -169,12 +169,12 @@ public class BOCacheImpl implements BOCache {
       try {
          FileOutputStream out;
          File file;
-         ChunkedBO chunkedBO = new ChunkedBO(filePath, 20000);
+         ChunkedBO chunkedBO = new ChunkedBO(filePath, 2048); // 20480~20Kb
          List<Chunk> chunks = chunkedBO.getChunks();
 
          // iterate over chunks
          for (Chunk chunk : chunks) {
-            file = new File(directory + "chunk" + chunk.getNumber() + "_" + chunk.getHash());
+            file = new File(directory + "chunk" + chunk.getNumber() + "of" + chunk.getTotalNumberOfChunks() + "_" + chunk.getHash());
             if (!file.exists()) {
                out = new FileOutputStream(file);
                out.write(chunk.getData());

@@ -42,7 +42,7 @@ public class LocatorSelector {
       }
       return null;
    }
-   
+
    public boolean hasNextLocator() {
       return locatorIterator.hasNext();
    }

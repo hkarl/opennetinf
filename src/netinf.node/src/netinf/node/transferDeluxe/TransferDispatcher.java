@@ -67,7 +67,7 @@ public final class TransferDispatcher {
       // prefer chunks
       if (chunks != null) {
          Demultiplexer demu = new Demultiplexer(chunks);
-         return demu.getInputs();
+         return demu.getCombinedStreams();
       } else {
          // Use normal locators
          LocatorSelector locSel = new LocatorSelector(io);

@@ -1,13 +1,14 @@
 package netinf.node.chunking;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import netinf.common.security.Hashing;
 import netinf.common.utils.Utils;
@@ -15,27 +16,24 @@ import netinf.common.utils.Utils;
 import org.apache.commons.io.IOUtils;
 
 /**
- * The Objects, which are chunked and consists of several chunks.
+ * This class represents a chunked BO.
  * 
  * @author PG NetInf 3, University of Paderborn
  */
-
 public class ChunkedBO {
 
-   private Unit transferType;
-   private byte[] buffer;
    private int chunkSizeInBytes;
-   private List<Chunk> orderedChunkContainer;
+   private Vector<Chunk> orderedChunkContainer;
 
    /**
     * Constructor
+    * 
     * @param filePath
     * @param sizeInBytes
     * @throws FileNotFoundException
     */
    public ChunkedBO(String filePath, int sizeInBytes) throws FileNotFoundException {
-      orderedChunkContainer = new ArrayList<Chunk>();
-      buffer = new byte[sizeInBytes];
+      orderedChunkContainer = new Vector<Chunk>();
       chunkSizeInBytes = sizeInBytes;
 
       // generate Chunks
@@ -44,16 +42,58 @@ public class ChunkedBO {
       if (file.exists()) {
          try {
             readStream = new DataInputStream(new FileInputStream(file));
-            int byteCount = 0;
+
+            // (BOcacheImpl) skip manually added content-type NOOOOOOOOOOOOOOOOOOO
+            int skipSize = readStream.readInt();
+            for (int i = 0; i < skipSize; i++) {
+               readStream.read();
+            }
+
             Chunk chunk = null;
             String hash = null;
             int chunkCount = 0;
-            while ((byteCount = readStream.read(buffer)) >= 0) {
+            byte[] tempBuf;
+            long fileSize = file.length();
+            int chunkPart;
+            ByteArrayOutputStream outStream = null;
+
+            for (chunkPart = 0; chunkPart < fileSize / sizeInBytes; chunkPart++) {
+               outStream = new ByteArrayOutputStream(sizeInBytes);
+
+               for (int byteCount = 0; byteCount < sizeInBytes; byteCount++) {
+                  outStream.write(readStream.read());
+               }
+
                chunkCount++;
-               hash = Utils.hexStringFromBytes(Hashing.hashSHA1(new ByteArrayInputStream(buffer)));
-               chunk = new Chunk(hash, buffer.clone(), buffer.length, chunkCount);
+               tempBuf = outStream.toByteArray();
+               hash = Utils.hexStringFromBytes(Hashing.hashSHA1(new ByteArrayInputStream(tempBuf)));
+               chunk = new Chunk(hash, tempBuf, tempBuf.length, chunkCount);
                orderedChunkContainer.add(chunk);
+               // close the file
+               outStream.close();
             }
+
+            // loop for the last chunk (which may be smaller than the chunk size)
+            if (fileSize != sizeInBytes * (chunkPart - 1)) {
+               // open the output file
+               outStream = new ByteArrayOutputStream(sizeInBytes);
+
+               // write the rest of the file
+               int b;
+               while ((b = readStream.read()) != -1) {
+                  outStream.write(b);
+               }
+
+               chunkCount++;
+               tempBuf = outStream.toByteArray();
+               hash = Utils.hexStringFromBytes(Hashing.hashSHA1(new ByteArrayInputStream(tempBuf)));
+               chunk = new Chunk(hash, tempBuf, tempBuf.length, chunkCount);
+               orderedChunkContainer.add(chunk);
+
+               // close the file
+               outStream.close();
+            }
+
             // set total number
             for (Chunk ch : orderedChunkContainer) {
                ch.setTotalNumberOfChunks(chunkCount);
@@ -65,7 +105,7 @@ public class ChunkedBO {
             IOUtils.closeQuietly(readStream);
          }
       } else {
-         throw new FileNotFoundException("File not found: " + filePath);
+         throw new FileNotFoundException("(ChunkedBO ) File not found: " + filePath);
       }
    }
 
@@ -73,20 +113,8 @@ public class ChunkedBO {
       return orderedChunkContainer;
    }
 
-   public Unit getTransferType() {
-      return transferType;
-   }
-
-   public void setTransferType(Unit transferType) {
-      this.transferType = transferType;
-   }
-
    public int getChunkSize() {
       return chunkSizeInBytes;
-   }
-
-   public void setChunkSize(int chunkSize) {
-      this.chunkSizeInBytes = chunkSize;
    }
 
 }
