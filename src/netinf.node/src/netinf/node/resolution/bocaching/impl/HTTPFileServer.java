@@ -74,6 +74,8 @@ public class HTTPFileServer implements HttpHandler {
    private HttpServer server;
    private String ip;
 
+   private boolean clearCacheOnStartup = true;
+   
    @Inject
    public HTTPFileServer(@Named("resolution.cache.httpPort") int port, @Named("resolution.cache.httpIP") String ip,
          @Named("resolution.cache.directory") String directory) {
@@ -84,6 +86,15 @@ public class HTTPFileServer implements HttpHandler {
       // create folder if not existing
       File cacheFolder = new File(directory);
       cacheFolder.mkdir();
+      if (clearCacheOnStartup) {
+         File[] files = cacheFolder.listFiles();
+         for (File f : files) {
+            if (f.isFile()) {
+                  f.delete();
+            }
+         }
+      }
+      
    }
 
    /**
@@ -109,12 +120,15 @@ public class HTTPFileServer implements HttpHandler {
       String requestPath = httpExchange.getRequestURI().getPath();
 
       if (!requestPath.matches(REQUEST_PATH_PATTERN)) {
+         LOG.debug("(HTTPFilesServer ) 403 Error");
          httpExchange.sendResponseHeaders(403, 0);
       } else {
          File file = new File(directory + requestPath);
          if (!file.exists()) {
+            LOG.debug("(HTTPFilesServer ) 404 Error");
             httpExchange.sendResponseHeaders(404, 0);
          } else if (!file.canRead()) {
+            LOG.debug("(HTTPFilesServer ) 403 Error");
             httpExchange.sendResponseHeaders(403, 0);
          } else {
             Headers h = httpExchange.getResponseHeaders();
@@ -122,6 +136,7 @@ public class HTTPFileServer implements HttpHandler {
 
             // read content type and send
             if (!requestPath.contains("chunk")) {
+               LOG.debug("(HTTPFilesServer ) Reading Content Type...");
                int contentTypeSize = stream.readInt();
                byte[] stringBuffer = new byte[contentTypeSize];
                stream.read(stringBuffer);
