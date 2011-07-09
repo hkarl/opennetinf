@@ -1,25 +1,14 @@
 package netinf.node.cache.peerside.impl;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.List;
 
-import netinf.common.datamodel.DataObject;
-import netinf.common.datamodel.DefinedAttributePurpose;
-import netinf.common.datamodel.attribute.Attribute;
-import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
-import netinf.common.log.demo.DemoLevel;
+import netinf.common.datamodel.NetInfObjectWrapper;
 import netinf.common.security.Hashing;
 import netinf.common.utils.Utils;
 import netinf.node.cache.peerside.PeerSideCache;
 import netinf.node.cache.peerside.PeerSideCacheServer;
-import netinf.node.transferDeluxe.TransferDispatcher;
-import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
@@ -34,7 +23,6 @@ public class PeerSideCacheImpl implements PeerSideCache {
 
    private static final Logger LOG = Logger.getLogger(PeerSideCacheImpl.class);
    private PeerSideCacheServer server;
-   private TransferDispatcher transferDispatcher;
 
    /**
     * Constructor
@@ -42,156 +30,50 @@ public class PeerSideCacheImpl implements PeerSideCache {
    @Inject
    public PeerSideCacheImpl(PeerSideCacheServer server) {
       this.server = server;
-      transferDispatcher = TransferDispatcher.getInstance();
    }
 
+   /**
+    * Method checks to see if NetInfObject has previously been cached
+    */
    @Override
-   public boolean contains(DataObject dataObject) {
-
+   public boolean contains(NetInfObjectWrapper dataObject) {
+	  if(null == dataObject)
+		  return false;
+	  byte[] ioByteForm = dataObject.serializeToBytes();
       LOG.trace(null);
 
-      String hash = getHash(dataObject);
-      LOG.debug("Hash of dataobject is " + hash);
-
-      if (hash == null) {
-         return false;
-      } else {
-         return server.contains(hash);
-      }
-   }
-
-   @Override
-   public boolean cache(DataObject dataObject) {
-
-      if (!contains(dataObject)) {
-         String hash = getHash(dataObject);
-
-         if (hash == null) {
-            LOG.info("DataObject has no Hash and will not be cached");
-            return false;
-         }
-
-         List<Attribute> locators = dataObject.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
-
-         for (Attribute attr : locators) {
-            DataInputStream fis = null;
-            String url = attr.getValue(String.class);
-            try {
-               String destination = getTmpFolder() + File.separator + hash + ".tmp";
-
-               transferDispatcher.getStreamAndSave(url, destination, false);
-
-               // get hash
-               fis = new DataInputStream(new FileInputStream(destination));
-               byte[] hashBytes = Hashing.hashSHA1(fis);
-               IOUtils.closeQuietly(fis);
-
-               if (hash.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
-                  LOG.info("Hash of downloaded file is valid: " + url);
-                  LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is valid. Will be cached.");
-
-                  server.cache(hashBytes, hash);
-                  addLocator(dataObject);
-                  deleteTmpFile(destination);
-
-                  return true;
-               } else {
-                  LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is invalid. Trying next locator");
-                  LOG.warn("Hash of downloaded file is not valid: " + url);
-                  LOG.warn("Trying next locator");
-               }
-
-            } catch (FileNotFoundException ex) {
-               LOG.warn("Error downloading:" + url);
-            } catch (IOException e) {
-               LOG.warn("Error hashing:" + url);
-            } catch (NetInfNoStreamProviderFoundException no) {
-               LOG.warn("No StreamProvider found for: " + url);
-            } catch (Exception e) {
-               LOG.warn("Error hashing, but file was OK: " + url);
-
-            } finally {
-               IOUtils.closeQuietly(fis);
-
-            }
-         }
-         LOG.warn("Could not find reliable source to cache: " + dataObject);
-         return false;
-      } else {
-
-         LOG.log(DemoLevel.DEMO, "(NODE ) DataObject has already been cached. Adding locator.");
-
-         addLocator(dataObject);
-
-         return true;
-      }
+      String hash;
+	try {
+		hash = Utils.hexStringFromBytes(Hashing.hashSHA1(new ByteArrayInputStream(ioByteForm)));
+		LOG.debug("Hash of dataobject is " + hash);
+		return server.contains(hash);
+	} catch (IOException e) {
+		LOG.error("(PSCACHE )Could not open byte array to hash IO. Will not proceed with check");
+		return false;
+	}     
+         
+      
    }
 
    /**
-    * Gets the hash-value of a DataObject
-    * 
-    * @param d
-    *           the DataObject
-    * @return hash-value of the DO
+    * Cache a general IO (represented by its most general Interface). If the object 
+    * has previously been cached, the method will check and return true.
     */
-   private String getHash(DataObject d) {
-
-      LOG.trace(null);
-
-      List<Attribute> attributes = d.getAttribute(DefinedAttributeIdentification.HASH_OF_DATA.getURI());
-      if (attributes.isEmpty()) {
-
-         LOG.trace("No hash of data found");
-         return null;
-      } else {
-         return attributes.get(0).getValue(String.class);
-      }
-   }
-
-   /**
-    * @param dataObject
-    */
-   private void addLocator(DataObject dataObject) {
-      String hash = getHash(dataObject);
-      Attribute attribute = dataObject.getDatamodelFactory().createAttribute();
-      attribute.setAttributePurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
-      attribute.setIdentification(DefinedAttributeIdentification.HTTP_URL.getURI());
-      attribute.setValue(server.getURL(hash));
-      Attribute cacheMarker = dataObject.getDatamodelFactory().createAttribute();
-      cacheMarker.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
-      cacheMarker.setIdentification(DefinedAttributeIdentification.CACHE.getURI());
-      cacheMarker.setValue("true");
-      attribute.addSubattribute(cacheMarker);
-      // Do not add the same locator twice
-      if (!dataObject.getAttributes().contains(attribute)) {
-         dataObject.addAttribute(attribute);
-      }
-   }
-
-   /**
-    * Get the path of temporary folder
-    * 
-    * @return pathToTemp path of temporary folder
-    */
-   private String getTmpFolder() {
-
-      String pathToTmp = System.getProperty("java.io.tmpdir") + File.separator + "peerSideCache";
-      File folder = new File(pathToTmp);
-      if (folder.exists() && folder.isDirectory()) {
-         return pathToTmp;
-      } else {
-         folder.mkdir();
-         return pathToTmp;
-      }
-   }
-
-   /**
-    * Delete the temporary file.
-    * 
-    * @param path
-    */
-   private void deleteTmpFile(String path) {
-      File file = new File(path);
-      file.delete();
-   }
+@Override
+public boolean cache(NetInfObjectWrapper io) {
+	if (!contains(io)) {
+	byte[] ioByteForm = io.serializeToBytes();
+	try {
+		String ioHash = Utils.hexStringFromBytes(Hashing.hashSHA1(new ByteArrayInputStream(ioByteForm)));
+		server.cache(ioByteForm, ioHash);
+		return true;
+	} catch (IOException e) {
+		LOG.error("(PSCACHE )Error hashing general IO, will not store");
+		return false;
+	}
+	} else {
+		LOG.warn("(PSCACHE ) NetInf Object has already been cached.");
+		return true;
+	}
+}
 }

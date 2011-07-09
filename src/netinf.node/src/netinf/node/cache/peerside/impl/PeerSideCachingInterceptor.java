@@ -1,14 +1,16 @@
 package netinf.node.cache.peerside.impl;
 
-import netinf.common.datamodel.DataObject;
 import netinf.common.datamodel.InformationObject;
 import netinf.node.cache.peerside.PeerSideCache;
 import netinf.node.resolution.ResolutionInterceptor;
 
+import org.apache.log4j.Logger;
+
 import com.google.inject.Inject;
 
 /**
- * Interface of peer-side caching interceptor.
+ * The implementation of the peer-side caching interceptor. Used to intercept get IO calls in 
+ * order to cache them locally
  * 
  * @author PG NetInf 3, University of Paderborn
  */
@@ -16,6 +18,8 @@ import com.google.inject.Inject;
 public class PeerSideCachingInterceptor implements ResolutionInterceptor {
 
    private PeerSideCache cache;
+   private static final Logger LOG = Logger.getLogger(PeerSideCachingInterceptor.class);
+   private final static String LOG_MESSAGE = "(PSCACHE ) Result of cache operation: "; 
 
    @Inject
    public PeerSideCachingInterceptor(PeerSideCache cache) {
@@ -24,9 +28,8 @@ public class PeerSideCachingInterceptor implements ResolutionInterceptor {
 
    @Override
    public InformationObject interceptGet(InformationObject io) {
-      if (io instanceof DataObject) {
-         cache.cache((DataObject) io);
-      }
+ 	  boolean cacheResult = cache.cache(io);
+   	  LOG.info(LOG_MESSAGE + (true == cacheResult ? "SUCCESS" : "FAILURE"));      
       return io;
    }
 

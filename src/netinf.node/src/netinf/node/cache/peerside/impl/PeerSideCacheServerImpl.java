@@ -2,7 +2,10 @@ package netinf.node.cache.peerside.impl;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
+
 import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import netinf.node.cache.peerside.CacheMemoryStoreEvictionPolicy;
@@ -23,16 +26,20 @@ public class PeerSideCacheServerImpl implements PeerSideCacheServer {
    // private CacheManager cacheManager;
 
    private Cache cache;
+   private static final Logger LOG = Logger.getLogger(PeerSideCacheServerImpl.class);
 
    private CacheConfiguration cacheConfig;
 
    /**
-    * Default constructor.
+    * Default constructor. Will initialize a cache with the name "peerSideCacheConfig"
+    * which is stored in the temp folder of the local computer. The cache is TEMPORARY
+    * cacheConfig.setEternal() can be used to change that.
     */
    @Inject
    public PeerSideCacheServerImpl() {
 
-      // this.cacheManager = new CacheManager(DEFAULT_CACHE_CONFIG_PATH);
+	 //CacheConfiguration object needed in order to initialize the Cache object
+	  CacheManager singletonCacheMgr = CacheManager.create();
 
       cacheConfig = new CacheConfiguration("peerSideCacheConfig", 10000);
       cacheConfig.setDiskStorePath(System.getProperty("java.io.tmpdir") + File.separator + "peerSideCache");
@@ -40,8 +47,13 @@ public class PeerSideCacheServerImpl implements PeerSideCacheServer {
       cacheConfig.setEternal(false);
       cacheConfig.setMemoryStoreEvictionPolicy("LRU");
       cacheConfig.setOverflowToDisk(true);
-
-      cache = new Cache(cacheConfig);
+      //Temporary Cache object, but need it in order to add to the singletonCacheMgr
+      Cache localCache = new Cache(cacheConfig);
+      singletonCacheMgr.addCache(localCache);
+      
+      //Get the VALID reference to the cache named peerSideCacheConfig which we have just addded
+      cache = singletonCacheMgr.getCache("peerSideCacheConfig");
+      LOG.info("(PSCACHE ) Initialized");
    }
 
    /**
@@ -53,12 +65,11 @@ public class PeerSideCacheServerImpl implements PeerSideCacheServer {
     * @param maxElementsOnDisk
     * @param overflowToDisk
     */
-   @Inject
+   //@Inject
    public PeerSideCacheServerImpl(String cacheName, int maxElementsInMemory, String path, Boolean eternal,
          CacheMemoryStoreEvictionPolicy policy, int maxElementsOnDisk, Boolean overflowToDisk) {
 
-      // this.cacheManager = new CacheManager(configPath);
-
+      //CacheConfiguration object needed in order to initialize the Cache object
       cacheConfig = new CacheConfiguration(cacheName, maxElementsInMemory);
 
       cacheConfig.setDiskStorePath(path);
