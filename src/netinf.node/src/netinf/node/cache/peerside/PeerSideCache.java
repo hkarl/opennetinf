@@ -1,6 +1,5 @@
 package netinf.node.cache.peerside;
-
-import netinf.common.datamodel.DataObject;
+import netinf.common.datamodel.NetInfObjectWrapper;
 
 /**
  * Interface of peer-side caching.
@@ -17,16 +16,17 @@ public interface PeerSideCache {
     * @return
     */
 
-   boolean contains(DataObject dataObject);
+   boolean contains(NetInfObjectWrapper dataObject);
 
    /**
     * Will get the content of the DataObject and store it in the cache. Blocks until the content has been stored. Will insert a
     * locator to the cached data in case of success
     * 
     * @return true if a valid Object could be stored, false otherwise
-    * @param dataObject
+    * @param io
     */
 
-   boolean cache(DataObject dataObject);
+   boolean cache(NetInfObjectWrapper io);
+   
 
 }
