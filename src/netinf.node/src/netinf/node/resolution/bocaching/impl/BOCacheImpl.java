@@ -103,7 +103,7 @@ public class BOCacheImpl implements BOCache {
       }
 
       if (!contains(dataObject)) {
-
+         LOG.log(DemoLevel.DEMO, "(BOCache ) Cache file...");
          List<Attribute> locators = dataObject.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
          for (Attribute attr : locators) {
             DataInputStream fis = null;
@@ -169,7 +169,7 @@ public class BOCacheImpl implements BOCache {
       try {
          FileOutputStream out;
          File file;
-         ChunkedBO chunkedBO = new ChunkedBO(filePath, 2048); // 20480~20Kb
+         ChunkedBO chunkedBO = new ChunkedBO(filePath, 4096); // 20480~20Kb
          List<Chunk> chunks = chunkedBO.getChunks();
 
          // iterate over chunks

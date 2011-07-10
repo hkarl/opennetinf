@@ -1,5 +1,7 @@
 package netinf.node.chunking;
 
+import netinf.common.log.demo.DemoLevel;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -31,7 +33,7 @@ public class Chunk {
       this.sizeInBytes = sizeInBytes;
       this.number = number;
 
-      LOG.debug("Chunk created with HASH: " + hash + " SIZE: " + sizeInBytes + " NUMBER: " + number);
+      LOG.log(DemoLevel.DEMO, "(Chunk ) Chunk created with HASH: " + hash + " SIZE: " + sizeInBytes + " NUMBER: " + number);
    }
 
    public byte[] getData() {

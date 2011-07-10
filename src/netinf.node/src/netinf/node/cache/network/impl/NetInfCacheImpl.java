@@ -1,5 +1,6 @@
 package netinf.node.cache.network.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -70,7 +71,7 @@ public class NetInfCacheImpl implements NetworkCache {
                   IOUtils.closeQuietly(fis);
 
                   if (hashOfBO.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
-                     boolean success = cacheServer.cacheBO(hashBytes, hashOfBO);
+                     boolean success = cacheServer.cacheBO(this.getByteArray(destination), hashOfBO);
                      if (success) {
                         addLocator(dataObject, urlPath);
                         deleteTmpFile(destination); // deleting tmp file
@@ -193,5 +194,18 @@ public class NetInfCacheImpl implements NetworkCache {
       File file = new File(path);
       file.delete();
    }
+   
+   private byte[] getByteArray(String filePath) throws IOException {
+      FileInputStream fis = new FileInputStream(filePath);
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      byte[] buffer = new byte[16384];
+
+      for (int len = fis.read(buffer); len > 0; len = fis.read(buffer)) {
+          bos.write(buffer, 0, len);
+      }
+      fis.close();
+      
+      return bos.toByteArray();
+  }
 
 }

@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
+import netinf.common.log.demo.DemoLevel;
 import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
 
 import org.apache.log4j.Logger;
@@ -29,7 +30,7 @@ public class Demultiplexer {
       totalNumberOfChunks = chunks.size();
       sources = new Vector<InputStream>();
 
-      LOG.debug("(Demultiplexer ) Number of chunks: " + totalNumberOfChunks);
+      LOG.log(DemoLevel.DEMO, "(Demultiplexer ) Number of chunks: " + totalNumberOfChunks);
 
       // TODO: a lot ...
    }
@@ -38,11 +39,11 @@ public class Demultiplexer {
       Attribute chunkAttr;
       String chunkUrl = "";
       // generate List of InputStreams
-      LOG.debug("(Demultiplexer ) Building InputStreams...");
+      LOG.debug("(Demultiplexer ) Building/Merging InputStreams...");
       for (int i = 1; i <= totalNumberOfChunks; i++) {
          chunkAttr = getChunk(i);
          chunkUrl = chunkAttr.getValue(String.class);
-         LOG.debug("(Demultiplexer ) Building InputStream of chunk: " + chunkUrl);
+         LOG.log(DemoLevel.DEMO, "(Demultiplexer ) Building InputStream of chunk: " + chunkUrl);
          sources.add(TransferDispatcher.getInstance().getStream(chunkUrl));
       }
 
