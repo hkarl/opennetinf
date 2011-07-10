@@ -12,7 +12,7 @@ import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
 /**
  * @author PG NetInf 3
  */
-public class LocatorSelector {
+public class LocatorSelector implements Iterator<String> {
 
    private InformationObject io;
    private List<Attribute> locatorList;
@@ -35,16 +35,20 @@ public class LocatorSelector {
       return result;
    }
 
-   public String getNextLocator() {
-      if (locatorIterator.hasNext()) {
-         Attribute loc = locatorIterator.next();
-         return loc.getValue(String.class);
-      }
-      return null;
+   @Override
+   public boolean hasNext() {
+      return locatorIterator.hasNext();
    }
 
-   public boolean hasNextLocator() {
-      return locatorIterator.hasNext();
+   @Override
+   public String next() {
+      Attribute loc = locatorIterator.next();
+      return loc.getValue(String.class);
+   }
+
+   @Override
+   public void remove() {
+      locatorIterator.remove();
    }
 
 }

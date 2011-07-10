@@ -1,6 +1,3 @@
-/**
- * 
- */
 package netinf.node.transferDeluxe;
 
 import java.io.DataOutputStream;
@@ -16,6 +13,7 @@ import java.util.List;
 import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
+import netinf.common.log.demo.DemoLevel;
 import netinf.node.transferDeluxe.streamprovider.FTPStreamProvider;
 import netinf.node.transferDeluxe.streamprovider.HTTPStreamProvider;
 import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
@@ -56,25 +54,27 @@ public final class TransferDispatcher {
    }
 
    public InputStream getStream(String url) throws IOException, NetInfNoStreamProviderFoundException {
-      LOG.info("(TransferDispatcher ) Getting Transfer-Stream from: " + url);
+      LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Getting Transfer-Stream from: " + url);
       StreamProvider dl = getStreamProvider(url);
       return dl.getStream(url);
    }
 
    public InputStream getStream(InformationObject io) throws Exception {
+      LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Getting Transfer-Stream from IO: " + io.getIdentifier());
       // check if chunks exist
       List<Attribute> chunks = getChunkList(io);
       // prefer chunks
       if (chunks != null) {
+         LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Chunks exist, use them...");
          Demultiplexer demu = new Demultiplexer(chunks);
          return demu.getCombinedStreams();
       } else {
          // Use normal locators
          LocatorSelector locSel = new LocatorSelector(io);
-         while (locSel.hasNextLocator()) {
+         while (locSel.hasNext()) {
             try {
 
-               return this.getStream(locSel.getNextLocator());
+               return this.getStream(locSel.next());
 
             } catch (NetInfNoStreamProviderFoundException e) {
                LOG.warn("(TransferDispatcher ) NoStreamProviderFoundException: " + e.getMessage());
@@ -90,6 +90,7 @@ public final class TransferDispatcher {
    }
 
    private List<Attribute> getChunkList(InformationObject io) {
+      LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Getting chunk-list from IO");
       // TODO: check better, chunk list cemplete, ?
       List<Attribute> allChunks = io.getAttribute(DefinedAttributeIdentification.CHUNK.getURI());
       if (allChunks.size() > 0) {
@@ -100,7 +101,7 @@ public final class TransferDispatcher {
 
    public void getStreamAndSave(String url, String destination, boolean withContentType)
          throws NetInfNoStreamProviderFoundException, IOException {
-      LOG.info("(TransferDispatcher ) Starting Download from: " + url);
+      LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Starting Download from: " + url);
       InputStream is = getStream(url);
       DataOutputStream dos = null;
       try {
@@ -130,7 +131,7 @@ public final class TransferDispatcher {
    StreamProvider getStreamProvider(String url) throws NetInfNoStreamProviderFoundException {
       for (StreamProvider sp : streamProviders) {
          if (sp.canHandle(url)) {
-            LOG.info("(TransferDispatcher ) Using " + sp.describe());
+            LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Using " + sp.describe());
             return sp;
          }
       }
