@@ -9,11 +9,14 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import netinf.common.communication.AtomicMessage;
 import netinf.common.communication.Connection;
 import netinf.common.communication.MessageEncoderXML;
 import netinf.common.communication.TCPConnection;
+import netinf.common.datamodel.DataObject;
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
@@ -24,6 +27,7 @@ import netinf.common.exceptions.NetInfResolutionException;
 import netinf.common.log.demo.DemoLevel;
 import netinf.common.messages.RSMDHTAck;
 import netinf.node.cache.network.NetworkCache;
+import netinf.node.cache.peerside.PeerSideCache;
 import netinf.node.resolution.AbstractResolutionService;
 import netinf.node.resolution.mdht.dht.DHT;
 import netinf.node.resolution.mdht.dht.DHTConfiguration;
@@ -44,12 +48,17 @@ public class MDHTResolutionService extends AbstractResolutionService {
 
    private static final Logger LOG = Logger.getLogger(MDHTResolutionService.class);
    private static final String IDENTIFIER = "ni:name=value";
+   private static final short NO_CACHING = 0;
+   private static final short USE_NETWORK_CACHE = 1;
+   private static final short USE_PEERSIDE_CACHE = 2;
    private DatamodelFactory datamodelFactory;
    private NetworkCache networkCache;
+   private PeerSideCache peerSideCache;
    //private Map<Integer,InformationObject> openRequests;
    //private DatamodelFactoryRdf localRdfFactory;
    private MessageEncoderXML localXmlEncoder;
    private InetAddress localNodeIp;
+   private ExecutorService executorService;
    
    // table of MDHT levels
    private Map<Integer, DHT> dhts = new Hashtable<Integer, DHT>();
@@ -73,6 +82,11 @@ public class MDHTResolutionService extends AbstractResolutionService {
       }
    }
 
+   @Inject(optional = true)
+   public void setPeersideCache(PeerSideCache cache) {
+      peerSideCache = cache;
+      LOG.info("(MDHT ) MDHT node connected with Peer-side Cache");
+   }
    @Inject
    public void setDatamodelFactory(DatamodelFactory factory) {
       datamodelFactory = factory;
@@ -87,6 +101,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
       super();
       //this.localRdfFactory = rdfFactory;
       this.localXmlEncoder = xmlEncoder;
+      this.executorService = Executors.newFixedThreadPool(2);
       // Initialize requests hash
       //this.openRequests = new Hashtable<Integer, InformationObject>();
       // Create DHTs
@@ -124,9 +139,40 @@ public class MDHTResolutionService extends AbstractResolutionService {
       LOG.info("(MDHT ) Getting IO with Identifier " + identifier);
 //      this.openRequests.put(key, value)
       InformationObject result = get(identifier, 0);
-      //InformationObject result = dhts.get(0).get(identifier);
+      
       if (result != null) {
+    	  short sCacheToUse = null == this.peerSideCache ? ( null == this.networkCache ? NO_CACHING : USE_NETWORK_CACHE ) : USE_PEERSIDE_CACHE;
           LOG.info("(MDHT ) Found IO");
+          //Cache it too, maybe do that on a separate thread asynchronously?
+          if (result instanceof DataObject ) {
+          switch ( sCacheToUse ) {
+          case USE_PEERSIDE_CACHE:
+        	  LOG.info("(MDHT ) Using Peer-side Cache");
+        	  try {
+        		  PeerSideCache dummyCache = (PeerSideCache)AsyncRunner.getInstance(PeerSideCache.class, peerSideCache, this.executorService);
+        		  //peerSideCache.cache(result);
+        		  dummyCache.cache(result);
+        	  } catch (Exception e) {
+        		  LOG.error("Naja, hat nicht geklappt mit dem Cachen. Weitermachen.");
+        		  return result;
+        	  }
+        	  break;
+          case USE_NETWORK_CACHE:
+        	  LOG.info("(MDHT ) Using Network Cache");
+        	  try {
+        		  NetworkCache dummyCache = (NetworkCache)AsyncRunner.getInstance(NetworkCache.class, networkCache, this.executorService);
+        		  //peerSideCache.cache(result);
+        		  dummyCache.cache((DataObject) result);
+        	  } catch (Exception e) {
+        		  LOG.error("Naja, hat nicht geklappt mit dem Cachen. Weitermachen.");
+        		  return result;
+        	  }
+        	  break;
+          case NO_CACHING:
+        	  LOG.info("(MDHT ) Will not cache this result. No cache active");
+        	  break;
+           }
+          }
           return result;
       }
       return null;

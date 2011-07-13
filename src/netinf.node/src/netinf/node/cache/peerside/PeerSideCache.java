@@ -1,4 +1,5 @@
 package netinf.node.cache.peerside;
+import netinf.common.datamodel.DataObject;
 import netinf.common.datamodel.NetInfObjectWrapper;
 
 /**
@@ -16,7 +17,7 @@ public interface PeerSideCache {
     * @return
     */
 
-   boolean contains(NetInfObjectWrapper dataObject);
+   boolean contains(DataObject dataObject);
 
    /**
     * Will get the content of the DataObject and store it in the cache. Blocks until the content has been stored. Will insert a

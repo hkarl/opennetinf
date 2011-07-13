@@ -27,7 +27,7 @@ public interface PeerSideCacheServer {
     *           the hash-value of the given BO
     */
 
-   void cache(byte[] hashBytes, String hash);
+   boolean cache(byte[] hashBytes, String hash);
 
    /**
     * Get the URL of the cached BO
@@ -37,4 +37,7 @@ public interface PeerSideCacheServer {
     * @return URL to the cached BO
     */
    String getURL(String hash);
+
+boolean containsBO(String hashOfBO);
+
 }
