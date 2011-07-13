@@ -1,5 +1,6 @@
 package netinf.node.cache.peerside.impl;
 
+import netinf.common.datamodel.DataObject;
 import netinf.common.datamodel.InformationObject;
 import netinf.node.cache.peerside.PeerSideCache;
 import netinf.node.resolution.ResolutionInterceptor;
@@ -28,9 +29,12 @@ public class PeerSideCachingInterceptor implements ResolutionInterceptor {
 
    @Override
    public InformationObject interceptGet(InformationObject io) {
- 	  boolean cacheResult = cache.cache(io);
-   	  LOG.info(LOG_MESSAGE + (true == cacheResult ? "SUCCESS" : "FAILURE"));      
-      return io;
+	   if (io instanceof DataObject) {
+		   	boolean cacheResult = cache.cache(io);
+		   	LOG.info(LOG_MESSAGE + (true == cacheResult ? "SUCCESS" : "FAILURE"));      
+      
+	   }
+	   return io;
    }
 
 }

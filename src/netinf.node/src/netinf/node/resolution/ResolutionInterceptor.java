@@ -46,5 +46,5 @@ import netinf.common.datamodel.InformationObject;
  */
 public interface ResolutionInterceptor {
 
-   public InformationObject interceptGet(InformationObject io);
+   InformationObject interceptGet(InformationObject io);
 }

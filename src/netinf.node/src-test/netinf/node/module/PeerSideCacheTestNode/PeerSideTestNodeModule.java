@@ -82,7 +82,7 @@ public class PeerSideTestNodeModule extends AbstractNodeModule {
    @Singleton
    @Provides
    ResolutionInterceptor[] provideResolutionInterceptors(PeerSideCachingInterceptor psCache /*IOCacheImpl ioCache*/, LocatorSelectorImpl locatorSelector) {
-      return new ResolutionInterceptor[] { psCache, locatorSelector };
+      return new ResolutionInterceptor[] { /*psCache, */locatorSelector };
    }
 
    /**
