@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import netinf.common.security.Hashing;
 import netinf.common.utils.Utils;
@@ -22,9 +22,10 @@ import org.apache.commons.io.IOUtils;
  */
 public class ChunkedBO {
 
-   private int chunkSizeInBytes;
-   private Vector<Chunk> orderedChunkContainer;
-
+   private int chunkSizeInBytes = 256 * 1024;
+   private List<Chunk> orderedChunkContainer;
+   private int totalNoOfChunks;
+   
    /**
     * Constructor
     * 
@@ -32,9 +33,12 @@ public class ChunkedBO {
     * @param sizeInBytes
     * @throws FileNotFoundException
     */
-   public ChunkedBO(String filePath, int sizeInBytes) throws FileNotFoundException {
-      orderedChunkContainer = new Vector<Chunk>();
-      chunkSizeInBytes = sizeInBytes;
+   public ChunkedBO(String filePath) throws FileNotFoundException {
+      if (filePath == null) {
+         throw new FileNotFoundException("path is null");
+      }
+      
+      orderedChunkContainer = new ArrayList<Chunk>();
 
       // generate Chunks
       File file = new File(filePath);
@@ -44,12 +48,11 @@ public class ChunkedBO {
             readStream = new DataInputStream(new FileInputStream(file));
 
             // (BOcacheImpl) skip manually added content-type NOOOOOOOOOOOOOOOOOOO
-            int skipSize = readStream.readInt();
-            for (int i = 0; i < skipSize; i++) {
-               readStream.read();
-            }
+//            int skipSize = readStream.readInt();
+//            for (int i = 0; i < skipSize; i++) {
+//               readStream.read();
+//            }
 
-            Chunk chunk = null;
             String hash = null;
             int chunkCount = 0;
             byte[] tempBuf;
@@ -57,26 +60,25 @@ public class ChunkedBO {
             int chunkPart;
             ByteArrayOutputStream outStream = null;
 
-            for (chunkPart = 0; chunkPart < fileSize / sizeInBytes; chunkPart++) {
-               outStream = new ByteArrayOutputStream(sizeInBytes);
+            for (chunkPart = 0; chunkPart < fileSize / chunkSizeInBytes; chunkPart++) {
+               outStream = new ByteArrayOutputStream(chunkSizeInBytes);
 
-               for (int byteCount = 0; byteCount < sizeInBytes; byteCount++) {
+               for (int byteCount = 0; byteCount < chunkSizeInBytes; byteCount++) {
                   outStream.write(readStream.read());
                }
 
                chunkCount++;
                tempBuf = outStream.toByteArray();
                hash = Utils.hexStringFromBytes(Hashing.hashSHA1(new ByteArrayInputStream(tempBuf)));
-               chunk = new Chunk(hash, tempBuf, tempBuf.length, chunkCount);
-               orderedChunkContainer.add(chunk);
+               orderedChunkContainer.add(new Chunk(hash, chunkCount));
                // close the file
                outStream.close();
             }
 
             // loop for the last chunk (which may be smaller than the chunk size)
-            if (fileSize != sizeInBytes * (chunkPart - 1)) {
+            if (fileSize != chunkSizeInBytes * (chunkPart - 1)) {
                // open the output file
-               outStream = new ByteArrayOutputStream(sizeInBytes);
+               outStream = new ByteArrayOutputStream(chunkSizeInBytes);
 
                // write the rest of the file
                int b;
@@ -87,17 +89,15 @@ public class ChunkedBO {
                chunkCount++;
                tempBuf = outStream.toByteArray();
                hash = Utils.hexStringFromBytes(Hashing.hashSHA1(new ByteArrayInputStream(tempBuf)));
-               chunk = new Chunk(hash, tempBuf, tempBuf.length, chunkCount);
-               orderedChunkContainer.add(chunk);
+               orderedChunkContainer.add(new Chunk(hash, chunkCount));
 
                // close the file
                outStream.close();
             }
 
             // set total number
-            for (Chunk ch : orderedChunkContainer) {
-               ch.setTotalNumberOfChunks(chunkCount);
-            }
+            this.totalNoOfChunks = chunkCount;
+            
          } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -115,6 +115,10 @@ public class ChunkedBO {
 
    public int getChunkSize() {
       return chunkSizeInBytes;
+   }
+   
+   public int getTotalNoOfChunks() {
+      return totalNoOfChunks;
    }
 
 }

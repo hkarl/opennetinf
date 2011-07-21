@@ -15,6 +15,8 @@ import netinf.common.log.demo.DemoLevel;
 import netinf.common.security.Hashing;
 import netinf.common.utils.Utils;
 import netinf.node.cache.network.NetworkCache;
+import netinf.node.chunking.Chunk;
+import netinf.node.chunking.ChunkedBO;
 import netinf.node.transferDeluxe.TransferDispatcher;
 import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
 
@@ -30,12 +32,11 @@ import com.google.inject.Inject;
  */
 public class NetInfCacheImpl implements NetworkCache {
 
-   private static final Logger LOG = Logger.getLogger(NetInfCacheImpl.class); // Logger
-   private CacheServer cacheServer; // adapter for the used cache server
+   private static final Logger LOG = Logger.getLogger(NetInfCacheImpl.class);
+   private CacheServer cacheServer;
    private TransferDispatcher transferDispatcher;
 
-   // decisions:
-   // key = hash of BO
+   private boolean doChunking = true; // enables/disables chunking
 
    /**
     * Constructor
@@ -71,11 +72,12 @@ public class NetInfCacheImpl implements NetworkCache {
                   IOUtils.closeQuietly(fis);
 
                   if (hashOfBO.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
-                     boolean success = cacheServer.cacheBO(this.getByteArray(destination), hashOfBO);
+                     boolean success = cacheServer.cacheBO(this.getByteArray(destination), hashOfBO); // TODO: stream instead byteArray
                      if (success) {
-                        addLocator(dataObject, urlPath);
+                        addLocator(dataObject, urlPath, destination);
                         deleteTmpFile(destination); // deleting tmp file
                         LOG.info("DO cached...");
+                        return;
                      }
                   } else {
                      LOG.info("Hash of file: " + hashOfBO + " -- Other: " + Utils.hexStringFromBytes(hashBytes));
@@ -83,7 +85,7 @@ public class NetInfCacheImpl implements NetworkCache {
                   }
 
                } catch (FileNotFoundException ex) {
-                  LOG.warn("FileNotFound:" + url);
+                  LOG.warn("FileNotFound: " + url);
                } catch (IOException e) {
                   LOG.warn("IOException:" + url);
                } catch (NetInfNoStreamProviderFoundException no) {
@@ -92,7 +94,6 @@ public class NetInfCacheImpl implements NetworkCache {
             } // end for
          } else {
             LOG.info("DO already in cache, but locator not in DO - adding locator entry...");
-            addLocator(dataObject, urlPath);
          }
       } else {
          LOG.info("Hash is null, will not be cached");
@@ -174,14 +175,87 @@ public class NetInfCacheImpl implements NetworkCache {
     * @param url
     *           The URL of the locator
     */
-   private void addLocator(DataObject dataObject, String url) {
+   private void addLocator(DataObject dataObject, String url, String pathOfLocalTmpFile) {
+      
+      for (Attribute attr : dataObject.getAttributes()) {
+         if (attr.getAttributePurpose().toString() == DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString()
+               && attr.getValue(String.class) == url) {
+            // already in DO
+            return;
+         }
+      }
+      
+      // Locator - http_url
       Attribute attribute = dataObject.getDatamodelFactory().createAttribute();
       attribute.setAttributePurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
       attribute.setIdentification(DefinedAttributeIdentification.HTTP_URL.getURI());
       attribute.setValue(url);
-      if (!dataObject.getAttributes().contains(attribute)) {
-         dataObject.addAttribute(attribute);
+      
+      // Cache marker
+      Attribute cacheMarker = dataObject.getDatamodelFactory().createAttribute();
+      cacheMarker.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+      cacheMarker.setIdentification(DefinedAttributeIdentification.CACHE.getURI());
+      cacheMarker.setValue("true");
+      attribute.addSubattribute(cacheMarker);
+ 
+      dataObject.addAttribute(attribute);
+
+      // Added chunks/ranges
+      if (doChunking && !this.containsChunks(dataObject)) {
+         try {
+            ChunkedBO chunkedBO = new ChunkedBO(pathOfLocalTmpFile);
+            
+            // Chunks
+            Attribute chunksAttr = dataObject.getDatamodelFactory().createAttribute();
+            chunksAttr.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.toString());
+            chunksAttr.setIdentification(DefinedAttributeIdentification.CHUNKS.getURI());
+            chunksAttr.setValue(chunkedBO.getTotalNoOfChunks());
+            
+            
+            for (Chunk chunk : chunkedBO.getChunks()) {
+               // Subattribute Chunk
+               Attribute singleChunkAttr = dataObject.getDatamodelFactory().createAttribute();
+               singleChunkAttr.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.toString());
+               singleChunkAttr.setIdentification(DefinedAttributeIdentification.CHUNK.getURI());
+               singleChunkAttr.setValue(chunk.getNumber());
+               
+               // SubSubattribute
+               Attribute hashOfChunkAttr = dataObject.getDatamodelFactory().createAttribute();
+               hashOfChunkAttr.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.toString());
+               hashOfChunkAttr.setIdentification(DefinedAttributeIdentification.HASH_OF_CHUNK.getURI());
+               hashOfChunkAttr.setValue(chunk.getHash());
+               
+               // add atributes
+               singleChunkAttr.addSubattribute(hashOfChunkAttr);
+               chunksAttr.addSubattribute(singleChunkAttr);
+            }
+            
+            // add chunk list
+            dataObject.addAttribute(chunksAttr);
+            
+            // add chunk flag
+            Attribute chunkFlag = dataObject.getDatamodelFactory().createAttribute();
+            chunkFlag.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+            chunkFlag.setIdentification(DefinedAttributeIdentification.CHUNKED.getURI());
+            chunkFlag.setValue("true");
+            attribute.addSubattribute(chunkFlag);
+            
+         } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         }
       }
+   }
+
+   private boolean containsChunks(DataObject dataObject) {
+      for (Attribute attr : dataObject.getAttributes()) {
+         if (attr.getIdentification().toString().equals(DefinedAttributeIdentification.CHUNKS.getURI())) {
+            LOG.info("(NetworkCache ) Chunklist already exists");
+            return true;
+         }
+      }
+      LOG.info("(NetworkCache ) Chunklist does not exist");
+      return false;
    }
 
    /**
@@ -200,6 +274,7 @@ public class NetInfCacheImpl implements NetworkCache {
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
       byte[] buffer = new byte[16384];
 
+      //TODO: use IOutils?
       for (int len = fis.read(buffer); len > 0; len = fis.read(buffer)) {
           bos.write(buffer, 0, len);
       }
@@ -207,5 +282,10 @@ public class NetInfCacheImpl implements NetworkCache {
       
       return bos.toByteArray();
   }
+
+   @Override
+   public String getAddress() {
+      return cacheServer.getAddress();
+   }
 
 }

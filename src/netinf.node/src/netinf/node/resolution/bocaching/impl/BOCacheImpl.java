@@ -41,7 +41,6 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -55,8 +54,6 @@ import netinf.common.exceptions.NetInfCheckedException;
 import netinf.common.log.demo.DemoLevel;
 import netinf.common.security.Hashing;
 import netinf.common.utils.Utils;
-import netinf.node.chunking.Chunk;
-import netinf.node.chunking.ChunkedBO;
 import netinf.node.resolution.bocaching.BOCache;
 import netinf.node.transferDeluxe.TransferDispatcher;
 
@@ -77,7 +74,7 @@ public class BOCacheImpl implements BOCache {
    private final HTTPFileServer server;
    private final Set<String> cached;
    private TransferDispatcher transferDispatcher;
-
+   
    @Inject
    public BOCacheImpl(HTTPFileServer server) throws NetInfCheckedException {
       super();
@@ -132,10 +129,6 @@ public class BOCacheImpl implements BOCache {
                   addLocator(dataObject);
                   cached.add(newFile.getName());
 
-                  // now add chunks
-                  LOG.info("Creating Chunks...");
-                  createChunksAndCache(dataObject, newFile.getAbsolutePath(), directory);
-
                   return true;
                } else {
                   LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is invalid. Trying next locator");
@@ -160,40 +153,39 @@ public class BOCacheImpl implements BOCache {
       } else {
          LOG.log(DemoLevel.DEMO, "(NODE ) DataObject has already been cached. Adding locator.");
          addLocator(dataObject);
-         createChunksAndCache(dataObject, directory + hash, directory);
          return true;
       }
    }
 
-   private void createChunksAndCache(DataObject dataObject, String filePath, String directory) {
-      try {
-         FileOutputStream out;
-         File file;
-         ChunkedBO chunkedBO = new ChunkedBO(filePath, 4096); // 20480~20Kb
-         List<Chunk> chunks = chunkedBO.getChunks();
-
-         // iterate over chunks
-         for (Chunk chunk : chunks) {
-            file = new File(directory + "chunk" + chunk.getNumber() + "of" + chunk.getTotalNumberOfChunks() + "_" + chunk.getHash());
-            if (!file.exists()) {
-               out = new FileOutputStream(file);
-               out.write(chunk.getData());
-               out.close();
-            } else {
-               LOG.debug("Chunk: " + chunk.getHash() + " already exists");
-            }
-            addChunkLocator(dataObject, chunk, file.getName());
-            cached.add(file.getName());
-         }
-
-      } catch (FileNotFoundException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      } catch (IOException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      }
-   }
+//   private void createChunksAndCache(DataObject dataObject, String filePath, String directory) {
+//      try {
+//         FileOutputStream out;
+//         File file;
+//         ChunkedBO chunkedBO = new ChunkedBO(filePath, 4096); // 20480~20Kb
+//         List<Chunk> chunks = chunkedBO.getChunks();
+//
+//         // iterate over chunks
+//         for (Chunk chunk : chunks) {
+//            file = new File(directory + "chunk" + chunk.getNumber() + "of" + chunk.getTotalNumberOfChunks() + "_" + chunk.getHash());
+//            if (!file.exists()) {
+//               out = new FileOutputStream(file);
+//               out.write(chunk.getData());
+//               out.close();
+//            } else {
+//               LOG.debug("Chunk: " + chunk.getHash() + " already exists");
+//            }
+//            addChunkLocator(dataObject, chunk, file.getName());
+//            cached.add(file.getName());
+//         }
+//
+//      } catch (FileNotFoundException e) {
+//         // TODO Auto-generated catch block
+//         e.printStackTrace();
+//      } catch (IOException e) {
+//         // TODO Auto-generated catch block
+//         e.printStackTrace();
+//      }
+//   }
 
    @Override
    public boolean contains(DataObject dataObject) {
@@ -255,45 +247,45 @@ public class BOCacheImpl implements BOCache {
       }
    }
 
-   private void addChunkLocator(DataObject dataObject, Chunk chunk, String chunkNameForLocator) {
-      // Locator Attribute
-      Attribute attribute = dataObject.getDatamodelFactory().createAttribute();
-      attribute.setAttributePurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
-      attribute.setIdentification(DefinedAttributeIdentification.CHUNK.getURI());
-      attribute.setValue(server.getUrlForHash(chunkNameForLocator));
-
-      // Subattributes - cache marker
-      Attribute cacheMarker = dataObject.getDatamodelFactory().createAttribute();
-      cacheMarker.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
-      cacheMarker.setIdentification(DefinedAttributeIdentification.CACHE.getURI());
-      cacheMarker.setValue("true");
-      attribute.addSubattribute(cacheMarker);
-
-      // Subattributes - hash of chunk
-      Attribute hashOfChunk = dataObject.getDatamodelFactory().createAttribute();
-      hashOfChunk.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
-      hashOfChunk.setIdentification(DefinedAttributeIdentification.HASH_OF_CHUNK.getURI());
-      hashOfChunk.setValue(chunk.getHash());
-      attribute.addSubattribute(hashOfChunk);
-
-      // Subattributes - number of chunk
-      Attribute numberOfChunk = dataObject.getDatamodelFactory().createAttribute();
-      numberOfChunk.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
-      numberOfChunk.setIdentification(DefinedAttributeIdentification.NUMBER_OF_CHUNK.getURI());
-      numberOfChunk.setValue(chunk.getNumber());
-      attribute.addSubattribute(numberOfChunk);
-
-      // Subattributes - total number of chunks
-      Attribute totalNumberOfChunks = dataObject.getDatamodelFactory().createAttribute();
-      totalNumberOfChunks.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
-      totalNumberOfChunks.setIdentification(DefinedAttributeIdentification.TOTAL_NUMBER_OF_CHUNKS.getURI());
-      totalNumberOfChunks.setValue(chunk.getTotalNumberOfChunks());
-      attribute.addSubattribute(totalNumberOfChunks);
-
-      // Do not add the same locator twice
-      if (!dataObject.getAttributes().contains(attribute)) {
-         dataObject.addAttribute(attribute);
-      }
-   }
+//   private void addChunkLocator(DataObject dataObject, Chunk chunk, String chunkNameForLocator) {
+//      // Locator Attribute
+//      Attribute attribute = dataObject.getDatamodelFactory().createAttribute();
+//      attribute.setAttributePurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
+//      attribute.setIdentification(DefinedAttributeIdentification.CHUNK.getURI());
+//      attribute.setValue(server.getUrlForHash(chunkNameForLocator));
+//
+//      // Subattributes - cache marker
+//      Attribute cacheMarker = dataObject.getDatamodelFactory().createAttribute();
+//      cacheMarker.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+//      cacheMarker.setIdentification(DefinedAttributeIdentification.CACHE.getURI());
+//      cacheMarker.setValue("true");
+//      attribute.addSubattribute(cacheMarker);
+//
+//      // Subattributes - hash of chunk
+//      Attribute hashOfChunk = dataObject.getDatamodelFactory().createAttribute();
+//      hashOfChunk.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+//      hashOfChunk.setIdentification(DefinedAttributeIdentification.HASH_OF_CHUNK.getURI());
+//      hashOfChunk.setValue(chunk.getHash());
+//      attribute.addSubattribute(hashOfChunk);
+//
+//      // Subattributes - number of chunk
+//      Attribute numberOfChunk = dataObject.getDatamodelFactory().createAttribute();
+//      numberOfChunk.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+//      numberOfChunk.setIdentification(DefinedAttributeIdentification.NUMBER_OF_CHUNK.getURI());
+//      numberOfChunk.setValue(chunk.getNumber());
+//      attribute.addSubattribute(numberOfChunk);
+//
+//      // Subattributes - total number of chunks
+//      Attribute totalNumberOfChunks = dataObject.getDatamodelFactory().createAttribute();
+//      totalNumberOfChunks.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+//      totalNumberOfChunks.setIdentification(DefinedAttributeIdentification.TOTAL_NUMBER_OF_CHUNKS.getURI());
+//      totalNumberOfChunks.setValue(chunk.getTotalNumberOfChunks());
+//      attribute.addSubattribute(totalNumberOfChunks);
+//
+//      // Do not add the same locator twice
+//      if (!dataObject.getAttributes().contains(attribute)) {
+//         dataObject.addAttribute(attribute);
+//      }
+//   }
 
 }

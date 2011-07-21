@@ -48,6 +48,8 @@ import netinf.common.utils.Utils;
 import netinf.node.access.AccessServer;
 import netinf.node.access.rest.RESTAccessServer;
 import netinf.node.access.rest.module.RESTModule;
+import netinf.node.cache.NetworkCacheInterceptor;
+import netinf.node.cache.network.module.NetworkCacheModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.bocaching.impl.BOCachingInterceptor;
@@ -100,10 +102,10 @@ public class StandardNodeModule extends AbstractNodeModule {
       install(new RESTModule());
 
       // MDHT Resolution
-      // install(new MDHTResolutionModule());
+      //install(new MDHTResolutionModule());
 
       // In-network Caching
-      // install(new NetworkCacheModule());
+      install(new NetworkCacheModule());
    }
 
    /**
@@ -120,7 +122,12 @@ public class StandardNodeModule extends AbstractNodeModule {
    ResolutionService[] provideResolutionServices(RDFResolutionService rdfResolutionService) {
       return new ResolutionService[] { rdfResolutionService };
    }
+//   ResolutionService[] provideResolutionServices(MDHTResolutionService mdhtResolutionService) {
+//      return new ResolutionService[] { mdhtResolutionService };
+//   }
 
+
+   
    /**
     * This method provides all the {@link ResolutionInterceptor}s which are automatically inserted into the node. In order to get
     * an instance of the according {@link ResolutionInterceptor}, add an additional parameter to this method, since this puts
@@ -136,8 +143,8 @@ public class StandardNodeModule extends AbstractNodeModule {
    // ResolutionInterceptor[] provideResolutionInterceptors(IOCacheImpl ioCache, LocatorSelectorImpl locatorSelector) {
    // return new ResolutionInterceptor[] { ioCache, locatorSelector };
    // }
-   ResolutionInterceptor[] provideResolutionInterceptors(BOCachingInterceptor boCaching) {
-      return new ResolutionInterceptor[] { boCaching };
+   ResolutionInterceptor[] provideResolutionInterceptors(BOCachingInterceptor boCaching, NetworkCacheInterceptor nwCaching) {
+      return new ResolutionInterceptor[] { boCaching, nwCaching };
    }
 
    /**

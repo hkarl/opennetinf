@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Vector;
 
 import netinf.common.datamodel.attribute.Attribute;
-import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
 import netinf.common.log.demo.DemoLevel;
 import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
 
@@ -51,14 +50,14 @@ public class Demultiplexer {
    }
 
    private Attribute getChunk(int number) {
-      for (Attribute chunk : chunks) {
-         List<Attribute> attr = chunk.getSubattribute(DefinedAttributeIdentification.NUMBER_OF_CHUNK.getURI());
-         if (attr.size() > 0) {
-            if (attr.get(0).getValue(Integer.class) == number) {
-               return chunk;
-            }
-         }
-      }
+//      for (Attribute chunk : chunks) {
+//         List<Attribute> attr = chunk.getSubattribute(DefinedAttributeIdentification.NUMBER_OF_CHUNK.getURI());
+//         if (attr.size() > 0) {
+//            if (attr.get(0).getValue(Integer.class) == number) {
+//               return chunk;
+//            }
+//         }
+//      }
       return null;
    }
 

@@ -12,36 +12,20 @@ import org.apache.log4j.Logger;
 public class Chunk {
 
    private static final Logger LOG = Logger.getLogger(Chunk.class);
-
-   private byte[] data;
-   private int sizeInBytes;
    private int number;
-   private int totalNumberOfChunks;
    private String hash;
 
    /**
     * Constructor
     * 
     * @param hash
-    * @param data
-    * @param sizeInBytes
     * @param number
     */
-   public Chunk(String hash, byte[] data, int sizeInBytes, int number) {
+   public Chunk(String hash, int number) {
       this.hash = hash;
-      this.data = data;
-      this.sizeInBytes = sizeInBytes;
       this.number = number;
 
-      LOG.log(DemoLevel.DEMO, "(Chunk ) Chunk created with HASH: " + hash + " SIZE: " + sizeInBytes + " NUMBER: " + number);
-   }
-
-   public byte[] getData() {
-      return data;
-   }
-
-   public int getSize() {
-      return sizeInBytes;
+      LOG.log(DemoLevel.DEMO, "(Chunk ) Chunk created with HASH: " + hash + " NUMBER: " + number);
    }
 
    public int getNumber() {
@@ -50,14 +34,6 @@ public class Chunk {
 
    public String getHash() {
       return hash;
-   }
-
-   public void setTotalNumberOfChunks(int total) {
-      totalNumberOfChunks = total;
-   }
-
-   public int getTotalNumberOfChunks() {
-      return totalNumberOfChunks;
    }
 
 }

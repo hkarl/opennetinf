@@ -41,5 +41,7 @@ public interface NetworkCache {
     * @return true if the cache is successfully connected, otherwise false
     */
    boolean isConnected();
+   
+   String getAddress();
 
 }
