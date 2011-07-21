@@ -1,6 +1,5 @@
 package netinf.node.cache.peerside.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,7 +9,6 @@ import java.util.List;
 
 import netinf.common.datamodel.DataObject;
 import netinf.common.datamodel.DefinedAttributePurpose;
-import netinf.common.datamodel.NetInfObjectWrapper;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
 import netinf.common.log.demo.DemoLevel;
@@ -44,30 +42,20 @@ public class PeerSideCacheImpl implements PeerSideCache {
    @Inject
    public PeerSideCacheImpl(PeerSideCacheServer server) {
       this.server = server;
+      transferDispatcher = TransferDispatcher.getInstance();
    }
 
-   /**
-    * Method checks to see if NetInfObject has previously been cached
-    */
    @Override
    public boolean contains(DataObject dataObject) {
-	  if(null == dataObject)
-		  return false;
-	  byte[] ioByteForm = dataObject.serializeToBytes();
-      LOG.trace(null);
 
-      String hash;
-	try {
-		hash = Utils.hexStringFromBytes(Hashing.hashSHA1(new ByteArrayInputStream(ioByteForm)));
-		LOG.debug("(PSCACHE )Hash of dataobject is " + hash);
-		return server.contains(hash);
-	} catch (IOException e) {
-		LOG.error("(PSCACHE )Could not open byte array to hash IO. Will not proceed with check");
-		return false;
-	}     
-         
-      
+      if (null == dataObject) {
+         return false;
+      }
+
+      String hashOfBO = getHash(dataObject);
+      return server.contains(hashOfBO);
    }
+
    /**
     * Gets the hash-value of a DataObject
     * 
@@ -83,81 +71,72 @@ public class PeerSideCacheImpl implements PeerSideCache {
       }
       return null;
    }
-   
-   public boolean contains(String hashOfBO) {
-	      if (isConnected()) {
-	         return server.containsBO(hashOfBO);
-	      }
-	      return false;
-	   }
-   
+
+   @Override
    public boolean isConnected() {
-      if (server != null) {
-         return true;
+      if (server == null) {
+         return false;
+      }
+
+      return server.isConnected();
+   }
+
+   @Override
+   public boolean cache(DataObject dataObject) {
+      if (dataObject == null) {
+         return false;
+      }
+
+      String hashOfBO = getHash(dataObject);
+
+      if (hashOfBO != null) {
+         String urlPath = server.getURL(hashOfBO);
+         if (!contains(dataObject)) {
+            List<Attribute> locators = dataObject.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
+            for (Attribute attribute : locators) {
+               String url = attribute.getValue(String.class);
+
+               try {
+                  // Download from some locator
+                  String destination = getTmpFolder() + File.separator + hashOfBO + ".tmp";
+                  transferDispatcher.getStreamAndSave(url, destination, false);
+
+                  // get hash
+                  FileInputStream fis = new FileInputStream(destination);
+                  byte[] hashBytes = Hashing.hashSHA1(fis);
+                  IOUtils.closeQuietly(fis);
+
+                  if (hashOfBO.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
+                     boolean success = server.cache(getByteArray(destination), hashOfBO);
+                     if (success) {
+                        addLocator(dataObject, urlPath);
+                        deleteTmpFile(destination); // deleting tmp file
+                        LOG.info("DO cached...");
+                        return true;
+                     }
+                  } else {
+                     LOG.info("Hash of file: " + hashOfBO + " -- Other: " + Utils.hexStringFromBytes(hashBytes));
+                     LOG.log(DemoLevel.DEMO, "(PSCACHE ) Hash of downloaded file is invalid. Trying next locator");
+                  }
+               } catch (FileNotFoundException ex) {
+                  LOG.warn("FileNotFound:" + url);
+               } catch (IOException e) {
+                  LOG.warn("IOException:" + url);
+               } catch (NetInfNoStreamProviderFoundException no) {
+                  LOG.warn("No StreamProvider found for: " + url);
+               }
+            } // end for
+         } else {
+            LOG.info("DO already in cache, but locator not in DO - adding locator entry...");
+            addLocator(dataObject, urlPath);
+            return true;
+         }
+      } else {
+         LOG.info("Hash is null, will not be cached");
       }
       return false;
    }
 
-   @Override
-   public boolean cache(NetInfObjectWrapper dataObject) {
-	   DataObject dataO = null;
-	   if ( dataObject instanceof DataObject ) {
-		   dataO = (DataObject) dataObject;
-	   } else {
-		   return false;
-	   }
-	      String hashOfBO = getHash(dataO);
-	      boolean bReturn = false;
-
-	      if (hashOfBO != null) {
-	         String urlPath = server.getURL(hashOfBO);
-	         if (!contains(hashOfBO)) {
-	            List<Attribute> locators = dataO.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
-	            for (Attribute attribute : locators) {
-	               String url = attribute.getValue(String.class);
-
-	               try {
-	                  // Download from some locator
-	                  String destination = getTmpFolder() + File.separator + hashOfBO + ".tmp";
-	                  transferDispatcher.getStreamAndSave(url, destination, false);
-
-	                  // get hash
-	                  FileInputStream fis = new FileInputStream(destination);
-	                  byte[] hashBytes = Hashing.hashSHA1(fis);
-	                  IOUtils.closeQuietly(fis);
-
-	                  if (hashOfBO.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
-	                	  boolean success = server.cache(this.getByteArray(destination), hashOfBO);	                     
-	                     if (success) {
-	                        addLocator(dataO, urlPath);
-	                        deleteTmpFile(destination); // deleting tmp file
-	                        LOG.info("DO cached...");
-	                     }
-	                     bReturn = success;
-	                  } else {
-	                     LOG.info("Hash of file: " + hashOfBO + " -- Other: " + Utils.hexStringFromBytes(hashBytes));
-	                     LOG.log(DemoLevel.DEMO, "(PSCACHE ) Hash of downloaded file is invalid. Trying next locator");
-	                  }
-
-	               } catch (FileNotFoundException ex) {
-	                  LOG.warn("FileNotFound:" + url);
-	               } catch (IOException e) {
-	                  LOG.warn("IOException:" + url);
-	               } catch (NetInfNoStreamProviderFoundException no) {
-	                  LOG.warn("No StreamProvider found for: " + url);
-	               }
-	            } // end for
-	         } else {
-	            LOG.info("DO already in cache, but locator not in DO - adding locator entry...");
-	            addLocator(dataO, urlPath);
-	            bReturn = true;
-	         }
-	      } else {
-	         LOG.info("Hash is null, will not be cached");
-	      }
-	      return bReturn;
-	   }
-   
    /**
     * Get system tmp folder
     * 
@@ -173,7 +152,7 @@ public class PeerSideCacheImpl implements PeerSideCache {
          return pathToTmp;
       }
    }
-   
+
    /**
     * Deletes the given file
     * 
@@ -184,7 +163,7 @@ public class PeerSideCacheImpl implements PeerSideCache {
       File file = new File(path);
       file.delete();
    }
-   
+
    /**
     * Adds a new locator to the DataObject
     * 
@@ -202,20 +181,18 @@ public class PeerSideCacheImpl implements PeerSideCache {
          dataObject.addAttribute(attribute);
       }
    }
-   
-   
+
    private byte[] getByteArray(String filePath) throws IOException {
       FileInputStream fis = new FileInputStream(filePath);
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
       byte[] buffer = new byte[16384];
 
       for (int len = fis.read(buffer); len > 0; len = fis.read(buffer)) {
-          bos.write(buffer, 0, len);
+         bos.write(buffer, 0, len);
       }
       fis.close();
-      
-      return bos.toByteArray();
-  }
 
+      return bos.toByteArray();
+   }
 
 }

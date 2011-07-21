@@ -26,7 +26,6 @@ public interface PeerSideCacheServer {
     * @param hashOfBO
     *           the hash-value of the given BO
     */
-
    boolean cache(byte[] hashBytes, String hash);
 
    /**
@@ -38,6 +37,9 @@ public interface PeerSideCacheServer {
     */
    String getURL(String hash);
 
-boolean containsBO(String hashOfBO);
-
+   /**
+    * 
+    * @return true if connected, otherwise false
+    */
+   boolean isConnected();
 }

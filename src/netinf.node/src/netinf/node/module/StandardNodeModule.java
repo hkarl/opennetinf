@@ -49,11 +49,11 @@ import netinf.node.access.AccessServer;
 import netinf.node.access.rest.RESTAccessServer;
 import netinf.node.access.rest.module.RESTModule;
 import netinf.node.cache.NetworkCacheInterceptor;
+import netinf.node.cache.PeersideCacheInterceptor;
 import netinf.node.cache.network.module.NetworkCacheModule;
+import netinf.node.cache.peerside.module.PeerSideCacheModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
-import netinf.node.resolution.bocaching.impl.BOCachingInterceptor;
-import netinf.node.resolution.bocaching.module.BOCachingModule;
 import netinf.node.resolution.rdf.RDFResolutionService;
 import netinf.node.resolution.rdf.module.RDFResolutionServiceModule;
 import netinf.node.search.SearchService;
@@ -96,7 +96,7 @@ public class StandardNodeModule extends AbstractNodeModule {
 
       // Caching Storage
       // install(new LocalIOCachingModule());
-      install(new BOCachingModule());
+      //install(new BOCachingModule());
 
       // RESTful API
       install(new RESTModule());
@@ -104,8 +104,9 @@ public class StandardNodeModule extends AbstractNodeModule {
       // MDHT Resolution
       //install(new MDHTResolutionModule());
 
-      // In-network Caching
+      // Caches
       install(new NetworkCacheModule());
+      install(new PeerSideCacheModule());
    }
 
    /**
@@ -143,8 +144,8 @@ public class StandardNodeModule extends AbstractNodeModule {
    // ResolutionInterceptor[] provideResolutionInterceptors(IOCacheImpl ioCache, LocatorSelectorImpl locatorSelector) {
    // return new ResolutionInterceptor[] { ioCache, locatorSelector };
    // }
-   ResolutionInterceptor[] provideResolutionInterceptors(BOCachingInterceptor boCaching, NetworkCacheInterceptor nwCaching) {
-      return new ResolutionInterceptor[] { boCaching, nwCaching };
+   ResolutionInterceptor[] provideResolutionInterceptors(PeersideCacheInterceptor psCaching, NetworkCacheInterceptor nwCaching) {
+      return new ResolutionInterceptor[] { psCaching, nwCaching };
    }
 
    /**
