@@ -8,14 +8,11 @@ import netinf.common.datamodel.translation.module.DatamodelTranslationModule;
 import netinf.common.utils.Utils;
 import netinf.node.access.AccessServer;
 import netinf.node.access.rest.module.RESTModule;
-import netinf.node.cache.network.module.NetworkCacheModule;
-import netinf.node.cache.peerside.impl.PeerSideCachingInterceptor;
+import netinf.node.cache.PeersideCacheInterceptor;
 import netinf.node.cache.peerside.module.PeerSideCacheModule;
 import netinf.node.module.AbstractNodeModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
-import netinf.node.resolution.iocaching.impl.IOCacheImpl;
-import netinf.node.resolution.iocaching.module.LocalIOCachingModule;
 import netinf.node.resolution.locator.impl.LocatorSelectorImpl;
 import netinf.node.resolution.mdht.MDHTResolutionService;
 import netinf.node.resolution.mdht.module.MDHTResolutionModule;
@@ -81,7 +78,7 @@ public class PeerSideTestNodeModule extends AbstractNodeModule {
     */
    @Singleton
    @Provides
-   ResolutionInterceptor[] provideResolutionInterceptors(PeerSideCachingInterceptor psCache /*IOCacheImpl ioCache*/, LocatorSelectorImpl locatorSelector) {
+   ResolutionInterceptor[] provideResolutionInterceptors(PeersideCacheInterceptor psCache /*IOCacheImpl ioCache*/, LocatorSelectorImpl locatorSelector) {
       return new ResolutionInterceptor[] { /*psCache, */locatorSelector };
    }
 
