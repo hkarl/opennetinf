@@ -238,4 +238,9 @@ public class EhCacheServerImpl implements CacheServer {
       return null;
    }
 
+   @Override
+   public String getAddress() {
+      return cacheAddress;
+   }
+
 }

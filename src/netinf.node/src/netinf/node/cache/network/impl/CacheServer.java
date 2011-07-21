@@ -51,4 +51,11 @@ public interface CacheServer {
     * @return true if cache is connected, otherwise false
     */
    boolean isConnected();
+
+   /**
+    * Provides the address of the cache server
+    * 
+    * @return the address (url)
+    */
+   String getAddress();
 }
