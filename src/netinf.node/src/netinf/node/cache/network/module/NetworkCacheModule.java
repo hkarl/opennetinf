@@ -21,4 +21,5 @@ public class NetworkCacheModule extends PrivateModule {
       bind(CacheServer.class).to(EhCacheServerImpl.class);
       expose(NetworkCache.class);
    }
+
 }

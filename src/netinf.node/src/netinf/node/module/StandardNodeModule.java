@@ -48,8 +48,7 @@ import netinf.common.utils.Utils;
 import netinf.node.access.AccessServer;
 import netinf.node.access.rest.RESTAccessServer;
 import netinf.node.access.rest.module.RESTModule;
-import netinf.node.cache.NetworkCacheInterceptor;
-import netinf.node.cache.PeersideCacheInterceptor;
+import netinf.node.cache.CachingInterceptor;
 import netinf.node.cache.network.module.NetworkCacheModule;
 import netinf.node.cache.peerside.module.PeerSideCacheModule;
 import netinf.node.resolution.ResolutionInterceptor;
@@ -68,7 +67,7 @@ import com.google.inject.Singleton;
  * This will be the module that is responsible for the whole NetInfNode. All other modules should be installed within this module.
  * By that we reach a maximum possible encapsulation.
  * 
- * @author PG Augnet 2, University of Paderborn
+ * @author PG NetInf 3, University of Paderborn
  */
 public class StandardNodeModule extends AbstractNodeModule {
 
@@ -83,28 +82,24 @@ public class StandardNodeModule extends AbstractNodeModule {
       super.configure();
       bind(MessageEncoder.class).to(MessageEncoderXML.class).in(Singleton.class);
 
-      // The datamodel
+      // Datamodel
       install(new DatamodelRdfModule());
       install(new DatamodelTranslationModule());
 
-      // The ResolutionServices
+      // ResolutionServices
       // install(new LocalResolutionModule());
+      // install(new MDHTResolutionModule());
       install(new RDFResolutionServiceModule());
 
-      // The SearchServices
+      // SearchServices
       install(new SearchServiceRDFModule());
-
-      // Caching Storage
-      // install(new LocalIOCachingModule());
-      //install(new BOCachingModule());
 
       // RESTful API
       install(new RESTModule());
 
-      // MDHT Resolution
-      //install(new MDHTResolutionModule());
-
       // Caches
+      // install(new LocalIOCachingModule());
+      // install(new BOCachingModule());
       install(new NetworkCacheModule());
       install(new PeerSideCacheModule());
    }
@@ -141,12 +136,12 @@ public class StandardNodeModule extends AbstractNodeModule {
     */
    @Singleton
    @Provides
+   ResolutionInterceptor[] provideResolutionInterceptors(CachingInterceptor caching) {
+      return new ResolutionInterceptor[] { caching };
+   }
    // ResolutionInterceptor[] provideResolutionInterceptors(IOCacheImpl ioCache, LocatorSelectorImpl locatorSelector) {
    // return new ResolutionInterceptor[] { ioCache, locatorSelector };
    // }
-   ResolutionInterceptor[] provideResolutionInterceptors(PeersideCacheInterceptor psCaching, NetworkCacheInterceptor nwCaching) {
-      return new ResolutionInterceptor[] { psCaching, nwCaching };
-   }
 
    /**
     * This method provides all the {@link SearchService}s which are automatically inserted into the node. In order to get an

@@ -8,7 +8,7 @@ import netinf.common.datamodel.translation.module.DatamodelTranslationModule;
 import netinf.common.utils.Utils;
 import netinf.node.access.AccessServer;
 import netinf.node.access.rest.module.RESTModule;
-import netinf.node.cache.PeersideCacheInterceptor;
+import netinf.node.cache.CachingInterceptor;
 import netinf.node.cache.peerside.module.PeerSideCacheModule;
 import netinf.node.module.AbstractNodeModule;
 import netinf.node.resolution.ResolutionInterceptor;
@@ -46,7 +46,7 @@ public class PeerSideTestNodeModule extends AbstractNodeModule {
       install(new MDHTResolutionModule());
       
       //Need a binding to AccessServer
-      install (new RESTModule());
+      install(new RESTModule());
       
       // The SearchServices
       install(new SearchServiceRDFModule());
@@ -78,8 +78,8 @@ public class PeerSideTestNodeModule extends AbstractNodeModule {
     */
    @Singleton
    @Provides
-   ResolutionInterceptor[] provideResolutionInterceptors(PeersideCacheInterceptor psCache /*IOCacheImpl ioCache*/, LocatorSelectorImpl locatorSelector) {
-      return new ResolutionInterceptor[] { /*psCache, */locatorSelector };
+   ResolutionInterceptor[] provideResolutionInterceptors(CachingInterceptor cache /*IOCacheImpl ioCache*/, LocatorSelectorImpl locatorSelector) {
+      return new ResolutionInterceptor[] { cache, locatorSelector };
    }
 
    /**

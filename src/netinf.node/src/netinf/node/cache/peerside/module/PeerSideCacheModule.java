@@ -13,7 +13,6 @@ import com.google.inject.Singleton;
  * 
  * @author PG NetInf 3, University of Paderborn
  */
-
 public class PeerSideCacheModule extends PrivateModule {
 
    @Override
