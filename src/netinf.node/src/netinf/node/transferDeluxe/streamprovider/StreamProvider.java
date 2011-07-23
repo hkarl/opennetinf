@@ -3,6 +3,8 @@ package netinf.node.transferDeluxe.streamprovider;
 import java.io.IOException;
 import java.io.InputStream;
 
+import netinf.node.chunking.Chunk;
+
 /**
  * @author PG NetInf 3
  */
@@ -19,6 +21,8 @@ public interface StreamProvider {
     */
    InputStream getStream(String url) throws IOException;
 
+   InputStream getStream(Chunk chunk, String baseUrl) throws IOException;
+   
    /**
     * Decides wether this URL can be handled or not.
     * 

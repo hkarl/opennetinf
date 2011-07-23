@@ -742,4 +742,19 @@ public class DatamodelUtils {
       // undefined content type
       return "application/octet-stream";
    }
+   
+   /**
+    * Gets the hash-value of a DataObject
+    * 
+    * @param dataO
+    *           the DataObject
+    * @return hash-value of the DO or null
+    */
+   public static String getHash(InformationObject io) {
+      List<Attribute> attributes = io.getAttribute(DefinedAttributeIdentification.HASH_OF_DATA.getURI());
+      for (Attribute attr : attributes) {
+         return attr.getValue(String.class);
+      }
+      return null;
+   }
 }

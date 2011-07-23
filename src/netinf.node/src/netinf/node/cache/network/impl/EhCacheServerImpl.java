@@ -68,7 +68,7 @@ public class EhCacheServerImpl implements CacheServer {
             // execute request
             HttpResponse response = client.execute(httpPut);
             int status = response.getStatusLine().getStatusCode();
-            if (status == HttpStatus.SC_CREATED) {
+            if (status == HttpStatus.SC_CREATED || status == HttpStatus.SC_OK) {
                return true;
             }
             return false;
@@ -227,7 +227,7 @@ public class EhCacheServerImpl implements CacheServer {
          cacheUrl = "http://127.0.0.1:8080";
       }
 
-      return cacheUrl + "/ehcache/rest/" + tablename;
+      return cacheUrl + tablename;
    }
 
    @Override

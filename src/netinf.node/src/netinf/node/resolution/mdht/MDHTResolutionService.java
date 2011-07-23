@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import netinf.common.communication.AtomicMessage;
 import netinf.common.communication.Connection;
@@ -19,14 +17,14 @@ import netinf.common.communication.TCPConnection;
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
+import netinf.common.datamodel.attribute.Attribute;
+import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
 import netinf.common.datamodel.identity.ResolutionServiceIdentityObject;
 import netinf.common.datamodel.rdf.DatamodelFactoryRdf;
 import netinf.common.datamodel.translation.DatamodelTranslator;
 import netinf.common.exceptions.NetInfResolutionException;
 import netinf.common.log.demo.DemoLevel;
 import netinf.common.messages.RSMDHTAck;
-import netinf.node.cache.network.NetworkCache;
-import netinf.node.cache.peerside.PeerSideCache;
 import netinf.node.resolution.AbstractResolutionService;
 import netinf.node.resolution.mdht.dht.DHT;
 import netinf.node.resolution.mdht.dht.DHTConfiguration;
@@ -45,19 +43,16 @@ import com.google.inject.Inject;
  */
 public class MDHTResolutionService extends AbstractResolutionService {
 
+   // TODO @razvan: take MDHT_LEVEL attribute in IO into account... (see PeersideCache)
+   
    private static final Logger LOG = Logger.getLogger(MDHTResolutionService.class);
    private static final String IDENTIFIER = "ni:name=value";
-   private static final short NO_CACHING = 0;
-   private static final short USE_NETWORK_CACHE = 1;
-   private static final short USE_PEERSIDE_CACHE = 2;
    private DatamodelFactory datamodelFactory;
-   private NetworkCache networkCache;
-   private PeerSideCache peerSideCache;
    // private Map<Integer,InformationObject> openRequests;
    // private DatamodelFactoryRdf localRdfFactory;
    private MessageEncoderXML localXmlEncoder;
    private InetAddress localNodeIp;
-   private ExecutorService executorService;
+   // private ExecutorService executorService;
 
    // table of MDHT levels
    private Map<Integer, DHT> dhts = new Hashtable<Integer, DHT>();
@@ -67,23 +62,6 @@ public class MDHTResolutionService extends AbstractResolutionService {
    @Inject
    public void setDatamodelTranslator(DatamodelTranslator translator) {
       this.translator = translator;
-   }
-
-   @Inject(optional = true)
-   public void setCache(NetworkCache cache) {
-      networkCache = cache;
-      if (!networkCache.isConnected()) {
-         networkCache = null;
-         LOG.warn("(MDHT ) CachingModule loaded, but server not reachable...");
-      } else {
-         LOG.info("(MDHT ) MDHT node connected with cache server");
-      }
-   }
-
-   @Inject(optional = true)
-   public void setPeersideCache(PeerSideCache cache) {
-      peerSideCache = cache;
-      LOG.info("(MDHT ) MDHT node connected with Peer-side Cache");
    }
 
    @Inject
@@ -99,7 +77,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
       super();
       // this.localRdfFactory = rdfFactory;
       localXmlEncoder = xmlEncoder;
-      executorService = Executors.newFixedThreadPool(2);
+      // executorService = Executors.newFixedThreadPool(2);
       // Initialize requests hash
       // this.openRequests = new Hashtable<Integer, InformationObject>();
       // Create DHTs
@@ -136,46 +114,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
    public InformationObject get(Identifier identifier) {
       LOG.info("(MDHT ) Getting IO with Identifier " + identifier);
       // this.openRequests.put(key, value)
-      InformationObject result = get(identifier, 0);
-
-      // if (result != null) {
-      // short sCacheToUse = null == this.peerSideCache ? ( null == this.networkCache ? NO_CACHING : USE_NETWORK_CACHE ) :
-      // USE_PEERSIDE_CACHE;
-      // LOG.info("(MDHT ) Found IO");
-      // //Cache it too, maybe do that on a separate thread asynchronously?
-      // if (result instanceof DataObject ) {
-      // switch ( sCacheToUse ) {
-      // case USE_PEERSIDE_CACHE:
-      // LOG.info("(MDHT ) Using Peer-side Cache");
-      // try {
-      // PeerSideCache dummyCache = (PeerSideCache)AsyncRunner.getInstance(PeerSideCache.class, peerSideCache,
-      // this.executorService);
-      // //peerSideCache.cache(result);
-      // dummyCache.cache(result);
-      // } catch (Exception e) {
-      // LOG.error("Naja, hat nicht geklappt mit dem Cachen. Weitermachen.");
-      // return result;
-      // }
-      // break;
-      // case USE_NETWORK_CACHE:
-      // LOG.info("(MDHT ) Using Network Cache");
-      // try {
-      // NetworkCache dummyCache = (NetworkCache)AsyncRunner.getInstance(NetworkCache.class, networkCache, this.executorService);
-      // //peerSideCache.cache(result);
-      // dummyCache.cache((DataObject) result);
-      // } catch (Exception e) {
-      // LOG.error("Naja, hat nicht geklappt mit dem Cachen. Weitermachen.");
-      // return result;
-      // }
-      // break;
-      // case NO_CACHING:
-      // LOG.info("(MDHT ) Will not cache this result. No cache active");
-      // break;
-      // }
-      // }
-      // return result;
-      // }
-      return result;
+      return get(identifier, 0);
    }
 
    @Override
@@ -204,10 +143,30 @@ public class MDHTResolutionService extends AbstractResolutionService {
          throw new NetInfResolutionException("Trying to put invalid Information Object", ex);
       }
 
-      for (int level = 0; level < dhts.size(); level++) {
+      // take level into account, if available
+      int upToThisLevel = getLevel(io);
+
+      for (int level = 0; level < upToThisLevel; level++) {
          dhts.get(level).put(informationObject, level, dhts.size() - 1, localNodeIp.getAddress());
          LOG.info("(MDHT ) Put IO at level " + level);
       }
+   }
+
+   /**
+    * Provides the level value of the mdht_level attribute of the IO.
+    * 
+    * @param io
+    *           The InformationObject.
+    * @return The level as integer if given, otherwise the maximum level.
+    */
+   private int getLevel(InformationObject io) {
+      List<Attribute> attributes = io.getAttribute(DefinedAttributeIdentification.MDHT_LEVEL.getURI());
+      for (Attribute attr : attributes) {
+         if (attr.getValue(Integer.class) != null) {
+            return attr.getValue(Integer.class);
+         }
+      }
+      return dhts.size();
    }
 
    public void put(InformationObject io, int maxLevel) {
@@ -232,10 +191,6 @@ public class MDHTResolutionService extends AbstractResolutionService {
       return "MDHT Resolution Server";
    }
 
-   /*
-    * (non-Javadoc)
-    * @see netinf.node.resolution.AbstractResolutionService#createIdentityObject()
-    */
    @Override
    protected ResolutionServiceIdentityObject createIdentityObject() {
       ResolutionServiceIdentityObject identity = datamodelFactory.createDatamodelObject(ResolutionServiceIdentityObject.class);
@@ -299,7 +254,6 @@ public class MDHTResolutionService extends AbstractResolutionService {
    }
 
    public void sendRemoteAck(final InetAddress targetNodeAddr) {
-
       try {
          int serverPort = 5000;
          Socket socket = new Socket();
@@ -319,7 +273,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
 
       } catch (IOException e) {
          LOG.error("(MDHT) Could not open remote node Socket to " + e.getMessage());
-
       }
    }
+
 }

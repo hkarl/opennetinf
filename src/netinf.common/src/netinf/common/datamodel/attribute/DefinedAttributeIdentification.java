@@ -55,14 +55,13 @@ public enum DefinedAttributeIdentification {
    PERSON_ADDRESS("person_address", true),
    PERSON_BIRTHDAY("person_birthday", true),
    PERSON_HOMEPAGE("person_homepage", true),
+   MDHT_LEVEL("mdht_level", true),        // specifies in which level the IO will be publiched (only mdht related)
    
    // for chunking
    CHUNKED("chunked", true),              // indicates whether a locator is chunk/range enabled or not 
    CHUNKS("chunks", true),                // represents a list of chunks/ranges
    CHUNK("chunk", true),                  // represents a single chunk/range
    HASH_OF_CHUNK("hash_of_chunk", true),  // the hash value of that chunk/range
-//   NUMBER_OF_CHUNK("number_of_chunk", true),
-//   TOTAL_NUMBER_OF_CHUNKS("total_number_of_chunks", true),
    
    // TODO: The following lines should be URIs one day
    OWNER("owner", true),

@@ -7,7 +7,8 @@
     <param name="Target" value="System.out"/> 
 	<!-- param name="Threshold" value="DEBUG"/ -->
     <layout class="org.apache.log4j.PatternLayout"> 
-      <param name="ConversionPattern" value="%6r %-5p [%t] %l - %m%n"/> 
+      <!-- param name="ConversionPattern" value="%6r %-5p %l [%t] - %m%n"/ --> 
+      <param name="ConversionPattern" value="%6r [%t] %-5p %m -- [%l] %n" />
     </layout>
   </appender>
 
@@ -30,7 +31,7 @@
   </appender> 
   
   <root> 
-    <priority value ="DEBUG" />
+    <priority value ="INFO" />
     <appender-ref ref="A1" />
     <appender-ref ref="A2" />
     <appender-ref ref="SOCK" />

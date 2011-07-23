@@ -119,7 +119,7 @@ public class Communicator {
       // Set the encoding format directly at the beginning.
       message.setSerializeFormat(this.serializeFormat);
 
-      LOG.info("NetInfMessage to be send: \n" + message);
+      LOG.debug("NetInfMessage to be send: \n" + message);
 
       int encoding = this.messageEncoder.getUniqueEncoderId();
       LOG.debug("Encoding message with encoder " + encoding);

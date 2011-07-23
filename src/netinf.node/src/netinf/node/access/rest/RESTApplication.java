@@ -40,7 +40,7 @@ public class RESTApplication extends Application {
    @Override
    public Restlet createInboundRoot() {
       Router router = new Router(getContext());
-
+      
       // IO routing
       String targetIO1 = "{rh}/io?hash_of_pk={hashOfPK}&hash_of_pk_ident={hashOfPKIdent}&version_kind={versionKind}&unique_label={uniqueLabel}&version_number={versionNumber}";
       Redirector redirectorIO1 = new Redirector(getContext(), targetIO1, Redirector.MODE_CLIENT_TEMPORARY);

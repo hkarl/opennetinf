@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.List;
 
+import netinf.common.datamodel.DataObject;
 import netinf.common.datamodel.DefinedAttributePurpose;
 import netinf.common.datamodel.DefinedLabelName;
 import netinf.common.datamodel.Identifier;
@@ -14,7 +15,6 @@ import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.exceptions.NetInfCheckedException;
 import netinf.common.utils.DatamodelUtils;
 import netinf.node.transferDeluxe.TransferDispatcher;
-import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
 
 import org.apache.log4j.Logger;
 import org.restlet.data.MediaType;
@@ -60,7 +60,7 @@ public class BOResource extends NetInfResource {
    @Get
    public Representation retrieveBO() {
       Identifier identifier = createIdentifier();
-
+      
       InformationObject io = null;
       try {
          io = getNodeConnection().getIO(identifier);
@@ -71,28 +71,27 @@ public class BOResource extends NetInfResource {
       if (io != null) {
          List<Attribute> locators = io.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
          if (!locators.isEmpty()) {
-            //for (Attribute locator : locators) {
-               try {
+            // for (Attribute locator : locators) {
+            try {
+               if (io instanceof DataObject) {
                   TransferDispatcher tsDispatcher = TransferDispatcher.getInstance();
-                  // InputStream inStream = tsDispatcher.getStream(locator.getValue(String.class));
-                  InputStream inStream = tsDispatcher.getStream(io);
-                  MediaType mdType = new MediaType(DatamodelUtils.getContentType(io));
                   
+                  InputStream inStream = tsDispatcher.getStream((DataObject) io);
+                  MediaType mdType = new MediaType(DatamodelUtils.getContentType(io));
+
                   return new InputRepresentation(inStream, mdType);
-               } catch (MalformedURLException muehe) {
-                  LOG.warn("Malformed locator URL", muehe);
-                  //continue;
-               } catch (IOException ioe) {
-                  LOG.warn("Could not open URL connection", ioe);
-                  //continue;
-               } catch (NetInfNoStreamProviderFoundException no) {
-                  LOG.warn("No StreamProvider found", no);
-                  //continue;
-               } catch (Exception e) {
-                  // TODO Auto-generated catch block
-                  e.printStackTrace();
                }
-            //}
+            } catch (MalformedURLException muehe) {
+               LOG.warn("Malformed locator URL", muehe);
+               // continue;
+            } catch (IOException ioe) {
+               LOG.warn("Could not open URL connection", ioe);
+               // continue;
+            } catch (Exception e) {
+               // TODO Auto-generated catch block
+               e.printStackTrace();
+            }
+            // }
          }
       }
       throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND);

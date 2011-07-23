@@ -1,10 +1,9 @@
 package netinf.node.access;
 
-
 /**
  * An AccessServer provides an interface to a NetInfNode.
  * 
- * @author mmuehe
+ * @author PG NetInf 3
  */
 public interface AccessServer {
 

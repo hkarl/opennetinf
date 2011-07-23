@@ -39,6 +39,7 @@ package netinf.common.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -141,10 +142,8 @@ public class Utils {
          ObjectInputStream serializedObject = new ObjectInputStream(bais);
          return serializedObject.readObject();
       } catch (IOException e) {
-         // TODO Auto-generated catch block
          e.printStackTrace();
       } catch (ClassNotFoundException e) {
-         // TODO Auto-generated catch block
          e.printStackTrace();
       }
       return null;
@@ -177,4 +176,47 @@ public class Utils {
 
       return hexString.toString();
    }
+
+   /**
+    * Get system tmp folder with the given subfolder
+    * 
+    * @return path to netinf tmp folder
+    */
+   public static String getTmpFolder(String subfolder) {
+      String pathToTmp = System.getProperty("java.io.tmpdir") + File.separator + subfolder;
+      File folder = new File(pathToTmp);
+      if (folder.exists() && folder.isDirectory()) {
+         return pathToTmp;
+      } else {
+         folder.mkdir();
+         return pathToTmp;
+      }
+   }
+
+   /**
+    * Provides the ByteArry for a given file path.
+    * 
+    * @param filePath
+    *           The Path to the file.
+    * @return The ByteArray.
+    * @throws IOException
+    */
+   public static byte[] getByteArray(String filePath) throws IOException {
+      FileInputStream fis = new FileInputStream(filePath);
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+      IOUtils.copy(fis, bos);
+      fis.close();
+      bos.close();
+
+      return bos.toByteArray();
+
+      // byte[] buffer = new byte[16384];
+      //
+      // for (int len = fis.read(buffer); len > 0; len = fis.read(buffer)) {
+      // bos.write(buffer, 0, len);
+      // }
+      // fis.close();
+   }
+
 }
