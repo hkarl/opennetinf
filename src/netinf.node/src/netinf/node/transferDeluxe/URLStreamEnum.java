@@ -26,12 +26,12 @@ public class URLStreamEnum implements Enumeration<InputStream> {
       chunks = chunkedBO.getChunks();
       maxChunk = chunks.size();
       baseURLs = chunkedBO.getBaseUrls();
-      curChunk = 1;
+      curChunk = 0;
    }
 
    @Override
    public boolean hasMoreElements() {
-      return curChunk <= maxChunk;
+      return curChunk < maxChunk;
    }
 
    @Override
@@ -39,6 +39,7 @@ public class URLStreamEnum implements Enumeration<InputStream> {
       for (String baseUrl : baseURLs) {
          LOG.info("Try baseURL: " + baseUrl);
          try {
+            System.out.println("get chunk number: " + curChunk);
             Chunk chunk = getChunkByNumber(curChunk);
             InputStream result = TransferDispatcher.getInstance().getStream(chunk, baseUrl);
             curChunk++;

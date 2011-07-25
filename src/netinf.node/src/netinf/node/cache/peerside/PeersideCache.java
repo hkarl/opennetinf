@@ -29,7 +29,7 @@ public class PeersideCache implements BOCacheServer {
    * Constructor
    */
    @Inject
-   public PeersideCache(@Named("peerside_mdht_scope") final int scope) {
+   public PeersideCache(@Named("peerside.mdht.scope") final int scope) {
       // create manager with default config and init cache
       manager = CacheManager.create(ehcacheConfigPath);
       cache = manager.getCache("PeersideCache");

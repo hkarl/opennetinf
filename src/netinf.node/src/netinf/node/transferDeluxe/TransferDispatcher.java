@@ -6,8 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +70,7 @@ public final class TransferDispatcher {
       try {
          ChunkedBO chunkedBO = new ChunkedBO(dataObj);
          LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Chunks exist, use them...");
-         return Demultiplexer.getCombinedStream(chunkedBO);
+         return new SequentialChunkStream(chunkedBO);
       } catch (NetInfNotChunkableException e1) {
          LOG.info("(TransferDispatcher ) Chunking can not be used for this DO: " + e1.getMessage());
       }
@@ -106,18 +104,8 @@ public final class TransferDispatcher {
       DataOutputStream dos = null;
       try {
          dos = new DataOutputStream(new FileOutputStream(destination));
-
-         // only for BOCaching and HTTPFileServer
-         if (withContentType) {
-            URL ur = new URL(url);
-            URLConnection urc = ur.openConnection();
-            byte[] contentTypeBytes = urc.getContentType().getBytes();
-            dos.writeInt(contentTypeBytes.length);
-            dos.write(contentTypeBytes);
-         }
-
          IOUtils.copy(is, dos);
-         
+  
       } catch (MalformedURLException e) {
          LOG.warn("Could not download data from: " + url);
       } catch (IOException e) {

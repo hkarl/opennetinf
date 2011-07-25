@@ -3,15 +3,15 @@
  */
 package netinf.node.transferDeluxe.streamprovider;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import netinf.common.security.Hashing;
 import netinf.common.utils.Utils;
 import netinf.node.chunking.Chunk;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
@@ -37,47 +37,48 @@ public class HTTPStreamProvider implements StreamProvider {
    public InputStream getStream(Chunk chunk, String baseUrl) throws IOException {
       // determine range
       int chunkSizeInBytes = 256 * 1024;
-      int from = chunkSizeInBytes * (chunk.getNumber() - 1);
-      int to = (chunkSizeInBytes * chunk.getNumber()) - 1;
+      int from = chunkSizeInBytes * chunk.getNumber();
+      String to;
+      to = "" + ((chunkSizeInBytes * (chunk.getNumber() + 1)) - 1);
 
       HttpClient client = new DefaultHttpClient();
       HttpGet httpGet = new HttpGet(baseUrl); // TODO: handling of last chunk...
       httpGet.setHeader("Range", "bytes=" + from + "-" + to); // TODO !!!!
+      System.out.println("from: " + from + "to " + to);
       try {
          HttpResponse response = client.execute(httpGet);
          int status = response.getStatusLine().getStatusCode();
          if (status == HttpStatus.SC_PARTIAL_CONTENT) {
-            return response.getEntity().getContent();
-            
-            // TODO: check integrity
+
+            InputStream inStream = response.getEntity().getContent();
             // check integrity
-            // InputStream inStream = response.getEntity().getContent();
-            // if (!isValid(chunk.getHash(), inStream)) {
-            // throw new IOException("Hash is not valid...");
-            // }
-            // return stream
+            String destination = Utils.getTmpFolder("chunkproviding") + File.separator + chunk.getHash() + ".tmp";
+            boolean success = Utils.saveTemp(inStream, destination);
+
+            if (success) {
+               if (Utils.isValidHash(chunk.getHash(), destination)) {
+                  return new FileInputStream(destination);
+               } else {
+                  throw new IOException("Hash of chunk no. " + chunk.getNumber() + " is NOT valid...");
+               }
+            }
+
          } else {
-            throw new IOException("Error at ranges request...");
+            throw new IOException("Error at ranges request... status: " + status);
          }
       } catch (ClientProtocolException e) {
          throw new IOException("Error at ranges request...");
       } catch (IOException e) {
-         throw new IOException("Error at ranges request...");
+         throw new IOException("Error at ranges request...: ");
       }
-   }
 
-   private boolean isValid(String hashOfBO, InputStream inStream) {
-      try {
-         byte[] hashBytes = Hashing.hashSHA1(inStream);
-         IOUtils.closeQuietly(inStream);
-
-         if (hashOfBO.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
-            return true;
+      return new InputStream() {
+         @Override
+         public int read() throws IOException {
+            LOG.warn("(HTTPStreamProvider ) returning an error stream (-1)");
+            return -1;
          }
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
-      return false;
+      };
    }
 
    @Override

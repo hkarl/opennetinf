@@ -8,7 +8,7 @@
 	<!-- param name="Threshold" value="DEBUG"/ -->
     <layout class="org.apache.log4j.PatternLayout"> 
       <!-- param name="ConversionPattern" value="%6r %-5p %l [%t] - %m%n"/ --> 
-      <param name="ConversionPattern" value="%6r [%t] %-5p %m -- [%l] %n" />
+      <param name="ConversionPattern" value="%6r [%t] %-5p %-70m - %l %n" />
     </layout>
   </appender>
 

@@ -1,5 +1,6 @@
 package netinf.node.cache;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -107,7 +108,7 @@ public class CacheJob extends Thread {
             transferDispatcher.getStreamAndSave(url, destination, false);
 
             // get hash
-            FileInputStream fis = new FileInputStream(destination);
+            DataInputStream fis = new DataInputStream(new FileInputStream(destination));
             byte[] hashBytes = Hashing.hashSHA1(fis);
             IOUtils.closeQuietly(fis);
 
