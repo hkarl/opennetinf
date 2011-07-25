@@ -49,12 +49,14 @@ public class URLStreamEnum implements Enumeration<InputStream> {
             e.printStackTrace();
          }
       }
+      
+      curChunk++;
       return new InputStream() {
          
          @Override
          public int read() throws IOException {
             // TODO Auto-generated method stub
-            return 0;
+            return -1;
          }
       };
    }

@@ -5,12 +5,8 @@ import java.util.Properties;
 import netinf.common.datamodel.impl.module.DatamodelImplModule;
 import netinf.common.security.impl.module.SecurityModule;
 import netinf.node.cache.network.NetworkCache;
-import netinf.node.cache.network.impl.CacheServer;
-import netinf.node.cache.network.impl.EhCacheServerImpl;
-import netinf.node.cache.network.impl.NetInfCacheImpl;
 
 import com.google.inject.PrivateModule;
-import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 
 /**
@@ -29,9 +25,7 @@ public class CacheModuleTest extends PrivateModule {
    @Override
    public void configure() {
       Names.bindProperties(binder(), properties);
-      bind(NetworkCache.class).to(NetInfCacheImpl.class).in(Singleton.class);
-      bind(CacheServer.class).to(EhCacheServerImpl.class);
-      expose(NetworkCache.class);
+      bind(BOCacheServer.class).to(NetworkCache.class);
 
       install(new DatamodelImplModule());
       install(new SecurityModule());

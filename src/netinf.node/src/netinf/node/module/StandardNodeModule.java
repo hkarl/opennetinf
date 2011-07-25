@@ -48,9 +48,10 @@ import netinf.common.utils.Utils;
 import netinf.node.access.AccessServer;
 import netinf.node.access.rest.RESTAccessServer;
 import netinf.node.access.rest.module.RESTModule;
+import netinf.node.cache.BOCacheServer;
 import netinf.node.cache.CachingInterceptor;
-import netinf.node.cache.network.module.NetworkCacheModule;
-import netinf.node.cache.peerside.module.PeerSideCacheModule;
+import netinf.node.cache.network.NetworkCache;
+import netinf.node.cache.peerside.PeersideCache;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.rdf.RDFResolutionService;
@@ -100,8 +101,6 @@ public class StandardNodeModule extends AbstractNodeModule {
       // Caches
       // install(new LocalIOCachingModule());
       // install(new BOCachingModule());
-      install(new NetworkCacheModule());
-      install(new PeerSideCacheModule());
    }
 
    /**
@@ -181,6 +180,12 @@ public class StandardNodeModule extends AbstractNodeModule {
    @Provides
    AccessServer[] provideAccessServers(RESTAccessServer rest) {
       return new AccessServer[] { rest };
+   }
+   
+   @Singleton
+   @Provides
+   BOCacheServer[] provideBOCaches(NetworkCache nw, PeersideCache ps) {
+      return new BOCacheServer[] { ps, nw };
    }
 
 }

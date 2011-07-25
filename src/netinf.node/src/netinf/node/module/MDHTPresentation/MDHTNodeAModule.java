@@ -6,7 +6,6 @@ import netinf.access.TCPServer;
 import netinf.common.datamodel.impl.module.DatamodelImplModule;
 import netinf.common.datamodel.translation.module.DatamodelTranslationModule;
 import netinf.common.utils.Utils;
-import netinf.node.cache.network.module.NetworkCacheModule;
 import netinf.node.module.AbstractNodeModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
@@ -50,9 +49,6 @@ public class MDHTNodeAModule extends AbstractNodeModule {
 
       // Caching Storage
       install(new LocalIOCachingModule());
-
-      // In-network Caching
-      install(new NetworkCacheModule());
    }
 
    @Singleton
