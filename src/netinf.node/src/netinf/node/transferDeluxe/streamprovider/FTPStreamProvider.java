@@ -40,7 +40,13 @@ public class FTPStreamProvider implements StreamProvider {
    @Override
    public InputStream getStream(Chunk chunk, String baseUrl) throws IOException {
       // TODO Auto-generated method stub
-      return null;
+      return new InputStream() {
+         
+         @Override
+         public int read() throws IOException {
+            return -1;
+         }
+      };
    }
 
 }

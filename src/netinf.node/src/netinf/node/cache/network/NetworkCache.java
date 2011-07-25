@@ -38,8 +38,8 @@ public class NetworkCache implements BOCacheServer {
     *           address where the server is hosted
     */
    @Inject
-   public NetworkCache(@Named("cache_address") final String host, @Named("cache_port") final String port,
-         @Named("cache_tablename") final String tablename, @Named("network_mdht_scope") final int scope) {
+   public NetworkCache(@Named("network.cache.address") final String host, @Named("network.cache.port") final String port,
+         @Named("network.cache.tablename") final String tablename, @Named("network.mdht.scope") final int scope) {
       
       mdhtScope = scope;
       

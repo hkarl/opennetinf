@@ -35,7 +35,7 @@ public class ChunkedBO {
 
    private static final Logger LOG = Logger.getLogger(ChunkedBO.class);
    private int chunkSizeInBytes = 256 * 1024;
-   private List<Chunk> orderedChunkContainer;
+   private List<Chunk> chunkList;
    private int totalNoOfChunks;
    private List<String> baseUrls;
 
@@ -50,13 +50,13 @@ public class ChunkedBO {
          throw new NetInfNotChunkableException("DataObject has no range enabled URLs");
       }
 
-      orderedChunkContainer = new ArrayList<Chunk>();
+      chunkList = new ArrayList<Chunk>();
       for (Attribute chunkAttr : chunks) {
-         orderedChunkContainer.add(new Chunk(chunkAttr));
+         chunkList.add(new Chunk(chunkAttr));
       }
 
       totalNoOfChunks = getTotalNumberOfChunks(dataObject);
-      if (totalNoOfChunks != orderedChunkContainer.size()) {
+      if (totalNoOfChunks != chunkList.size()) {
          throw new NetInfNotChunkableException("The number of chunks in the DO is nor valid");
       }
    }
@@ -139,10 +139,10 @@ public class ChunkedBO {
     */
    public ChunkedBO(String filePath) throws FileNotFoundException {
       if (filePath == null) {
-         throw new FileNotFoundException("path is null");
+         throw new FileNotFoundException("Given file does not exist");
       }
 
-      orderedChunkContainer = new ArrayList<Chunk>();
+      chunkList = new ArrayList<Chunk>();
 
       // generate Chunks
       File file = new File(filePath);
@@ -150,37 +150,28 @@ public class ChunkedBO {
       if (file.exists()) {
          try {
             readStream = new DataInputStream(new FileInputStream(file));
-
-            // (BOcacheImpl) skip manually added content-type NOOOOOOOOOOOOOOOOOOO
-            // int skipSize = readStream.readInt();
-            // for (int i = 0; i < skipSize; i++) {
-            // readStream.read();
-            // }
-
             String hash = null;
             int chunkCount = 0;
             byte[] tempBuf;
             long fileSize = file.length();
-            int chunkPart;
             ByteArrayOutputStream outStream = null;
 
-            for (chunkPart = 0; chunkPart < fileSize / chunkSizeInBytes; chunkPart++) {
+            for (chunkCount = 0; chunkCount < fileSize / chunkSizeInBytes; chunkCount++) {
                outStream = new ByteArrayOutputStream(chunkSizeInBytes);
 
                for (int byteCount = 0; byteCount < chunkSizeInBytes; byteCount++) {
                   outStream.write(readStream.read());
                }
 
-               chunkCount++;
                tempBuf = outStream.toByteArray();
                hash = Utils.hexStringFromBytes(Hashing.hashSHA1(new ByteArrayInputStream(tempBuf)));
-               orderedChunkContainer.add(new Chunk(hash, chunkCount));
+               chunkList.add(new Chunk(hash, chunkCount));
                // close the file
                outStream.close();
             }
 
             // loop for the last chunk (which may be smaller than the chunk size)
-            if (fileSize != chunkSizeInBytes * (chunkPart - 1)) {
+            if (fileSize != chunkSizeInBytes * (chunkCount - 1)) {
                // open the output file
                outStream = new ByteArrayOutputStream(chunkSizeInBytes);
 
@@ -190,21 +181,19 @@ public class ChunkedBO {
                   outStream.write(b);
                }
 
-               chunkCount++;
                tempBuf = outStream.toByteArray();
                hash = Utils.hexStringFromBytes(Hashing.hashSHA1(new ByteArrayInputStream(tempBuf)));
-               orderedChunkContainer.add(new Chunk(hash, chunkCount));
+               chunkList.add(new Chunk(hash, chunkCount));
 
                // close the file
                outStream.close();
             }
 
             // set total number
-            totalNoOfChunks = chunkCount;
+            totalNoOfChunks = chunkList.size();
 
          } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.warn("(ChunkedBO ) error while creating chunks: " + e.getMessage());
          } finally {
             IOUtils.closeQuietly(readStream);
          }
@@ -214,7 +203,7 @@ public class ChunkedBO {
    }
 
    public List<Chunk> getChunks() {
-      return orderedChunkContainer;
+      return chunkList;
    }
 
    /**

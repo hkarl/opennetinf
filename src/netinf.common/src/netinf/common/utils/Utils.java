@@ -39,10 +39,13 @@ package netinf.common.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.PrivateKey;
@@ -50,6 +53,7 @@ import java.security.PublicKey;
 import java.util.Properties;
 
 import netinf.common.exceptions.NetInfUncheckedException;
+import netinf.common.security.Hashing;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -210,13 +214,42 @@ public class Utils {
       bos.close();
 
       return bos.toByteArray();
+   }
+   
+   public static boolean isValidHash(String hashOfBO, String filePath) {
+      try {
+         File file = new File(filePath);
+         if (file.exists()) {
+            DataInputStream fis = new DataInputStream(new FileInputStream(filePath));
+            byte[] hashBytes = Hashing.hashSHA1(fis);
+            IOUtils.closeQuietly(fis);
+            if (hashOfBO.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
+               LOG.warn("(Utils ) Hash is valid: " + hashOfBO);
+               return true;
+            }
+         }
+      } catch (IOException e) {
+         LOG.warn("(Utils ) Error while checking integrity: " + e.getMessage());
+      }
+      return false;
+   }
+   
+   public static boolean saveTemp(InputStream inStream, String destination) {
+      File file = new File(destination);
+      if (file.exists()) {
+         return true;
+      } else { // file does not exist
+         try {
+            file.createNewFile();
+            IOUtils.copy(inStream, new FileOutputStream(file));
+         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+         } catch (IOException e) {
+            e.printStackTrace();
+         }
+      }
 
-      // byte[] buffer = new byte[16384];
-      //
-      // for (int len = fis.read(buffer); len > 0; len = fis.read(buffer)) {
-      // bos.write(buffer, 0, len);
-      // }
-      // fis.close();
+      return false;
    }
 
 }

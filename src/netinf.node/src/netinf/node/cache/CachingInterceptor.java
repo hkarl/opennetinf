@@ -37,7 +37,7 @@ public class CachingInterceptor implements ResolutionInterceptor {
     *           The injected chunking flag.
     */
    @Inject
-   public CachingInterceptor(@Named("use_chunking") final boolean useChunking) {
+   public CachingInterceptor(@Named("chunking") final boolean useChunking) {
       this.useChunking = useChunking;
       if (this.useChunking) {
          LOG.info("(CachingInterceptor ) Chunking is enabled");
