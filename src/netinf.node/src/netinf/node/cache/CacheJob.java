@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
 public class CacheJob extends Thread {
 
    private static final Logger LOG = Logger.getLogger(CacheJob.class);
-   private List<Cache> usedCaches;
+   private List<BOCache> usedCaches;
    private LocalNodeConnection connection;
    private DataObject toBeCached;
    private TransferDispatcher transferDispatcher;
@@ -49,7 +49,7 @@ public class CacheJob extends Thread {
     * @param useChunking
     *           The flag if chunking should be used.
     */
-   public CacheJob(DataObject dO, List<Cache> caches, LocalNodeConnection conn, boolean useChunking) {
+   public CacheJob(DataObject dO, List<BOCache> caches, LocalNodeConnection conn, boolean useChunking) {
       transferDispatcher = TransferDispatcher.getInstance();
       usedCaches = caches;
       connection = conn;
@@ -66,7 +66,7 @@ public class CacheJob extends Thread {
          return;
       }
 
-      for (Cache useCache : usedCaches) {
+      for (BOCache useCache : usedCaches) {
          LOG.info("(CacheJob ) CachingJob started...: " + useCache.getName());
          boolean success = useCache.cache(toBeCached, cachedTmpFile);
          if (success) {

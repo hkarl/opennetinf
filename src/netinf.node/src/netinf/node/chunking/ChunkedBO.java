@@ -96,6 +96,7 @@ public class ChunkedBO {
       return false;
    }
    
+   @SuppressWarnings("unused")
    private List<String> getLocatorsWithChunkedLabel(DataObject obj) {
       List<String> urls = new ArrayList<String>();
       List<Attribute> attrs = obj.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());

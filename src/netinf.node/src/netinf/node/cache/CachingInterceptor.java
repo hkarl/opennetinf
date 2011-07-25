@@ -10,8 +10,6 @@ import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.utils.DatamodelUtils;
 import netinf.node.api.impl.LocalNodeConnection;
-import netinf.node.cache.network.NetworkCache;
-import netinf.node.cache.peerside.PeerSideCache;
 import netinf.node.resolution.ResolutionInterceptor;
 
 import org.apache.log4j.Logger;
@@ -28,7 +26,7 @@ public class CachingInterceptor implements ResolutionInterceptor {
 
    private static final Logger LOG = Logger.getLogger(CachingInterceptor.class);
    private LocalNodeConnection connection;
-   private List<Cache> usedCaches = new ArrayList<Cache>();
+   private List<BOCache> usedCaches = new ArrayList<BOCache>();
    private Hashtable<String, Thread> runningCacheJobs = new Hashtable<String, Thread>();
    private boolean useChunking;
 
@@ -49,22 +47,15 @@ public class CachingInterceptor implements ResolutionInterceptor {
    }
 
    @Inject(optional = true)
-   public void setNetworkCache(NetworkCache cache) {
-      if (!cache.isConnected()) {
-         LOG.info("(NWInterceptor ) NWCache not connected");
-      } else {
-         usedCaches.add(cache);
-         LOG.info("(NWInterceptor ) NWCache connected");
-      }
-   }
-
-   @Inject(optional = true)
-   public void setPeersideCache(PeerSideCache cache) {
-      if (!cache.isConnected()) {
-         LOG.info("(PSInterceptor ) PSCache not connected");
-      } else {
-         usedCaches.add(cache);
-         LOG.info("(PSInterceptor ) PSCache connected");
+   public void setCaches(BOCacheServer[] server) {
+      for (BOCacheServer serv : server) {
+         if (!serv.isConnected()) {
+            LOG.info("(CachingInterceptor ) " + serv.getClass().getSimpleName() + "is NOT connected");
+         } else {
+            BOCache cache = new BOCache(serv, serv.getClass().getSimpleName(), serv.getScope());
+            usedCaches.add(cache);
+            LOG.info("(CachingInterceptor ) " + cache.getName() + " IS connected");
+         }
       }
    }
 
@@ -82,7 +73,7 @@ public class CachingInterceptor implements ResolutionInterceptor {
          return io;
       }
 
-      List<Cache> useThisCaches = whoShouldCache(io);
+      List<BOCache> useThisCaches = whoShouldCache(io);
       if (useThisCaches.isEmpty()) {
          LOG.info("(CachingInterceptor ) nobody should cache this DO");
          return io;
@@ -123,10 +114,10 @@ public class CachingInterceptor implements ResolutionInterceptor {
     *           The IO
     * @return A subset of all usable caches (which make sense)
     */
-   private List<Cache> whoShouldCache(InformationObject obj) {
-      List<Cache> useThisCaches = new ArrayList<Cache>();
+   private List<BOCache> whoShouldCache(InformationObject obj) {
+      List<BOCache> useThisCaches = new ArrayList<BOCache>();
       List<Attribute> locators = obj.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
-      for (Cache cache : usedCaches) {
+      for (BOCache cache : usedCaches) {
          boolean addCache = true;
          for (Attribute loc : locators) {
             if (loc.getValue(String.class).contains(cache.getAddress())) {

@@ -1,11 +1,11 @@
-package netinf.node.cache.network.impl;
+package netinf.node.cache;
 
 /**
- * Interface for an cache adapter that can be used by a NetInfCache
+ * Interface for an CachingServer
  * 
  * @author PG NetInf 3, University of Paderborn
  */
-public interface CacheServer {
+public interface BOCacheServer {
 
    /**
     * Caches a given BO in the Server
@@ -17,15 +17,6 @@ public interface CacheServer {
     * @return true if the operation was successfully executed, otherwise false
     */
    boolean cacheBO(byte[] bo, String hashOfBO);
-
-   /**
-    * Gets the BO from the cache
-    * 
-    * @param hashOfBO
-    *           the hash-value of the given BO
-    * @return the BO, in case of failure null
-    */
-   byte[] getBO(String hashOfBO);
 
    /**
     * Get the URL of the cached BO
@@ -58,4 +49,11 @@ public interface CacheServer {
     * @return the address (url)
     */
    String getAddress();
+
+   /**
+    * Provides the given scope of this CachinServer.
+    * 
+    * @return The scope as integer.
+    */
+   int getScope();
 }
