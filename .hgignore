@@ -10,6 +10,9 @@ syntax: glob
 # log files
 *.log
 
+# checkstyle files
+.checkstyle
+
 # libraries
 *.jar
 
