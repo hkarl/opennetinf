@@ -4,6 +4,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.Status;
+import netinf.node.access.AccessServer;
 import netinf.node.cache.BOCacheServer;
 
 import org.apache.log4j.Logger;
@@ -17,24 +18,34 @@ import com.google.inject.name.Named;
 public class PeersideCache implements BOCacheServer {
 
    // TODO: cache is still not persistent
-   // TODO: cache is not reachable from outside -> REST
+   private static final Logger LOG = Logger.getLogger(PeersideCache.class);
    
    private Cache cache;
    private CacheManager manager;
-   private static final Logger LOG = Logger.getLogger(PeersideCache.class);
    private final String ehcacheConfigPath = "../configs/PeersideEhcacheConfig.xml";
+   
+   private AccessServer accessServer;
+   private String host;
+   private int port;
+   
    private int mdhtScope;
    
   /**
    * Constructor
    */
    @Inject
-   public PeersideCache(@Named("peerside.mdht.scope") final int scope) {
+   public PeersideCache(@Named("peerside.mdht.scope") final int scope, 
+         @Named("peerside.access.host") String host, @Named("peerside.access.port") int port) {
       // create manager with default config and init cache
       manager = CacheManager.create(ehcacheConfigPath);
       cache = manager.getCache("PeersideCache");
       
       mdhtScope = scope;
+      
+      this.host = host;
+      this.port = port;
+      accessServer = new PeersideAccessServer(cache, port);
+      accessServer.start();
    }
 
    @Override
@@ -71,7 +82,7 @@ public class PeersideCache implements BOCacheServer {
 
    @Override
    public String getAddress() {
-      return manager.getDiskStorePath();
+      return "http://" + host + ":" + port;
    }
    
    @Override
