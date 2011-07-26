@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +13,8 @@ import netinf.common.log.demo.DemoLevel;
 import netinf.node.chunking.Chunk;
 import netinf.node.chunking.ChunkedBO;
 import netinf.node.chunking.NetInfNotChunkableException;
+import netinf.node.transferDeluxe.chunkstreams.ConcurrentChunkStream;
+import netinf.node.transferDeluxe.chunkstreams.SequentialChunkStream;
 import netinf.node.transferDeluxe.streamprovider.FTPStreamProvider;
 import netinf.node.transferDeluxe.streamprovider.HTTPStreamProvider;
 import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
@@ -32,6 +33,7 @@ public final class TransferDispatcher {
    private static final Logger LOG = Logger.getLogger(TransferDispatcher.class);
    private List<StreamProvider> streamProviders;
    private static TransferDispatcher instance;
+   private int chunkingTechnique = 1;
 
    private TransferDispatcher() {
       addStreamProviders();
@@ -44,6 +46,11 @@ public final class TransferDispatcher {
       streamProviders.add(new HTTPStreamProvider());
    }
 
+   /**
+    * Provides the singleton instance of a TransferDispatcher.
+    * 
+    * @return The TransferDispatcher
+    */
    public static synchronized TransferDispatcher getInstance() {
       if (instance == null) {
          instance = new TransferDispatcher();
@@ -70,7 +77,19 @@ public final class TransferDispatcher {
       try {
          ChunkedBO chunkedBO = new ChunkedBO(dataObj);
          LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Chunks exist, use them...");
-         return new SequentialChunkStream(chunkedBO);
+
+         switch (chunkingTechnique) {
+         case 1:
+            LOG.info("(TransferDispatcher ) Using ConcurrentChunkStream...");
+            return new ConcurrentChunkStream(chunkedBO);
+         case 2:
+            LOG.info("(TransferDispatcher ) SequentialChunkStream...");
+            return new SequentialChunkStream(chunkedBO);
+         default:
+            LOG.info("(TransferDispatcher ) Nothing selected... Using ConcurrentChunkStream");
+            return new ConcurrentChunkStream(chunkedBO);
+         }
+
       } catch (NetInfNotChunkableException e1) {
          LOG.info("(TransferDispatcher ) Chunking can not be used for this DO: " + e1.getMessage());
       }
@@ -93,29 +112,35 @@ public final class TransferDispatcher {
 
    public void getStreamAndSave(String url, String destination, boolean withContentType)
          throws NetInfNoStreamProviderFoundException, IOException {
-      
+
       File file = new File(destination);
       if (file.exists() && file.isFile()) {
          return;
       }
-      
+
       LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Starting Download from: " + url);
       InputStream is = getStream(url);
       DataOutputStream dos = null;
       try {
          dos = new DataOutputStream(new FileOutputStream(destination));
          IOUtils.copy(is, dos);
-  
-      } catch (MalformedURLException e) {
-         LOG.warn("Could not download data from: " + url);
-      } catch (IOException e) {
-         LOG.warn("Could not download data from: " + url);
+      } catch (Exception e) {
+         LOG.warn("(TransferDispatcher ) Could not download data from: " + url + " - " + e.getMessage());
       } finally {
          IOUtils.closeQuietly(is);
          IOUtils.closeQuietly(dos);
       }
    }
 
+   /**
+    * Provides the appropriate StreamProvider.
+    * 
+    * @param url
+    *           The URL to which a stream shall be povided.
+    * @return The specific StreamProvider.
+    * @throws NetInfNoStreamProviderFoundException
+    *            If no provider could be found.
+    */
    StreamProvider getStreamProvider(String url) throws NetInfNoStreamProviderFoundException {
       for (StreamProvider sp : streamProviders) {
          if (sp.canHandle(url)) {
@@ -123,8 +148,6 @@ public final class TransferDispatcher {
             return sp;
          }
       }
-
-      // no StreamProvider found
       throw new NetInfNoStreamProviderFoundException(url + " not supported");
    }
 

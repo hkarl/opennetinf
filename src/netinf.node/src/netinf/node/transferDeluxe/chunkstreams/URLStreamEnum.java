@@ -1,4 +1,4 @@
-package netinf.node.transferDeluxe;
+package netinf.node.transferDeluxe.chunkstreams;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +7,7 @@ import java.util.List;
 
 import netinf.node.chunking.Chunk;
 import netinf.node.chunking.ChunkedBO;
+import netinf.node.transferDeluxe.TransferDispatcher;
 import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
 
 import org.apache.log4j.Logger;
@@ -50,10 +51,10 @@ public class URLStreamEnum implements Enumeration<InputStream> {
             e.printStackTrace();
          }
       }
-      
+
       curChunk++;
       return new InputStream() {
-         
+
          @Override
          public int read() throws IOException {
             // TODO Auto-generated method stub
@@ -62,6 +63,12 @@ public class URLStreamEnum implements Enumeration<InputStream> {
       };
    }
 
+   /**
+    * Provides the chunk by the given number
+    * 
+    * @param number
+    * @return The Chunk
+    */
    private Chunk getChunkByNumber(int number) {
       for (Chunk chunk : chunks) {
          if (chunk.getNumber() == number) {

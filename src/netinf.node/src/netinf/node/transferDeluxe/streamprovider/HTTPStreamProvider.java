@@ -38,13 +38,11 @@ public class HTTPStreamProvider implements StreamProvider {
       // determine range
       int chunkSizeInBytes = 256 * 1024;
       int from = chunkSizeInBytes * chunk.getNumber();
-      String to;
-      to = "" + ((chunkSizeInBytes * (chunk.getNumber() + 1)) - 1);
+      int to = (chunkSizeInBytes * (chunk.getNumber() + 1)) - 1;
 
       HttpClient client = new DefaultHttpClient();
-      HttpGet httpGet = new HttpGet(baseUrl); // TODO: handling of last chunk...
-      httpGet.setHeader("Range", "bytes=" + from + "-" + to); // TODO !!!!
-      System.out.println("from: " + from + "to " + to);
+      HttpGet httpGet = new HttpGet(baseUrl);
+      httpGet.setHeader("Range", "bytes=" + from + "-" + to);
       try {
          HttpResponse response = client.execute(httpGet);
          int status = response.getStatusLine().getStatusCode();
