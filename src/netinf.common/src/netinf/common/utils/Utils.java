@@ -215,7 +215,7 @@ public class Utils {
 
       return bos.toByteArray();
    }
-   
+
    public static boolean isValidHash(String hashOfBO, String filePath) {
       try {
          File file = new File(filePath);
@@ -224,16 +224,17 @@ public class Utils {
             byte[] hashBytes = Hashing.hashSHA1(fis);
             IOUtils.closeQuietly(fis);
             if (hashOfBO.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
-               LOG.warn("(Utils ) Hash is valid: " + hashOfBO);
+               LOG.info("(Utils ) Hash is valid: " + hashOfBO);
                return true;
             }
          }
       } catch (IOException e) {
          LOG.warn("(Utils ) Error while checking integrity: " + e.getMessage());
       }
+      LOG.info("(Utils ) Hash is NOT valid: " + hashOfBO);
       return false;
    }
-   
+
    public static boolean saveTemp(InputStream inStream, String destination) {
       File file = new File(destination);
       if (file.exists()) {

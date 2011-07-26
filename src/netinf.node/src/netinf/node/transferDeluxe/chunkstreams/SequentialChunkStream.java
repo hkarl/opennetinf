@@ -1,4 +1,4 @@
-package netinf.node.transferDeluxe;
+package netinf.node.transferDeluxe.chunkstreams;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,12 +17,6 @@ public class SequentialChunkStream extends InputStream {
 
    private static final Logger LOG = Logger.getLogger(SequentialChunkStream.class);
    private SequenceInputStream stream;
-   
-   public static InputStream getCombinedStream(ChunkedBO chunkedBO) {
-      LOG.log(DemoLevel.DEMO, "(Demultiplexer ) Number of chunks: " + chunkedBO.getTotalNoOfChunks());
-      Enumeration<InputStream> urlEnum = new URLStreamEnum(chunkedBO);
-      return new SequenceInputStream(urlEnum);
-   }
    
    public SequentialChunkStream(ChunkedBO chunkedBO) {
       LOG.log(DemoLevel.DEMO, "(Demultiplexer ) Number of chunks: " + chunkedBO.getTotalNoOfChunks());
