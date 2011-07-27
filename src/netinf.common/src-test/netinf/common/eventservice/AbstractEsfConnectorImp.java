@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.Identifier;
 import netinf.common.exceptions.NetInfCheckedException;
+import netinf.common.log.demo.DemoLevel;
 import netinf.common.messages.ESFEventMessage;
 import netinf.common.messages.ESFFetchMissedEventsRequest;
 import netinf.common.messages.ESFUnsubscriptionRequest;
@@ -13,9 +14,12 @@ import netinf.common.messages.NetInfMessage;
 
 import com.google.inject.Provider;
 
+/**
+ * @author PG NetInf
+ */
 public class AbstractEsfConnectorImp extends AbstractEsfConnector {
 
-   MockErrorCommunicator communicator;
+   private MockErrorCommunicator communicator;
    private AbstractMessageProcessor procHandler;
    private MessageReceiver receiveHandler;
    private LinkedBlockingQueue<ESFEventMessage> messageQueue = new LinkedBlockingQueue<ESFEventMessage>();
@@ -26,8 +30,8 @@ public class AbstractEsfConnectorImp extends AbstractEsfConnector {
    private List<String> subscriptionQueries = null;
    private List<Long> subscriptionExpireTimes = null;
 
-   ESFEventMessage msg1 = new ESFEventMessage();
-   ESFEventMessage msg2 = new ESFEventMessage();
+   private ESFEventMessage msg1 = new ESFEventMessage();
+   private ESFEventMessage msg2 = new ESFEventMessage();
 
    public AbstractEsfConnectorImp(DatamodelFactory dmFactory, MessageReceiver receiveHandler,
          AbstractMessageProcessor procHandler, String host, String port) {
@@ -95,14 +99,14 @@ public class AbstractEsfConnectorImp extends AbstractEsfConnector {
       }
 
       if (result) {
-         // LOG.log(DemoLevel.DEMO, "(ESCON) I am connected to an event service at " + this.host + ":" + this.port);
+         LOG.log(DemoLevel.DEMO, "(ESCON) I am connected to an event service");
       } else {
          LOG.error("Something went wrong while initializing the ESF connector. See above error message for details");
          // if connection is open, close it as cleanup
          try {
             this.communicator.close();
          } catch (Exception e) {
-            // no logging necessary
+            LOG.warn("Communicator could not be closed");
          }
       }
    }

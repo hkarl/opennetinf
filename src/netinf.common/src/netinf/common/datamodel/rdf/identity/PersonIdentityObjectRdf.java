@@ -97,7 +97,7 @@ public class PersonIdentityObjectRdf extends IdentityObjectRdf implements Person
       if (getIdentifier() != null) {
          buf.append(getIdentifier().describe());
       } else {
-         // TODO: What to do then? (eddy)
+         buf.append("Identifier is NULL");
       }
 
       return buf.toString();

@@ -20,8 +20,11 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
+/**
+ * @author PG NetInf 3
+ */
 public class RemoteNodeConnectionTest {
-   
+
    private static final String PROPERTIES_PATH = "../configs/testing.properties";
    public static final String NETINFNODE_PROPERTIES = "../configs/testing/netinfnode_testing.properties";
 

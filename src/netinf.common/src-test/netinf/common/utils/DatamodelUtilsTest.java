@@ -27,6 +27,9 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
+/**
+ * @author PG NetInf 3
+ */
 public class DatamodelUtilsTest {
 
    public static final String PROPERTIES = "../configs/testing.properties";

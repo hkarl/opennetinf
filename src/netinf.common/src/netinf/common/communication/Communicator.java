@@ -102,7 +102,7 @@ public class Communicator {
          try {
             this.connection.close();
          } catch (IOException ex) {
-            // No Problem
+            LOG.warn("Communicator could not be closed");
          }
       }
       this.host = host;

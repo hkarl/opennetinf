@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+/**
+ * @author PG NetInf 3
+ */
 public class DefinedQueryTemplatesTest {
 
    @Test

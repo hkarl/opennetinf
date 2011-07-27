@@ -99,7 +99,7 @@ public abstract class AbstractEsfConnector extends Thread {
       this.procHandler = procHandler;
       this.host = host;
       this.port = Integer.valueOf(port);
-      
+
       this.messageQueue = new LinkedBlockingQueue<ESFEventMessage>();
    }
 
@@ -187,7 +187,7 @@ public abstract class AbstractEsfConnector extends Thread {
          try {
             this.communicator.close();
          } catch (Exception e) {
-            // no logging necessary
+            LOG.warn("Communicator could not be closed");
          }
       }
    }
@@ -368,7 +368,7 @@ public abstract class AbstractEsfConnector extends Thread {
          this.communicator.stopAsyncReceive();
          this.communicator.close();
       } catch (Exception e) {
-         // no logging necessary
+         LOG.warn("Communicator could not be closed");
       }
       while (!(messageQueue.isEmpty() && procHandler.isWaiting())) {
          try {
