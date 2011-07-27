@@ -24,6 +24,9 @@ import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
+/**
+ * @author PG NetInf
+ */
 public class AbstractEsfConnectorImpTest {
 
    public static final String IDENTIFICATION_1 = DefinedAttributeIdentification.AMOUNT.getURI();

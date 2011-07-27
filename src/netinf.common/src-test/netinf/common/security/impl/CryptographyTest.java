@@ -216,18 +216,21 @@ public class CryptographyTest {
          crypto.encrypt(informationObject, "wrong algorithm", defaultKeyAlgorithmName);
          Assert.fail("Exception expected. Wrong content algotirhm given.");
       } catch (NetInfCheckedSecurityException securityException) {
+         System.out.println(securityException.getMessage());
       }
 
       try {
          crypto.encrypt(informationObject, defaultContentAlgorithmName, "wrong algorithm");
          Assert.fail("Exception expected. Wrong key algotirhm given.");
       } catch (NetInfCheckedSecurityException securityException) {
+         System.out.println(securityException.getMessage());
       }
 
       try {
          crypto.encrypt(informationObject, defaultKeyAlgorithmName, defaultContentAlgorithmName);
          Assert.fail("Exception expected. Wrong algotirhm given in wrong order.");
       } catch (NetInfCheckedSecurityException securityException) {
+         System.out.println(securityException.getMessage());
       }
 
    }
@@ -241,6 +244,7 @@ public class CryptographyTest {
          crypto.encrypt(informationObject, readers1);
          Assert.fail("Exception expected. No readers given.");
       } catch (NetInfCheckedSecurityException securityException) {
+         System.out.println(securityException.getMessage());
       }
    }
 
@@ -264,6 +268,7 @@ public class CryptographyTest {
          crypto.encrypt(informationObject, readers);
          Assert.fail("Exception expected. Wrong reader name given.");
       } catch (NetInfCheckedSecurityException securityException) {
+         System.out.println(securityException.getMessage());
       }
    }
 
@@ -297,6 +302,7 @@ public class CryptographyTest {
          crypto.decrypt(encryptedAttribute);
          Assert.fail("Exception expected. No private key given.");
       } catch (NetInfCheckedSecurityException securityException) {
+         System.out.println(securityException.getMessage());
       } catch (Exception e) {
          Assert.fail("Wrong exception catched. " + e.getMessage());
          e.printStackTrace();
@@ -307,7 +313,7 @@ public class CryptographyTest {
    public void testBadPrivateKey() throws NetInfCheckedSecurityException {
       Attribute attribute = createTestAttribute();
       Attribute encryptedAttribute = crypto.encrypt(attribute, publicKeys);
-      String keyName = identityObject.getIdentifier().toString() + "?" + DefinedAttributeIdentification.PUBLIC_KEY.getURI();
+      // String keyName = identityObject.getIdentifier().toString() + "?" + DefinedAttributeIdentification.PUBLIC_KEY.getURI();
 
       IdentityManager wrongIdentityManager = EasyMock.createMock(IdentityManager.class);
       EasyMock.expect(wrongIdentityManager.hasPrivateKey((String) EasyMock.anyObject())).andReturn(true).anyTimes();
@@ -343,6 +349,7 @@ public class CryptographyTest {
          crypto.decrypt(encryptedAttribute);
          Assert.fail("Exception expected. Wrong private key given.");
       } catch (NetInfCheckedSecurityException securityException) {
+         System.out.println(securityException.getMessage());
       }
    }
 
@@ -385,6 +392,7 @@ public class CryptographyTest {
          crypto.decrypt(encryptedAttribute);
          Assert.fail("Exception expected. Wrong private key given.");
       } catch (NetInfCheckedSecurityException securityException) {
+         System.out.println(securityException.getMessage());
       }
    }
 

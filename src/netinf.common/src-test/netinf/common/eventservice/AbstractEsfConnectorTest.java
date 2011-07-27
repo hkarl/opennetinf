@@ -32,6 +32,9 @@ import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
+/**
+ * @author PG NetInf
+ */
 public class AbstractEsfConnectorTest {
 
    public static final String IDENTIFICATION_1 = DefinedAttributeIdentification.AMOUNT.getURI();
@@ -50,9 +53,9 @@ public class AbstractEsfConnectorTest {
 
    private Injector injector;
 
-   String port = "5002";
-   String host = "127.0.0.1";
-   AbstractEsfConnectorImp esfConnector;
+   private String port = "5002";
+   private String host = "127.0.0.1";
+   private AbstractEsfConnectorImp esfConnector;
 
    @Before
    public void setUp() throws Exception {

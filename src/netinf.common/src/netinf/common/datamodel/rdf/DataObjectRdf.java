@@ -81,7 +81,7 @@ public class DataObjectRdf extends InformationObjectRdf implements DataObject {
       if (getIdentifier() != null) {
          buf.append(getIdentifier().describe());
       } else {
-         // TODO: What to do then? (eddy)
+         buf.append("Identifier is NULL");
       }
 
       return buf.toString();
