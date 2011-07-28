@@ -66,9 +66,16 @@ public class ChunkedBO {
       List<Attribute> attrs = obj.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
       for (Attribute attr : attrs) {
          String loc = attr.getValue(String.class);
+
          if (providesRanges(loc)) {
             LOG.info("(ChunkedBO ) URL provides RANGEs: " + loc);
-            urls.add(loc);
+            if (loc.contains("localhost")) {
+               urls.add(0, loc); // prefer local cache
+            } else {
+               urls.add(loc);
+            }
+         } else {
+            LOG.info("(ChunkedBO ) URL provides NOT RANGEs: " + loc);
          }
       }
       return urls;
@@ -95,7 +102,7 @@ public class ChunkedBO {
       }
       return false;
    }
-   
+
    @SuppressWarnings("unused")
    private List<String> getLocatorsWithChunkedLabel(DataObject obj) {
       List<String> urls = new ArrayList<String>();
@@ -208,6 +215,7 @@ public class ChunkedBO {
 
    /**
     * Provides the size of a single chunk
+    * 
     * @return Size as integer.
     */
    public int getChunkSize() {
@@ -216,6 +224,7 @@ public class ChunkedBO {
 
    /**
     * Gets the total number of chunks.
+    * 
     * @return The total number as integer.
     */
    public int getTotalNoOfChunks() {
@@ -224,6 +233,7 @@ public class ChunkedBO {
 
    /**
     * Provides a list of base urls.
+    * 
     * @return The list.
     */
    public List<String> getBaseUrls() {

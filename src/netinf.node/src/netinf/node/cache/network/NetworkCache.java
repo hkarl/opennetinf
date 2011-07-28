@@ -40,9 +40,9 @@ public class NetworkCache implements BOCacheServer {
    @Inject
    public NetworkCache(@Named("network.cache.address") final String host, @Named("network.cache.port") final String port,
          @Named("network.cache.tablename") final String tablename, @Named("network.mdht.scope") final int scope) {
-      
+
       mdhtScope = scope;
-      
+
       // create address of cache
       cacheAddress = buildCacheAddress(host, port, tablename);
 
