@@ -117,12 +117,11 @@ public class StandardNodeModule extends AbstractNodeModule {
    ResolutionService[] provideResolutionServices(RDFResolutionService rdfResolutionService) {
       return new ResolutionService[] { rdfResolutionService };
    }
-//   ResolutionService[] provideResolutionServices(MDHTResolutionService mdhtResolutionService) {
-//      return new ResolutionService[] { mdhtResolutionService };
-//   }
 
+   // ResolutionService[] provideResolutionServices(MDHTResolutionService mdhtResolutionService) {
+   // return new ResolutionService[] { mdhtResolutionService };
+   // }
 
-   
    /**
     * This method provides all the {@link ResolutionInterceptor}s which are automatically inserted into the node. In order to get
     * an instance of the according {@link ResolutionInterceptor}, add an additional parameter to this method, since this puts
@@ -138,6 +137,7 @@ public class StandardNodeModule extends AbstractNodeModule {
    ResolutionInterceptor[] provideResolutionInterceptors(CachingInterceptor caching) {
       return new ResolutionInterceptor[] { caching };
    }
+
    // ResolutionInterceptor[] provideResolutionInterceptors(IOCacheImpl ioCache, LocatorSelectorImpl locatorSelector) {
    // return new ResolutionInterceptor[] { ioCache, locatorSelector };
    // }
@@ -181,7 +181,7 @@ public class StandardNodeModule extends AbstractNodeModule {
    AccessServer[] provideAccessServers(RESTAccessServer rest) {
       return new AccessServer[] { rest };
    }
-   
+
    @Singleton
    @Provides
    BOCacheServer[] provideBOCaches(NetworkCache nw, PeersideCache ps) {

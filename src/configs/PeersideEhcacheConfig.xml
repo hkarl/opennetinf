@@ -6,7 +6,7 @@
          monitoring="autodetect"
          dynamicConfig="true">
     
-    <diskStore path="java.io.tmpdir"/>
+    <diskStore path="PeersideDiskStore"/>
     <defaultCache
             maxElementsInMemory="10000"
             eternal="false"
@@ -25,5 +25,6 @@
            overflowToDisk="true"
            diskPersistent="true"
            maxElementsInMemory="1"
+           diskExpiryThreadIntervalSeconds="1"
             />
 </ehcache>
