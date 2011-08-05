@@ -3,7 +3,6 @@ package netinf.node.transferDeluxe.chunkstreams;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
@@ -39,7 +38,7 @@ public class BufferFiller extends Thread {
 
    @Override
    public void run() {
-      while (curr <= max) {
+      while (curr <= max && !isInterrupted()) {
          InputStream in = null;
          ByteArrayOutputStream out = new ByteArrayOutputStream();
          try {
@@ -49,7 +48,6 @@ public class BufferFiller extends Thread {
                   System.out.println("curr = " + curr + " chunk: " + chunk + " max:" + max);
                   in = TransferDispatcher.getInstance().getStream(chunk, baseUrl);
                   curr += incr;
-
                   IOUtils.copy(in, out);
                   bufferQueue.put(out.toByteArray());
                   Thread.yield();
@@ -58,12 +56,11 @@ public class BufferFiller extends Thread {
                   LOG.warn("(BufferFiller ) No Streamprivder found: " + e.getMessage());
                }
             }
-         } catch (MalformedURLException e) {
-            LOG.warn("(BufferFiller ) MalformedURLException: " + e.getMessage());
-         } catch (IOException e) {
-            LOG.warn("(BufferFiller ) IOException:" + e.getMessage());
          } catch (InterruptedException e) {
-            LOG.warn("(BufferFiller ) InterruptedException: " + e.getMessage());
+            interrupt();
+            LOG.info("(BufferFiller ) Thread interrupted");
+         } catch (IOException e) {
+            LOG.warn("(BufferFiller ) IOException:" + e.getMessage());;
          } finally {
             IOUtils.closeQuietly(in);
             IOUtils.closeQuietly(out);
@@ -74,8 +71,9 @@ public class BufferFiller extends Thread {
       try {
          bufferQueue.put(new byte[] { -1 });
       } catch (InterruptedException e) {
-         LOG.warn("(BufferFiller ) InterruptedException: " + e.getMessage());
+         LOG.info("(BufferFiller ) Thread interrupted");
       }
+      LOG.debug("(BufferFiller ) End of Thread");
    }
 
    /**
@@ -91,6 +89,15 @@ public class BufferFiller extends Thread {
          }
       }
       return null;
+   }
+   
+   /**
+    * Interrupts the buffer thread and clears all remaining bytes in buffer.
+    */
+   public void interruptAndClear() {
+      LOG.info("(BufferFiller ) Interrupt and clear buffer");
+      interrupt();
+      bufferQueue.clear();
    }
 
 }

@@ -57,7 +57,7 @@ public class ChunkedBO {
 
       totalNoOfChunks = getTotalNumberOfChunks(dataObject);
       if (totalNoOfChunks != chunkList.size()) {
-         throw new NetInfNotChunkableException("The number of chunks in the DO is nor valid");
+         throw new NetInfNotChunkableException("The number of chunks in the DO is not valid");
       }
    }
 

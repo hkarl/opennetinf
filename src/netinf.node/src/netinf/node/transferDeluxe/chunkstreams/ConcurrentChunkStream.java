@@ -3,6 +3,8 @@ package netinf.node.transferDeluxe.chunkstreams;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -13,7 +15,8 @@ import netinf.node.chunking.ChunkedBO;
  */
 public class ConcurrentChunkStream extends InputStream {
 
-   private BlockingQueue<byte[]>[] bufferQueues;
+   private List<BlockingQueue<byte[]>> bufferQueues;
+   private List<BufferFiller> bufferFillers;
    private int noOfFiller = 7;
 
    private int currQueue;
@@ -21,17 +24,20 @@ public class ConcurrentChunkStream extends InputStream {
    private int max;
    private int cur;
 
-   @SuppressWarnings("unchecked")
    public ConcurrentChunkStream(ChunkedBO chunkedBO) {
       max = chunkedBO.getTotalNoOfChunks() - 1;
       cur = 0;
       currQueue = 0;
 
       // init queues and bufferfillers
-      bufferQueues = new BlockingQueue[noOfFiller];
+      bufferQueues = new ArrayList<BlockingQueue<byte[]>>(noOfFiller);
+      bufferFillers = new ArrayList<BufferFiller>(noOfFiller);
       for (int i = 0; i < noOfFiller; i++) {
-         bufferQueues[i] = new ArrayBlockingQueue<byte[]>(7);
-         new BufferFiller(chunkedBO, i, noOfFiller, bufferQueues[i]).start();
+         BlockingQueue<byte[]> buffer = new ArrayBlockingQueue<byte[]>(noOfFiller); 
+         bufferQueues.add(buffer);
+         BufferFiller filler = new BufferFiller(chunkedBO, i, noOfFiller, buffer); 
+         bufferFillers.add(filler);
+         filler.start();
       }
 
       // start taking
@@ -43,7 +49,7 @@ public class ConcurrentChunkStream extends InputStream {
     */
    private void nextChunk() {
       try {
-         in = new ByteArrayInputStream(bufferQueues[currQueue].take());
+         in = new ByteArrayInputStream(bufferQueues.get(currQueue).take());
          currQueue = (currQueue + 1) % noOfFiller;
          cur++;
       } catch (InterruptedException e) {
@@ -62,6 +68,13 @@ public class ConcurrentChunkStream extends InputStream {
       } else {
          nextChunk();
          return read();
+      }
+   }
+   
+   @Override
+   public void close() throws IOException {
+      for (BufferFiller filler : bufferFillers) {
+         filler.interruptAndClear();
       }
    }
 

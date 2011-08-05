@@ -2,7 +2,7 @@ package netinf.node.access.rest.resources;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
+import java.io.OutputStream;
 import java.util.List;
 
 import netinf.common.datamodel.DataObject;
@@ -16,10 +16,11 @@ import netinf.common.exceptions.NetInfCheckedException;
 import netinf.common.utils.DatamodelUtils;
 import netinf.node.transferDeluxe.TransferDispatcher;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
-import org.restlet.representation.InputRepresentation;
+import org.restlet.representation.OutputRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;
@@ -71,19 +72,27 @@ public class BOResource extends NetInfResource {
       if (io != null) {
          List<Attribute> locators = io.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
          if (!locators.isEmpty()) {
-            // for (Attribute locator : locators) {
             try {
                if (io instanceof DataObject) {
                   TransferDispatcher tsDispatcher = TransferDispatcher.getInstance();
                   
-                  InputStream inStream = tsDispatcher.getStream((DataObject) io);
+                  final InputStream inStream = tsDispatcher.getStream((DataObject) io);
                   MediaType mdType = new MediaType(DatamodelUtils.getContentType(io));
 
-                  return new InputRepresentation(inStream, mdType);
+                  // return new InputRepresentation(inStream, mdType);
+                  return new OutputRepresentation(mdType) {
+                     @Override
+                     public void write(OutputStream outStream) throws IOException {
+                        try {
+                           IOUtils.copy(inStream, outStream);
+                        } finally {
+                           IOUtils.closeQuietly(inStream);
+                           IOUtils.closeQuietly(outStream);
+                        }
+                        
+                     }
+                  };
                }
-            } catch (MalformedURLException muehe) {
-               LOG.warn("Malformed locator URL", muehe);
-               // continue;
             } catch (IOException ioe) {
                LOG.warn("Could not open URL connection", ioe);
                // continue;
@@ -91,7 +100,6 @@ public class BOResource extends NetInfResource {
                // TODO Auto-generated catch block
                e.printStackTrace();
             }
-            // }
          }
       }
       throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND);

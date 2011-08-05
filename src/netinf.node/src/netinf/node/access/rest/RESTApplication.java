@@ -19,7 +19,7 @@ import org.restlet.routing.Router;
  */
 public class RESTApplication extends Application {
 
-   /** Conncection to a NetInfNode */
+   /** Connection to a NetInfNode */
    private NetInfNodeConnection nodeConnection;
    /** Implementation of a DatamodelFacotry */
    private DatamodelFactory datamodelFactory;

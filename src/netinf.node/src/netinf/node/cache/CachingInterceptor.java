@@ -50,11 +50,11 @@ public class CachingInterceptor implements ResolutionInterceptor {
    public void setCaches(BOCacheServer[] server) {
       for (BOCacheServer serv : server) {
          if (!serv.isConnected()) {
-            LOG.info("(CachingInterceptor ) " + serv.getClass().getSimpleName() + "is NOT connected");
+            LOG.info("(CachingInterceptor ) " + serv.getClass().getSimpleName() + " not connected");
          } else {
             BOCache cache = new BOCache(serv, serv.getClass().getSimpleName(), serv.getScope());
             usedCaches.add(cache);
-            LOG.info("(CachingInterceptor ) " + cache.getName() + " IS connected");
+            LOG.info("(CachingInterceptor ) " + cache.getName() + " connected");
          }
       }
    }

@@ -54,7 +54,7 @@
         <dependency
             org="org.restlet.jse"
             name="org.restlet"
-            rev="2.0.7" />
+            rev="2.0.8" />
         <dependency
             org="net.sf.ehcache"
             name="ehcache-core"

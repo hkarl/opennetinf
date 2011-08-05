@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Properties;
@@ -240,16 +241,21 @@ public class Utils {
       if (file.exists()) {
          return true;
       } else { // file does not exist
+         OutputStream out = null;
          try {
             file.createNewFile();
-            IOUtils.copy(inStream, new FileOutputStream(file));
+            out = new FileOutputStream(file);
+            IOUtils.copy(inStream, out);
+            return true;
          } catch (FileNotFoundException e) {
             e.printStackTrace();
          } catch (IOException e) {
             e.printStackTrace();
+         } finally {
+            IOUtils.closeQuietly(inStream);
+            IOUtils.closeQuietly(out);
          }
       }
-
       return false;
    }
 
