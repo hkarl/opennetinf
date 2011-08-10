@@ -18,10 +18,7 @@ public class TestModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      // TODO Auto-generated method stub
-
       this.bind(Stack.class).annotatedWith(Names.named("stack")).toInstance(stack);
-
    }
 
 }
