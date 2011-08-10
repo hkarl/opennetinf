@@ -53,11 +53,11 @@ public class URLStreamEnum implements Enumeration<InputStream> {
       }
 
       curChunk++;
+      // return error stream (-1 = end)
       return new InputStream() {
 
          @Override
          public int read() throws IOException {
-            // TODO Auto-generated method stub
             return -1;
          }
       };
