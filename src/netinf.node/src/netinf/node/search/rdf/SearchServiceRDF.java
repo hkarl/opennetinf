@@ -133,7 +133,7 @@ public class SearchServiceRDF implements SearchService {
       this.model = null;
 
       boolean ready = false;
-      try {            
+      try {
          this.store = sdbStoreFactory.createStore();
          this.dataset = SDBFactory.connectDataset(this.store);
          this.model = SDBFactory.connectDefaultModel(this.store);
@@ -396,7 +396,7 @@ public class SearchServiceRDF implements SearchService {
       // add further products to query in case they exist
       if (products.length > 1) {
          int i = 0;
-         // eddy: was productCount = 1 ^^
+         // eddy: was productCount = 1 before
          for (int productCount = 0; productCount < products.length; productCount++) {
             constructedQuery += " UNION { ?identifier <" + DefinedAttributeIdentification.REPRESENTS.getURI() + "> ?blank_" + i
                   + ". ?blank_" + i + " <" + DefinedRdfNames.ATTRIBUTE_VALUE + "> 'String:Shop'.";

@@ -164,15 +164,6 @@ public class TCPServer extends NetInfServer {
          } catch (IOException e) {
             LOG.error("The TCP Server encountered an error", e);
          }
-         // dont know, if this is really neccessary: stop() in TCPServer is already closing the socket
-         // TODO: eddy - observe if this is causing any problems
-         // finally {
-         // try {
-         // TCPServer.this.serverSocket.close();
-         // } catch (IOException e) {
-         // LOG.error("The TCP Server encountered an error while closing", e);
-         // }
-         // }
       }
 
       @Override
