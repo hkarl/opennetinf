@@ -137,6 +137,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
    public void put(InformationObject io) {
       LOG.log(DemoLevel.DEMO, "(MDHT ) Putting IO with Identifier: " + io.getIdentifier() + " on all levels");
       InformationObject informationObject = translator.toImpl(io);
+      
       try {
          validateIOForPut(informationObject);
       } catch (IllegalArgumentException ex) {
@@ -160,13 +161,18 @@ public class MDHTResolutionService extends AbstractResolutionService {
     * @return The level as integer if given, otherwise the maximum level.
     */
    private int getLevel(InformationObject io) {
-      List<Attribute> attributes = io.getAttribute(DefinedAttributeIdentification.MDHT_LEVEL.getURI());
+	  int retValue = dhts.size();
+	  List<Attribute> attributes = io.getAttribute(DefinedAttributeIdentification.MDHT_LEVEL.getURI());
+	  if (attributes.isEmpty()) 					//Use default size if the above-mentioned attribute is not defined
+		   return retValue;
       for (Attribute attr : attributes) {
-         if (attr.getValue(Integer.class) != null) {
-            return attr.getValue(Integer.class);
+    	 Integer intValue = attr.getValue(Integer.class);
+         if (intValue != null) {
+        	 retValue = intValue > retValue ? retValue : intValue;	//Check to see if the given value more than maximum allowed
+        	 break;
          }
       }
-      return dhts.size();
+      return retValue;
    }
 
    public void put(InformationObject io, int maxLevel) {
