@@ -51,12 +51,5 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<statusbarpanel id="infox-statusbar-status" class="statusbarpanel-iconic" width="15" src="chrome://infox/skin/oni16.png" />
 		<statusbarpanel id="infox-statusbar-text" label="init" />
 	</statusbar>
-
-	<toolbarpalette id="BrowserToolbarPalette">
-		<toolbaritem id="infox-gp-label" flex="1">
-			<textbox id="infox-gp-target" multiline="false" label="&switchdevice;" />
-			<toolbarbutton id="infox-gp-switchdevice-button" label="&switchdevice;" oncommand="InFox.tcChangeRequest();"/>
-		</toolbaritem>
-	</toolbarpalette>
 		
 </overlay>
