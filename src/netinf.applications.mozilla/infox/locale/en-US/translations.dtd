@@ -6,14 +6,11 @@
 <!ENTITY port				"HTTP Interface Port">
 <!ENTITY username			"Username/Identification">
 <!ENTITY password			"Password/Key">
-<!ENTITY moveto				" GP Relocation\n Destination: ">
 <!ENTITY autorun			"Start Plugin at Startup">
 <!ENTITY autoopen			"Automatically follow links">
 <!ENTITY colorizelinks		"Style links">
 <!ENTITY unrescolor			"Unresolved link's color">
 <!ENTITY rescolor			"Resolved link's color">
-<!ENTITY switchdevice		"Relocate GP">
-<!ENTITY switchdevicedesc	"Relocate GP">
 <!ENTITY restbehavior		"RESTful Behavior with Popups">
 <!ENTITY restport			"REST Interface Port">
 <!ENTITY reset				"Reset">
