@@ -15,4 +15,4 @@ pref("extensions.infox.rescolor", "#E6EFC2");
 pref("extensions.infox.restbehavior", true);
 pref("extensions.infox.restport", "8081");
 
-// don't forger to apply changes in 'InFox.resetPreferences()'
+// don't forget to apply changes in 'InFox.resetPreferences()'
