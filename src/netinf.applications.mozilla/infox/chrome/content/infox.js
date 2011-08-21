@@ -92,8 +92,6 @@ var InFox = {
 		this.unrescolor		= this.prefManager.getCharPref("unrescolor");	
 		this.rescolor		= this.prefManager.getCharPref("rescolor");
 		
-		this.GPJobId		= "";
-		
 		// load jQuery library
 		var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
 		jsLoader.loadSubScript("chrome://infox/content/jquery/jquery-1.3.2.min.js");
@@ -204,14 +202,6 @@ var InFox = {
 			document.getElementById('infox-statusbar-text').label = "No unresolved NetInf links";
 		} else {
 			document.getElementById('infox-statusbar-text').label = foundLinks + " unresolved NetInf links";
-		}
-		
-		try {
-			// GP Toolbar
-			document.getElementById('infox-gp-target').disabled = true;
-			document.getElementById('infox-gp-switchdevice-button').disabled = true;
-		} catch (e) {
-			//LOG.info("Please add the GP-bar under 'View -> Toolbars -> Customize...' to enable GP functionality.");
 		}
 		
 	},
@@ -852,146 +842,6 @@ var InFox = {
 
 	},
 	
-	/* Starts a TransferRequest (using Generic Path Integration)
-	 * 
-	 * @param strSource the source address
-	 */
-	tcStartRequest: function(strSource) {
-		
-		var http	= new XMLHttpRequest();
-		var url 	= 'http://' + this.SERVER + ':' + this.PORT;
-	    var params 	=	"<?xml version='1.0' encoding='UTF-8'?>\n" +
-						"<TCStartTransferRequest>\n" +
-						"\t<SerializeFormat>RDF</SerializeFormat>\n" +
-						"\t<Source>" + strSource + "</Source>\n" +
-						"</TCStartTransferRequest>";
-	    
-		LOG.info("Sending TCStartRequest to NetInf Node <" + url + ">"); //+ ":\n\n" + params);
-		
-	    http.open("POST", url, true);
-		
-		//Send the proper header information along with the request
-	    http.setRequestHeader("Content-type", "text/xml");
-	    http.setRequestHeader("Content-length", params.length);
-	    http.setRequestHeader("Connection", "close");
-	
-	    http.send(params);
-	    http.onreadystatechange = function() {//Call this function when the state changes.
-			var msg = "";
-			switch (http.readyState) {
-				case 1:
-					msg = "Request Object created, but not initalized";
-					break;
-				case 2:
-					msg = "Request is initialized and uploading";
-					break;
-				case 3:
-					msg = "Request sent and partial data is loaded";
-					break;
-				case 4:
-					if (http.status == 200) {
-						msg = "Request is successfully completed";
-					} else {
-						msg = "Request unsuccessfull. HTTP status: " + http.status;
-						LOG.info(msg);
-						return;
-					}
-					break;
-				default:
-					msg = "undefined";
-					break;
-			}
-	    	LOG.info(msg);
-			
-	    	if(http.readyState == 4 && http.status == 200) {
-	    		//LOG.info(http.responseText); // ugly output
-	    		var rdfIO = http.responseXML;
-				var nsResolver = rdfIO.createNSResolver( rdfIO.ownerDocument == null ? rdfIO.documentElement : rdfIO.ownerDocument.documentElement);
-				InFox.GPJobId = rdfIO.evaluate( '//JobId', rdfIO, nsResolver, XPathResult.ANY_TYPE, null ).iterateNext().textContent;
-				LOG.info("GP Job ID is: " + InFox.GPJobId);
-				
-				// Update GP Toolbar
-				document.getElementById('infox-gp-target').disabled = false;
-				document.getElementById('infox-gp-switchdevice-button').disabled = false;
-	    	} else if (http.readyState == 4 && http.status != 200) {
-	    		LOG.error(msg);
-	    	}
-	    };
-
-            var requestTimer = setTimeout(function() {
-            http.abort();
-            LOG.info("Request Timeout");
-            }, 5000);
-		
-	    //http.send(params);
-	},
-	
-	/* Requests a Change Transfer (using Generic Path Integration) for the current Transfer Job.
-	 */
-	tcChangeRequest: function() {
-		
-		var strDestination = document.getElementById('infox-gp-target').value;
-		
-		var http	= new XMLHttpRequest();
-		var url 	= 'http://' + this.SERVER + ':' + this.PORT;
-	    var params 	=	"<?xml version='1.0' encoding='UTF-8'?>\n" +
-						"<TCChangeTransferRequest>\n" +
-						"\t<SerializeFormat>RDF</SerializeFormat>\n" +
-						"\t<Proceed>true</Proceed>\n" +
-						"\t<NewDestination>" + strDestination + "</NewDestination>\n" +
-						"\t<JobId>" + this.GPJobId + "</JobId>\n" +
-						"</TCChangeTransferRequest>";
-	    
-		LOG.info("Sending TCChangeRequest for job <" + this.GPJobId + ">" + "\n" + "with new destination " + strDestination + " to NetInf Node <" + url + ">" + ":\n\n" + params);
-		
-	    http.open("POST", url, true);
-		
-		//Send the proper header information along with the request
-	    http.setRequestHeader("Content-type", "text/xml");
-	    http.setRequestHeader("Content-length", params.length);
-	    http.setRequestHeader("Connection", "close");
-	
-	    http.send(params);
-	    http.onreadystatechange = function() {//Call this function when the state changes.
-			var msg = "";
-			switch (http.readyState) {
-				case 1:
-					msg = "Request Object created, but not initalized";
-					break;
-				case 2:
-					msg = "Request is initialized and uploading";
-					break;
-				case 3:
-					msg = "Request sent and partial data is loaded";
-					break;
-				case 4:
-					if (http.status == 200) {
-						msg = "Request is successfully completed";
-					} else {
-						msg = "Request unsuccessfull. HTTP status: " + http.status;
-						LOG.info(msg);
-						return;
-					}
-					break;
-				default:
-					msg = "undefined";
-					break;
-			}
-	    	LOG.info(msg);
-			
-	    	if(http.readyState == 4 && http.status == 200) {
-	    		LOG.info(http.responseText); // ugly output
-				// to something usefull
-	    	} else if (http.readyState == 4 && http.status != 200) {
-	    		LOG.error(msg);
-	    	}
-	    };
-
-        var requestTimer = setTimeout(function() {
-	        http.abort();
-	        LOG.info("Request Timeout");
-        }, 5000);
-	},
 	
 	/**
 	 * resets the preferences to default values
@@ -1017,5 +867,3 @@ var InFox = {
 
 // When Firefox is loaded, we initialize the InFox instance
 window.addEventListener("load", function(e) { InFox.startup(); }, false);
-//window.addEventListener("unload", function(e) { InFox.shutdown(); }, false);
-
