@@ -186,7 +186,9 @@ public class FreePastryDHT implements DHT, Application {
             if (pastryNode.joinFailed() && noOfAttempts < MAX_JOIN_ATTEMPTS) {
              LOG.warn("(FreePastryDHT) Could not join the Pastry ring.  Reason:"
             		   + pastryNode.joinFailedReason());
-            } else {
+            } else
+            	if (pastryNode.joinFailed()
+            	 && noOfAttempts >= MAX_JOIN_ATTEMPTS) {
              	LOG.error("(FreePastryDHT) Reached the max number of join attempts. Join failed.");
             	break;
             }
