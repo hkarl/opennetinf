@@ -116,17 +116,21 @@ public class CachingInterceptor implements ResolutionInterceptor {
     */
    private List<BOCache> whoShouldCache(InformationObject obj) {
       List<BOCache> useThisCaches = new ArrayList<BOCache>();
-      List<Attribute> locators = obj.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
+      // List<Attribute> locators = obj.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
       for (BOCache cache : usedCaches) {
-         boolean addCache = true;
-         for (Attribute loc : locators) {
-            if (loc.getValue(String.class).contains(cache.getAddress())) {
-               addCache = false;
-            }
-         }
-         if (addCache) {
+         if (!cache.contains(DatamodelUtils.getHash(obj))) {
             useThisCaches.add(cache);
          }
+
+         // boolean addCache = true;
+         // for (Attribute loc : locators) {
+         // if (loc.getValue(String.class).contains(cache.getAddress())) {
+         // addCache = false;
+         // }
+         // }
+         // if (addCache) {
+         // useThisCaches.add(cache);
+         // }
       }
 
       return useThisCaches;
