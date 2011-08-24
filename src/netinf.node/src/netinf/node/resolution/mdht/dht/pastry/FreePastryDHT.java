@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
+import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.mdht.MDHTResolutionService;
 import netinf.node.resolution.mdht.dht.DHT;
 import netinf.node.resolution.mdht.dht.DHTConfiguration;
@@ -169,7 +170,8 @@ public class FreePastryDHT implements DHT, Application {
    }
 
    public FreePastryDHT(DHTConfiguration config, MDHTResolutionService pParent) throws IOException {
-      this(config.getListenPort(), config.getBootHost(), config.getBootPort(), "Level-" + config.getLevel(), pParent);
+		  this(config.getListenPort(), config.getBootHost(),
+			config.getBootPort(), "Level-" + config.getLevel(), pParent);
    }
 
 
@@ -186,13 +188,14 @@ public class FreePastryDHT implements DHT, Application {
             if (pastryNode.joinFailed() && noOfAttempts < MAX_JOIN_ATTEMPTS) {
              LOG.warn("(FreePastryDHT) Could not join the Pastry ring.  Reason:"
             		   + pastryNode.joinFailedReason());
+             noOfAttempts++;
             } else
             	if (pastryNode.joinFailed()
             	 && noOfAttempts >= MAX_JOIN_ATTEMPTS) {
              	LOG.error("(FreePastryDHT) Reached the max number of join attempts. Join failed.");
             	break;
             }
-            noOfAttempts++;
+            
          }
       }
       LOG.info("(FreePastryDHT) Finished starting pastry node" + pastryNode);
