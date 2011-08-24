@@ -1,0 +1,5 @@
+<!ENTITY runinbird	"Run InBird">
+<!ENTITY server		"HTTP Interface Server">
+<!ENTITY port		"HTTP Interface Port">
+<!ENTITY username	"Username/Identification">
+<!ENTITY password	"Password/Key">
