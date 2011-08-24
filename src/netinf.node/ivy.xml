@@ -58,7 +58,7 @@
         <dependency
             org="net.sf.ehcache"
             name="ehcache-core"
-            rev="2.4.2" />
+            rev="2.4.4" />
         <dependency
             org="mysql"
             name="mysql-connector-java"

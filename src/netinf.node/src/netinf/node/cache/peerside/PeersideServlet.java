@@ -89,4 +89,18 @@ public class PeersideServlet extends HttpServlet {
    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
       doHeadOrGet(req, resp, true);
    }
+
+   @Override
+   protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+      String elementKey = req.getPathInfo();
+      if (elementKey.startsWith("/") && elementKey.length() >= 1) {
+         elementKey = elementKey.substring(1);
+      }
+      if (elementKey.equals("*")) {
+         cache.removeAll();
+      } else {
+         cache.remove(elementKey);
+      }
+      resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+   }
 }
