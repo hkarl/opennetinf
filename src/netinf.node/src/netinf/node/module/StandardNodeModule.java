@@ -37,6 +37,8 @@
  */
 package netinf.node.module;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import netinf.access.HTTPServer;
 import netinf.access.NetInfServer;
 import netinf.access.TCPServer;
@@ -56,6 +58,7 @@ import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.rdf.RDFResolutionService;
 import netinf.node.resolution.rdf.module.RDFResolutionServiceModule;
+import netinf.node.resolution.remote.RemoteResolutionFactory;
 import netinf.node.search.SearchService;
 import netinf.node.search.rdf.SearchServiceRDF;
 import netinf.node.search.rdf.module.SearchServiceRDFModule;
@@ -114,8 +117,11 @@ public class StandardNodeModule extends AbstractNodeModule {
     */
    @Singleton
    @Provides
-   ResolutionService[] provideResolutionServices(RDFResolutionService rdfResolutionService) {
-      return new ResolutionService[] { rdfResolutionService };
+   ResolutionService[] provideResolutionServices(RemoteResolutionFactory remoteResolutionFactory, RDFResolutionService rdfResolutionService) {
+      ResolutionService[] otherRS = { rdfResolutionService };
+      
+      ResolutionService[] remoteRS = remoteResolutionFactory.getRemoteResolutionServices().toArray(new ResolutionService[] {});
+      return (ResolutionService[]) ArrayUtils.addAll(remoteRS, otherRS);
    }
 
    // ResolutionService[] provideResolutionServices(MDHTResolutionService mdhtResolutionService) {

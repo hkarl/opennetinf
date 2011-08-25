@@ -1,0 +1,10 @@
+This folder contains .remoteRS files. These configuration files are used to connect various RemoteResolutionServices.
+
+
+Example
+-------
+
+/configs/remoteRS/example.remoteRS (the .remoteRS extension has to be provided):
+
+host = 10.10.10.1
+port = 5000
