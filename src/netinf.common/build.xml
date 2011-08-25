@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="netinf.common">
+    <property environment="env"/>
+    <property name="netinf.access.location" value="../netinf.access"/>
+    <property name="netinf.database.location" value="../netinf.database"/>
+    <property name="netinf.eventservice.location" value="../netinf.eventservice"/>
+    <property name="netinf.node.location" value="../netinf.node"/>
+    <property name="netinf.tools.iomanagement.location" value="../netinf.tools.iomanagement"/>
+    <property name="netinf.tools.logging.location" value="../netinf.tools.logging"/>
+    <property name="netinf.tools.productlist.location" value="../netinf.tools.productlist"/>
+    <property name="netinf.tools.shopping.location" value="../netinf.tools.shopping"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <path id="JUnit 4.libraryclasspath">
+        <pathelement location="../../../../../../Program Files (x86)/eclipse/plugins/org.junit4_4.5.0.v20090824/junit.jar"/>
+        <pathelement location="../../../../../../Program Files (x86)/eclipse/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+    </path>
+    <path id="netinf.common.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/log4j-1.2.15.jar"/>
+        <pathelement location="lib/commons-io-1.4.jar"/>
+        <pathelement location="lib/commons-lang-2.4.jar"/>
+        <pathelement location="lib/aopalliance.jar"/>
+        <pathelement location="lib/guice-2.0.jar"/>
+        <pathelement location="lib/google-protobuf.jar"/>
+        <pathelement location="lib/commons-codec-1.4.jar"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+        <pathelement location="lib/jena.jar"/>
+        <pathelement location="lib/arq.jar"/>
+        <pathelement location="lib/arq-extra.jar"/>
+    	<!--<pathelement location="lib/guice-2.0-src.zip"/>-->
+        <pathelement location="lib/icu4j_3_4.jar"/>
+        <pathelement location="lib/iri.jar"/>
+        <pathelement location="lib/jenatest.jar"/>
+        <pathelement location="lib/json.jar"/>
+        <pathelement location="lib/junit-4.5.jar"/>
+        <pathelement location="lib/lucene-core-2.3.1.jar"/>
+        <pathelement location="lib/sdb.jar"/>
+        <pathelement location="lib/slf4j-api-1.5.6.jar"/>
+        <pathelement location="lib/slf4j-log4j12-1.5.6.jar"/>
+        <pathelement location="lib/stax-api-1.0.jar"/>
+        <pathelement location="lib/wstx-asl-3.0.0.jar"/>
+        <pathelement location="lib/xercesImpl.jar"/>
+        <pathelement location="lib-test/easymock.jar"/>
+        <pathelement location="lib-test/easymockclassextension.jar"/>
+        <pathelement location="lib-test/cglib-nodep-2.2.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src-test">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="netinf.common.classpath"/>
+        </javac>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+            <src path="src-test"/>
+            <classpath refid="netinf.common.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
+        <ant antfile="${netinf.access.location}/build.xml" dir="${netinf.access.location}" inheritAll="false" target="clean"/>
+        <ant antfile="${netinf.access.location}/build.xml" dir="${netinf.access.location}" inheritAll="false" target="build"/>
+        <ant antfile="${netinf.database.location}/build.xml" dir="${netinf.database.location}" inheritAll="false" target="clean"/>
+        <ant antfile="${netinf.database.location}/build.xml" dir="${netinf.database.location}" inheritAll="false" target="build"/>
+        <ant antfile="${netinf.eventservice.location}/build.xml" dir="${netinf.eventservice.location}" inheritAll="false" target="clean"/>
+        <ant antfile="${netinf.eventservice.location}/build.xml" dir="${netinf.eventservice.location}" inheritAll="false" target="build"/>
+        <ant antfile="${netinf.node.location}/build.xml" dir="${netinf.node.location}" inheritAll="false" target="clean"/>
+        <ant antfile="${netinf.node.location}/build.xml" dir="${netinf.node.location}" inheritAll="false" target="build"/>
+        <ant antfile="${netinf.tools.iomanagement.location}/build.xml" dir="${netinf.tools.iomanagement.location}" inheritAll="false" target="clean"/>
+        <ant antfile="${netinf.tools.iomanagement.location}/build.xml" dir="${netinf.tools.iomanagement.location}" inheritAll="false" target="build"/>
+        <ant antfile="${netinf.tools.logging.location}/build.xml" dir="${netinf.tools.logging.location}" inheritAll="false" target="clean"/>
+        <ant antfile="${netinf.tools.logging.location}/build.xml" dir="${netinf.tools.logging.location}" inheritAll="false" target="build"/>
+        <ant antfile="${netinf.tools.productlist.location}/build.xml" dir="${netinf.tools.productlist.location}" inheritAll="false" target="clean"/>
+        <ant antfile="${netinf.tools.productlist.location}/build.xml" dir="${netinf.tools.productlist.location}" inheritAll="false" target="build"/>
+        <ant antfile="${netinf.tools.shopping.location}/build.xml" dir="${netinf.tools.shopping.location}" inheritAll="false" target="clean"/>
+        <ant antfile="${netinf.tools.shopping.location}/build.xml" dir="${netinf.tools.shopping.location}" inheritAll="false" target="build"/>
+    </target>
+    <target name="src-test">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="netinf.common.communication.MessageEncoderProtobufTest" todir="${junit.output.dir}"/>
+            <test name="netinf.common.communication.MessageEncoderXMLTest" todir="${junit.output.dir}"/>
+            <test name="netinf.common.datamodel.DatamodelTest" todir="${junit.output.dir}"/>
+            <test name="netinf.common.datamodel.rdf.RdfDatamodelTest" todir="${junit.output.dir}"/>
+            <test name="netinf.common.datamodel.translation.TranslationTest" todir="${junit.output.dir}"/>
+            <test name="netinf.common.security.impl.CryptographyTest" todir="${junit.output.dir}"/>
+            <test name="netinf.common.security.impl.HashingTest" todir="${junit.output.dir}"/>
+            <test name="netinf.common.security.impl.IdentityManagerTest" todir="${junit.output.dir}"/>
+            <test name="netinf.common.security.impl.IdentityVerificationTest" todir="${junit.output.dir}"/>
+            <test name="netinf.common.security.impl.IntegrityTest" todir="${junit.output.dir}"/>
+            <test name="netinf.common.security.impl.SecurityManagerTest" todir="${junit.output.dir}"/>
+            <test name="netinf.common.security.impl.SignatureAlgorithmTest" todir="${junit.output.dir}"/>
+            <test name="netinf.common.utils.UtilsTest" todir="${junit.output.dir}"/>
+            <classpath refid="netinf.common.classpath"/>
+        </junit>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+</project>
