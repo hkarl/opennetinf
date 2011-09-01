@@ -129,7 +129,7 @@ public abstract class MessageEncoderTest {
       this.testIdentifier.addIdentifierLabel(testIdentifierLabel);
 
       IdentifierLabel testIdentifierLabel2 = this.datamodelFactory.createIdentifierLabel();
-      testIdentifierLabel2.setLabelName("Universität");
+      testIdentifierLabel2.setLabelName("Universitaet");
       testIdentifierLabel2.setLabelValue("Moscow");
       this.testIdentifier2 = this.datamodelFactory.createIdentifier();
       this.testIdentifier2.addIdentifierLabel(testIdentifierLabel2);
