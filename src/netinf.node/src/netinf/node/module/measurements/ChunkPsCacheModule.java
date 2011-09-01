@@ -10,7 +10,7 @@ import netinf.node.access.AccessServer;
 import netinf.node.access.rest.module.RESTModule;
 import netinf.node.cache.BOCacheServer;
 import netinf.node.cache.CachingInterceptor;
-import netinf.node.cache.network.NetworkCache;
+import netinf.node.cache.peerside.PeersideCache;
 import netinf.node.module.AbstractNodeModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
