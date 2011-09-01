@@ -1,4 +1,4 @@
-package netinf.node.module.PeerSideCacheTestNode;
+package netinf.node.module.measurements;
 
 import netinf.access.HTTPServer;
 import netinf.access.NetInfServer;
@@ -8,15 +8,13 @@ import netinf.common.datamodel.translation.module.DatamodelTranslationModule;
 import netinf.common.utils.Utils;
 import netinf.node.access.AccessServer;
 import netinf.node.access.rest.module.RESTModule;
-import netinf.node.cache.BOCacheServer;
 import netinf.node.cache.CachingInterceptor;
-import netinf.node.cache.peerside.PeersideCache;
 import netinf.node.module.AbstractNodeModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.locator.impl.LocatorSelectorImpl;
-import netinf.node.resolution.mdht.MDHTResolutionService;
 import netinf.node.resolution.mdht.module.MDHTResolutionModule;
+import netinf.node.resolution.remote.RemoteResolutionFactory;
 import netinf.node.search.SearchService;
 import netinf.node.search.rdf.SearchServiceRDF;
 import netinf.node.search.rdf.module.SearchServiceRDFModule;
@@ -27,11 +25,11 @@ import com.google.inject.Singleton;
 /**
  * @author PG Netinf 3, University of Paderborn
  */
-public class PeerSideTestNodeModule extends AbstractNodeModule {
+public class ClientNodeModule extends AbstractNodeModule {
 
-   public static final String NODE_PROPERTIES = "../configs/IntegrationTestingStarterConfigs/PeerSideTestNode.properties";
+   public static final String NODE_PROPERTIES = "../configs/veclientconfigs/cachingoff/nochunknocache.properties";
 
-   public PeerSideTestNodeModule() {
+   public ClientNodeModule() {
       super(Utils.loadProperties(NODE_PROPERTIES));
    }
 
@@ -62,8 +60,10 @@ public class PeerSideTestNodeModule extends AbstractNodeModule {
 
    @Singleton
    @Provides
-   ResolutionService[] provideResolutionServices(MDHTResolutionService mdhtResolutionService) {
-      return new ResolutionService[] { mdhtResolutionService };
+   ResolutionService[] provideResolutionServices(RemoteResolutionFactory
+   remoteResolutionFactory) {
+     return remoteResolutionFactory.getRemoteResolutionServices().toArray(new
+   ResolutionService[] {});
    }
 
    /**
@@ -109,10 +109,11 @@ public class PeerSideTestNodeModule extends AbstractNodeModule {
 	   return new AccessServer[] { accServ };
    }
 
-  /* @Singleton
+   /***** Uncomment below to provide Peerside and NetworkCaches ****/
+   /*@Singleton
    @Provides
-   BOCacheServer[] provideBOCaches(NetworkCache nw , PeersideCache ps) {
-      return new BOCacheServer[] { ps , nw };
+   BOCacheServer[] provideBOCaches(NetworkCache nw ,PeersideCache ps) {
+      return new BOCacheServer[] { ps, nw };
    }*/
 
 }
