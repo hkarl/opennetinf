@@ -32,9 +32,7 @@ public class RemoteNodeConnectionTest {
    private Injector createInjector;
    private Properties properties;
 
-   private MessageEncoder messageEncoder;
    private DatamodelFactory datamodelFactory;
-   private DatamodelFactory datamodelFactoryN2;
    private Identifier testIdentifier;
    private Identifier testIdentifier2;
    private Identifier testIdentity;
@@ -46,7 +44,7 @@ public class RemoteNodeConnectionTest {
       this.properties = Utils.loadProperties(PROPERTIES_PATH);
       this.injector = Guice.createInjector(new CommonTestModule(this.properties));
 
-      this.messageEncoder = this.injector.getInstance(MessageEncoderProtobuf.class);
+      this.injector.getInstance(MessageEncoderProtobuf.class);
       this.datamodelFactory = this.injector.getInstance(DatamodelFactory.class);
 
       final Properties node2properties = Utils.loadProperties(NETINFNODE_PROPERTIES);
@@ -59,7 +57,7 @@ public class RemoteNodeConnectionTest {
             bind(NetInfNodeConnection.class).annotatedWith(SecurityModule.Security.class).to(RemoteNodeConnection.class);
          }
       });
-      datamodelFactoryN2 = createInjector.getInstance(DatamodelFactory.class);
+      createInjector.getInstance(DatamodelFactory.class);
 
       IdentifierLabel testIdentifierLabel = this.datamodelFactory.createIdentifierLabel();
       testIdentifierLabel.setLabelName("Uni");
@@ -68,7 +66,7 @@ public class RemoteNodeConnectionTest {
       this.testIdentifier.addIdentifierLabel(testIdentifierLabel);
 
       IdentifierLabel testIdentifierLabel2 = this.datamodelFactory.createIdentifierLabel();
-      testIdentifierLabel2.setLabelName("Universität");
+      testIdentifierLabel2.setLabelName("Universitaet");
       testIdentifierLabel2.setLabelValue("Moscow");
       this.testIdentifier2 = this.datamodelFactory.createIdentifier();
       this.testIdentifier2.addIdentifierLabel(testIdentifierLabel2);
