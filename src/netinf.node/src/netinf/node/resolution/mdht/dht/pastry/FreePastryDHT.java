@@ -135,7 +135,7 @@ public class FreePastryDHT implements DHT, Application {
 
       environment.getParameters().setString("loglevel", "WARNING");
 
-      if (bootHost == "localhost") {
+      if (bootHost.contains("localhost")) {
 
     	  environment.getParameters().setString("rice_socket_seed", "true");
 
