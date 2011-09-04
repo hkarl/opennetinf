@@ -6,6 +6,7 @@
         module="netinf.access"
         status="integration">
        </info>
+  <dependencies>
     <dependency
         org="log4j"
         name="log4j"
@@ -14,4 +15,5 @@
         org="com.google.inject"
         name="guice"
         rev="2.0" />
+    </dependencies>
 </ivy-module>

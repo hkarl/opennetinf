@@ -4,7 +4,7 @@
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. -->
-<project basedir="." default="build" name="netinf.node">
+<project basedir="." default="build" name="netinf.node" xmlns:ivy="antlib:org.apache.ivy.ant">
     <property environment="env"/>
     <property name="netinf.common.location" value="../netinf.common"/>
     <property name="junit.output.dir" value="junit"/>
@@ -19,33 +19,34 @@
     </path>
     <path id="netinf.common.classpath">
         <pathelement location="${netinf.common.location}/bin"/>
-        <pathelement location="${netinf.common.location}/lib/log4j-1.2.15.jar"/>
-        <pathelement location="${netinf.common.location}/lib/commons-io-1.4.jar"/>
-        <pathelement location="${netinf.common.location}/lib/commons-lang-2.4.jar"/>
-        <pathelement location="${netinf.common.location}/lib/aopalliance.jar"/>
-        <pathelement location="${netinf.common.location}/lib/guice-2.0.jar"/>
-        <pathelement location="${netinf.common.location}/lib/google-protobuf.jar"/>
-        <pathelement location="${netinf.common.location}/lib/commons-codec-1.4.jar"/>
+        <pathelement location="lib/log4j-1.2.16.jar"/>
+        <pathelement location="lib/commons-io-2.0.1.jar"/>
+        <pathelement location="lib/commons-lang-2.5.jar"/>
+        <pathelement location="lib/aopalliance.jar"/>
+        <pathelement location="lib/guice-2.0.jar"/>
+        <pathelement location="lib/protobuf-java-2.3.0.jar"/>
+        <pathelement location="lib/commons-codec-1.4.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
-        <pathelement location="${netinf.common.location}/lib/jena.jar"/>
-        <pathelement location="${netinf.common.location}/lib/arq.jar"/>
-        <pathelement location="${netinf.common.location}/lib/arq-extra.jar"/>
-        <pathelement location="${netinf.common.location}/lib/guice-2.0-src.zip"/>
-        <pathelement location="${netinf.common.location}/lib/icu4j_3_4.jar"/>
-        <pathelement location="${netinf.common.location}/lib/iri.jar"/>
-        <pathelement location="${netinf.common.location}/lib/jenatest.jar"/>
-        <pathelement location="${netinf.common.location}/lib/json.jar"/>
-        <pathelement location="${netinf.common.location}/lib/junit-4.5.jar"/>
-        <pathelement location="${netinf.common.location}/lib/lucene-core-2.3.1.jar"/>
-        <pathelement location="${netinf.common.location}/lib/sdb.jar"/>
-        <pathelement location="${netinf.common.location}/lib/slf4j-api-1.5.6.jar"/>
-        <pathelement location="${netinf.common.location}/lib/slf4j-log4j12-1.5.6.jar"/>
-        <pathelement location="${netinf.common.location}/lib/stax-api-1.0.jar"/>
-        <pathelement location="${netinf.common.location}/lib/wstx-asl-3.0.0.jar"/>
-        <pathelement location="${netinf.common.location}/lib/xercesImpl.jar"/>
-        <pathelement location="${netinf.common.location}/lib-test/easymock.jar"/>
-        <pathelement location="${netinf.common.location}/lib-test/easymockclassextension.jar"/>
-        <pathelement location="${netinf.common.location}/lib-test/cglib-nodep-2.2.jar"/>
+        <pathelement location="lib/jena-2.6.2.jar"/>
+        <pathelement location="lib/arq-2.8.2.jar"/>
+        <pathelement location="lib/arq-extra.jar"/>
+        <!--<pathelement location="lib/guice-2.0-src.zip"/>-->
+        <pathelement location="lib/icu4j-3.4.4.jar"/>
+        <pathelement location="lib/iri-0.8.jar"/>
+        <pathelement location="lib/jenatest.jar"/>
+        <pathelement location="lib/json.jar"/>
+        <pathelement location="lib/junit-4.5.jar"/>
+        <pathelement location="lib/lucene-core-2.3.1.jar"/>
+        <pathelement location="lib/sdb-1.3.1.jar"/>
+        <pathelement location="lib/slf4j-api-1.5.6.jar"/>
+        <pathelement location="lib/slf4j-log4j12-1.5.6.jar"/>
+        <pathelement location="lib/stax-api-1.0.jar"/>
+        <pathelement location="lib/wstx-asl-3.0.0.jar"/>
+        <pathelement location="lib/xercesImpl.jar"/>
+        <pathelement location="lib/easymock-2.5.2.jar"/>
+        <pathelement location="lib/easymockclassextension-2.5.2.jar"/>
+        <pathelement location="lib/cglib-nodep-2.2.jar"/>
+        <pathelement location="ehcache-core-2.4.4.jar"/>
     </path>
     <path id="netinf.database.classpath">
         <pathelement location="${netinf.database.location}/bin"/>
@@ -72,27 +73,39 @@
         <pathelement location="lib/xpp3-1.1.3.4d_b2.jar"/>
         <pathelement location="lib/mysql-connector-java-5.1.10-bin.jar"/>
         <pathelement location="${netinf.common.location}/lib/arq-extra.jar"/>
-        <pathelement location="${netinf.common.location}/lib/arq.jar"/>
-        <pathelement location="${netinf.common.location}/lib/icu4j_3_4.jar"/>
-        <pathelement location="${netinf.common.location}/lib/iri.jar"/>
-        <pathelement location="${netinf.common.location}/lib/jena.jar"/>
+        <pathelement location="${netinf.common.location}/lib/arq-2.8.2.jar"/>
+        <pathelement location="${netinf.common.location}/lib/icu4j-3.4.4.jar"/>
+        <pathelement location="${netinf.common.location}/lib/iri-0.8.jar"/>
+        <pathelement location="lib/jena-2.6.2.jar"/>
         <pathelement location="${netinf.common.location}/lib/jenatest.jar"/>
         <pathelement location="${netinf.common.location}/lib/json.jar"/>
         <pathelement location="${netinf.common.location}/lib/junit-4.5.jar"/>
-        <pathelement location="${netinf.common.location}/lib/log4j-1.2.15.jar"/>
+        <pathelement location="${netinf.common.location}/lib/log4j-1.2.16.jar"/>
         <pathelement location="${netinf.common.location}/lib/lucene-core-2.3.1.jar"/>
-        <pathelement location="${netinf.common.location}/lib/sdb.jar"/>
+        <pathelement location="lib/sdb-1.3.1.jar"/>
         <pathelement location="${netinf.common.location}/lib/slf4j-api-1.5.6.jar"/>
         <pathelement location="${netinf.common.location}/lib/slf4j-log4j12-1.5.6.jar"/>
         <pathelement location="${netinf.common.location}/lib/stax-api-1.0.jar"/>
         <pathelement location="${netinf.common.location}/lib/wstx-asl-3.0.0.jar"/>
         <pathelement location="${netinf.common.location}/lib/xercesImpl.jar"/>
-        <pathelement location="${netinf.common.location}/lib-test/cglib-nodep-2.2.jar"/>
-        <pathelement location="${netinf.common.location}/lib-test/easymock.jar"/>
-        <pathelement location="${netinf.common.location}/lib-test/easymockclassextension.jar"/>
+        <pathelement location="${netinf.common.location}/lib/cglib-nodep-2.2.jar"/>
+        <pathelement location="${netinf.common.location}/lib/easymock-2.5.2.jar"/>
+        <pathelement location="${netinf.common.location}/lib/easymockclassextension-2.5.2.jar"/>
         <pathelement location="lib/JSAP-2.1.jar"/>
+        <pathelement location="lib/org.restlet-2.0.8.jar"/>
+        <pathelement location="lib/httpclient-4.1.jar"/>
+        <pathelement location="lib/protobuf-java-2.3.0.jar"/>
+        <pathelement location="lib/jetty-server-7.4.4.v20110707.jar"/>
+        <pathelement location="lib/jetty-servlet-7.4.4.v20110707.jar"/>
+        <pathelement location="lib/jetty-util-7.4.4.v20110707.jar"/>
+        <pathelement location="lib/httpcore-4.1.jar"/>
+        <pathelement location="lib/servlet-api-2.5.jar"/>
+	<pathelement location="lib/ehcache-core-2.4.4.jar"/>
+
     </path>
     <target name="init">
+    <ivy:configure file="../configs/ivy/ivysettings.xml" />
+       <ivy:retrieve/>
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">

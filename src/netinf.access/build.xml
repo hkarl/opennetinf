@@ -4,7 +4,7 @@
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. -->
-<project basedir="." default="build" name="netinf.access">
+<project basedir="." default="build" name="netinf.access" xmlns:ivy="antlib:org.apache.ivy.ant">
     <property environment="env"/>
     <property name="netinf.eventservice.location" value="../netinf.eventservice"/>
     <property name="netinf.node.location" value="../netinf.node"/>
@@ -18,7 +18,7 @@
     </path>
     <path id="netinf.common.classpath">
         <pathelement location="${netinf.common.location}/bin"/>
-        <pathelement location="${netinf.common.location}/lib/log4j-1.2.15.jar"/>
+        <pathelement location="${netinf.common.location}/lib/log4j-1.2.16.jar"/>
         <pathelement location="${netinf.common.location}/lib/commons-io-1.4.jar"/>
         <pathelement location="${netinf.common.location}/lib/commons-lang-2.4.jar"/>
         <pathelement location="${netinf.common.location}/lib/aopalliance.jar"/>
@@ -42,9 +42,9 @@
         <pathelement location="${netinf.common.location}/lib/stax-api-1.0.jar"/>
         <pathelement location="${netinf.common.location}/lib/wstx-asl-3.0.0.jar"/>
         <pathelement location="${netinf.common.location}/lib/xercesImpl.jar"/>
-        <pathelement location="${netinf.common.location}/lib-test/easymock.jar"/>
-        <pathelement location="${netinf.common.location}/lib-test/easymockclassextension.jar"/>
-        <pathelement location="${netinf.common.location}/lib-test/cglib-nodep-2.2.jar"/>
+        <pathelement location="${netinf.common.location}/lib/easymock.jar"/>
+        <pathelement location="${netinf.common.location}/lib/easymockclassextension.jar"/>
+        <pathelement location="${netinf.common.location}/lib/cglib-nodep-2.2.jar"/>
     </path>
     <path id="netinf.access.classpath">
         <pathelement location="bin"/>
@@ -77,6 +77,8 @@
         <ant antfile="${netinf.common.location}/build.xml" dir="${netinf.common.location}" inheritAll="false" target="build-project"/>
     </target>
     <target depends="init" name="build-project">
+    <ivy:configure file="../configs/ivy/ivysettings.xml" />
+    <ivy:retrieve/>
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
             <src path="src"/>

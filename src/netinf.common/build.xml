@@ -4,7 +4,7 @@
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. -->
-<project basedir="." default="build" name="netinf.common">
+<project basedir="." default="build" name="netinf.common" xmlns:ivy="antlib:org.apache.ivy.ant">
     <property environment="env"/>
     <property name="netinf.access.location" value="../netinf.access"/>
     <property name="netinf.database.location" value="../netinf.database"/>
@@ -24,20 +24,20 @@
     </path>
     <path id="netinf.common.classpath">
         <pathelement location="bin"/>
-        <pathelement location="lib/log4j-1.2.15.jar"/>
-        <pathelement location="lib/commons-io-1.4.jar"/>
-        <pathelement location="lib/commons-lang-2.4.jar"/>
+        <pathelement location="lib/log4j-1.2.16.jar"/>
+        <pathelement location="lib/commons-io-2.0.1.jar"/>
+        <pathelement location="lib/commons-lang-2.5.jar"/>
         <pathelement location="lib/aopalliance.jar"/>
         <pathelement location="lib/guice-2.0.jar"/>
-        <pathelement location="lib/google-protobuf.jar"/>
+        <pathelement location="lib/protobuf-java-2.3.0.jar"/>
         <pathelement location="lib/commons-codec-1.4.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
-        <pathelement location="lib/jena.jar"/>
-        <pathelement location="lib/arq.jar"/>
+        <pathelement location="lib/jena-2.6.2.jar"/>
+        <pathelement location="lib/arq-2.8.2.jar"/>
         <pathelement location="lib/arq-extra.jar"/>
     	<!--<pathelement location="lib/guice-2.0-src.zip"/>-->
-        <pathelement location="lib/icu4j_3_4.jar"/>
-        <pathelement location="lib/iri.jar"/>
+        <pathelement location="lib/icu4j-3.4.4.jar"/>
+        <pathelement location="lib/iri-0.8.jar"/>
         <pathelement location="lib/jenatest.jar"/>
         <pathelement location="lib/json.jar"/>
         <pathelement location="lib/junit-4.5.jar"/>
@@ -48,9 +48,9 @@
         <pathelement location="lib/stax-api-1.0.jar"/>
         <pathelement location="lib/wstx-asl-3.0.0.jar"/>
         <pathelement location="lib/xercesImpl.jar"/>
-        <pathelement location="lib-test/easymock.jar"/>
-        <pathelement location="lib-test/easymockclassextension.jar"/>
-        <pathelement location="lib-test/cglib-nodep-2.2.jar"/>
+        <pathelement location="lib/easymock-2.5.2.jar"/>
+        <pathelement location="lib/easymockclassextension-2.5.2.jar"/>
+        <pathelement location="lib/cglib-nodep-2.2.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
@@ -74,6 +74,8 @@
     <target depends="build-subprojects,build-project" name="build"/>
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
+    <ivy:configure file="../configs/ivy/ivysettings.xml" />
+    <ivy:retrieve/>
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
             <src path="src"/>
