@@ -176,50 +176,12 @@
 	<target name="clean" depends="cleanprojects,cleanbuild,cleanarchive" />
 
 	<target name="jar_libs">
-		<copy file="${netinf.common.location}/lib/log4j-1.2.15.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/commons-io-1.4.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/commons-lang-2.4.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/aopalliance.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/guice-2.0.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/google-protobuf.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/commons-codec-1.4.jar" todir="${libs.location}" />
-		<copy file="${plugin.location}/org.junit4_4.5.0.v20090824/junit.jar" todir="${libs.location}" />
-		<copy file="${plugin.location}/org.hamcrest.core_1.1.0.v20090501071000.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/jena.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/arq.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/arq-extra.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/icu4j_3_4.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/iri.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/jenatest.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/json.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/junit-4.5.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/lucene-core-2.3.1.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/sdb.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/slf4j-api-1.5.6.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/slf4j-log4j12-1.5.6.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/stax-api-1.0.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/wstx-asl-3.0.0.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib/xercesImpl.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib-test/easymock.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib-test/easymockclassextension.jar" todir="${libs.location}" />
-		<copy file="${netinf.common.location}/lib-test/cglib-nodep-2.2.jar" todir="${libs.location}" />
-		<copy file="${netinf.database.location}/lib/mysql-connector-java-5.0.8-bin.jar" todir="${libs.location}" />
-		<copy file="${netinf.eventservice.location}/lib/siena.jar" todir="${libs.location}" />
-		<copy file="${netinf.node.location}/lib/bouncycastle.jar" todir="${libs.location}" />
-		<copy file="${netinf.node.location}/lib/commons-jxpath-1.1.jar" todir="${libs.location}" />
-		<copy file="${netinf.node.location}/lib/commons-logging.jar" todir="${libs.location}" />
-		<copy file="${netinf.node.location}/lib/FreePastry-2.1.jar" todir="${libs.location}" />
-		<copy file="${netinf.node.location}/lib/sbbi-upnplib-1.0.4.jar" todir="${libs.location}" />
-		<copy file="${netinf.node.location}/lib/xmlpull_1_1_3_4a.jar" todir="${libs.location}" />
-		<copy file="${netinf.node.location}/lib/xpp3-1.1.3.4d_b2.jar" todir="${libs.location}" />
-		<copy file="${netinf.node.location}/lib/mysql-connector-java-5.1.10-bin.jar" todir="${libs.location}" />
-		<copy file="${netinf.node.location}/lib/JSAP-2.1.jar" todir="${libs.location}" />
-		<copy file="${netinf.tools.iomanagement.location}/lib/derby.jar" todir="${libs.location}" />
-		<copy file="${netinf.tools.iomanagement.location}/lib/JSAP-2.1.jar" todir="${libs.location}" />
-		<copy file="${netinf.tools.productlist.location}/lib/miglayout-3.7.2-swing.jar" todir="${libs.location}" />
-		<copy file="${netinf.tools.shopping.location}/lib/swingx-1.6.jar" todir="${libs.location}" />
-		<copy file="${netinf.tools.shopping.location}/lib/swingx-beaninfo-1.6.jar" todir="${libs.location}" />
-		<copy file="${netinf.tools.shopping.location}/lib/swingx-ws-1.0.jar" todir="${libs.location}" />
+                <copy todir="${libs.location}">
+			<fileset dir="/home/netinf/builds/checkout/CurrentRepository/src/netinf.node/lib"/>
+                </copy>
+                <copy todir="${libs.location}">
+			<fileset dir="/home/netinf/builds/checkout/CurrentRepository/src/netinf.common/lib"/>
+		</copy>
 	</target>
 
 	<target name="copyconfig">
@@ -306,7 +268,9 @@
 		</javac>
 	</target>
 
-	<target depends="build_access" name="jar_access">
+	<!-- <target depends="build_access" name="jar_access"> -->
+	<target  name="jar_access">
+
 		<jar destfile="${nlibs.location}/netinf_access.jar">
 			<fileset dir="${netinf.access.location}/bin" />
 		</jar>
@@ -339,7 +303,8 @@
 		</javac>
 	</target>
 
-	<target depends="build_common" name="jar_common">
+	<!--<target depends="build_common" name="jar_common">-->
+	<target name="jar_common">
 		<jar destfile="${nlibs.location}/netinf_common.jar">
 			<fileset dir="${netinf.common.location}/bin" />
 		</jar>
@@ -367,7 +332,8 @@
 		</javac>
 	</target>
 
-	<target depends="build_database" name="jar_database">
+	<!-- <target depends="build_database" name="jar_database">-->
+	<target name="jar_database">
 		<jar destfile="${nlibs.location}/netinf_database.jar">
 			<fileset dir="${netinf.database.location}/bin" />
 		</jar>
@@ -442,11 +408,13 @@
 		</javac>
 	</target>
 
-	<target depends="build_node" name="jar_node">
+	<!-- <target depends="build_node" name="jar_node"> -->
+        <target depends="newbuild,copyconfig,jar_libs,jar_nlibs" name="jar_node">
 		<jar destfile="${jar.location}/node.jar">
 			<manifest>
 				<attribute name="Main-Class" value="netinf.node.StarterNode" />
-				<attribute name="Class-Path" value=". libs/log4j-1.2.15.jar libs/commons-io-1.4.jar libs/commons-lang-2.4.jar libs/aopalliance.jar libs/guice-2.0.jar libs/google-protobuf.jar libs/commons-codec-1.4.jar libs/junit.jar libs/org.hamcrest.core_1.1.0.v20090501071000.jar libs/jena.jar libs/arq.jar libs/arq-extra.jar libs/guice-2.0-src.zip libs/icu4j_3_4.jar libs/iri.jar libs/jenatest.jar libs/json.jar libs/junit-4.5.jar libs/lucene-core-2.3.1.jar libs/sdb.jar libs/slf4j-api-1.5.6.jar libs/slf4j-log4j12-1.5.6.jar libs/stax-api-1.0.jar libs/wstx-asl-3.0.0.jar libs/xercesImpl.jar libs/easymock.jar libs/easymockclassextension.jar libs/cglib-nodep-2.2.jar libs/mysql-connector-java-5.0.8-bin.jar libs/bouncycastle.jar libs/commons-jxpath-1.1.jar libs/commons-logging.jar libs/FreePastry-2.1.jar libs/sbbi-upnplib-1.0.4.jar libs/xmlpull_1_1_3_4a.jar libs/xpp3-1.1.3.4d_b2.jar libs/mysql-connector-java-5.1.10-bin.jar libs/JSAP-2.1.jar netinf_libs/netinf_access.jar netinf_libs/netinf_common.jar netinf_libs/netinf_database.jar" />
+				<attribute name="Class-Path" value=". libs/log4j-1.2.16.jar libs/commons-io-2.0.1.jar libs/commons-lang-2.5.jar libs/aopalliance-1.0.jar libs/guice-2.0.jar libs/protobuf-java-2.3.0.jar libs/commons-codec-1.4.jar libs/junit.jar libs/org.hamcrest.core_1.1.0.v20090501071000.jar libs/jena-2.6.2.jar libs/arq-2.8.2.jar libs/arq-extra.jar libs/guice-2.0-src.zip libs/icu4j-3.4.4.jar libs/iri-0.8.jar libs/jenatest.jar libs/json.jar libs/junit-4.5.jar libs/lucene-core-2.3.1.jar libs/sdb-1.3.1.jar libs/slf4j-api-1.5.6.jar libs/slf4j-log4j12-1.5.6.jar libs/stax-api-1.0.jar libs/wstx-asl-3.0.0.jar libs/xercesImpl.jar libs/easymock-2.5.2.jar libs/easymockclassextension-2.5.2.jar libs/cglib-nodep-2.2.jar libs/mysql-connector-java-5.0.8-bin.jar libs/bouncycastle.jar libs/commons-jxpath-1.1.jar libs/commons-logging.jar libs/FreePastry-2.1.jar libs/sbbi-upnplib-1.0.4.jar libs/xmlpull_1_1_3_4a.jar libs/xpp3-1.1.3.4d_b2.jar libs/mysql-connector-java-5.1.10-bin.jar libs/JSAP-2.1.jar libs/org.restlet-2.0.8.jar netinf_libs/netinf_access.jar netinf_libs/netinf_common.jar netinf_libs/netinf_database.jar" />
+        <!--                        <attribute name="Class-Path" value=".  libs/*"/> -->
 			</manifest>
 			<fileset dir="${netinf.node.location}/bin" />
 		</jar>
@@ -456,7 +424,7 @@
 		<jar destfile="${jar.location}/createdefaultios.jar">
 			<manifest>
 				<attribute name="Main-Class" value="netinf.node.CreateDefaultIOsPrototype" />
-				<attribute name="Class-Path" value=". libs/log4j-1.2.15.jar libs/commons-io-1.4.jar libs/commons-lang-2.4.jar libs/aopalliance.jar libs/guice-2.0.jar libs/google-protobuf.jar libs/commons-codec-1.4.jar libs/junit.jar libs/org.hamcrest.core_1.1.0.v20090501071000.jar libs/jena.jar libs/arq.jar libs/arq-extra.jar libs/guice-2.0-src.zip libs/icu4j_3_4.jar libs/iri.jar libs/jenatest.jar libs/json.jar libs/junit-4.5.jar libs/lucene-core-2.3.1.jar libs/sdb.jar libs/slf4j-api-1.5.6.jar libs/slf4j-log4j12-1.5.6.jar libs/stax-api-1.0.jar libs/wstx-asl-3.0.0.jar libs/xercesImpl.jar libs/easymock.jar libs/easymockclassextension.jar libs/cglib-nodep-2.2.jar libs/mysql-connector-java-5.0.8-bin.jar libs/bouncycastle.jar libs/commons-jxpath-1.1.jar libs/commons-logging.jar libs/FreePastry-2.1.jar libs/sbbi-upnplib-1.0.4.jar libs/xmlpull_1_1_3_4a.jar libs/xpp3-1.1.3.4d_b2.jar libs/mysql-connector-java-5.1.10-bin.jar libs/JSAP-2.1.jar netinf_libs/netinf_access.jar netinf_libs/netinf_common.jar netinf_libs/netinf_database.jar" />
+				<attribute name="Class-Path" value=". libs/log4j-1.2.16.jar libs/commons-io-2.0.1.jar libs/commons-lang-2.5.jar libs/aopalliance.jar libs/guice-2.0.jar libs/protobuf-java-2.3.0.jar libs/commons-codec-1.4.jar libs/junit.jar libs/org.hamcrest.core_1.1.0.v20090501071000.jar libs/jena-2.6.2.jar libs/arq-2.8.2.jar libs/arq-extra.jar libs/guice-2.0-src.zip libs/icu4j-3.4.4.jar libs/iri-0.8.jar libs/jenatest.jar libs/json.jar libs/junit-4.5.jar libs/lucene-core-2.3.1.jar libs/sdb-1.3.1.jar libs/slf4j-api-1.5.6.jar libs/slf4j-log4j12-1.5.6.jar libs/stax-api-1.0.jar libs/wstx-asl-3.0.0.jar libs/xercesImpl.jar libs/easymock-2.5.2.jar libs/easymockclassextension-2.5.2.jar libs/cglib-nodep-2.2.jar libs/mysql-connector-java-5.0.8-bin.jar libs/bouncycastle.jar libs/commons-jxpath-1.1.jar libs/commons-logging.jar libs/FreePastry-2.1.jar libs/sbbi-upnplib-1.0.4.jar libs/xmlpull_1_1_3_4a.jar libs/xpp3-1.1.3.4d_b2.jar libs/mysql-connector-java-5.1.10-bin.jar libs/JSAP-2.1.jar netinf_libs/netinf_access.jar netinf_libs/netinf_common.jar netinf_libs/netinf_database.jar" />
 			</manifest>
 			<fileset dir="${netinf.node.location}/bin" />
 		</jar>
