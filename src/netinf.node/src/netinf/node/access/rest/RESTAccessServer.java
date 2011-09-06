@@ -1,6 +1,7 @@
 package netinf.node.access.rest;
 
 import netinf.common.datamodel.DatamodelFactory;
+import netinf.common.datamodel.translation.DatamodelTranslator;
 import netinf.node.access.AccessServer;
 import netinf.node.api.impl.LocalNodeConnection;
 
@@ -24,11 +25,12 @@ public class RESTAccessServer implements AccessServer {
    private Component component;
 
    @Inject
-   public RESTAccessServer(@Named("node.access.rest.port") int port, LocalNodeConnection connection, DatamodelFactory factory) {
+   public RESTAccessServer(@Named("node.access.rest.port") int port, LocalNodeConnection connection, DatamodelFactory factory,
+         DatamodelTranslator translator) {
       component = new Component();
       component.getServers().add(Protocol.HTTP, port);
 
-      Application application = new RESTApplication(connection, factory);
+      Application application = new RESTApplication(connection, factory, translator);
 
       component.getDefaultHost().attach(application);
    }
