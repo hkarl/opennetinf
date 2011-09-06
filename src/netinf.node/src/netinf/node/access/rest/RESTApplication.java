@@ -2,6 +2,7 @@ package netinf.node.access.rest;
 
 import netinf.common.communication.NetInfNodeConnection;
 import netinf.common.datamodel.DatamodelFactory;
+import netinf.common.datamodel.translation.DatamodelTranslator;
 import netinf.node.access.rest.resources.BOResource;
 import netinf.node.access.rest.resources.IOResource;
 import netinf.node.access.rest.resources.SearchResource;
@@ -23,10 +24,13 @@ public class RESTApplication extends Application {
    private NetInfNodeConnection nodeConnection;
    /** Implementation of a DatamodelFacotry */
    private DatamodelFactory datamodelFactory;
+   /** Implementation of DatamodelTranslator */
+   private DatamodelTranslator datamodelTranslator;
 
-   public RESTApplication(NetInfNodeConnection connection, DatamodelFactory factory) {
+   public RESTApplication(NetInfNodeConnection connection, DatamodelFactory factory, DatamodelTranslator translator) {
       nodeConnection = connection;
       datamodelFactory = factory;
+      datamodelTranslator = translator;
    }
 
    public NetInfNodeConnection getNodeConnection() {
@@ -37,10 +41,14 @@ public class RESTApplication extends Application {
       return datamodelFactory;
    }
 
+   public DatamodelTranslator getDatamodelTranslator() {
+      return datamodelTranslator;
+   }
+
    @Override
    public Restlet createInboundRoot() {
       Router router = new Router(getContext());
-      
+
       // IO routing
       String targetIO1 = "{rh}/io?hash_of_pk={hashOfPK}&hash_of_pk_ident={hashOfPKIdent}&version_kind={versionKind}&unique_label={uniqueLabel}&version_number={versionNumber}";
       Redirector redirectorIO1 = new Redirector(getContext(), targetIO1, Redirector.MODE_CLIENT_TEMPORARY);

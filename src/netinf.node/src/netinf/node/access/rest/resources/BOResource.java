@@ -7,9 +7,7 @@ import java.util.List;
 
 import netinf.common.datamodel.DataObject;
 import netinf.common.datamodel.DefinedAttributePurpose;
-import netinf.common.datamodel.DefinedLabelName;
 import netinf.common.datamodel.Identifier;
-import netinf.common.datamodel.IdentifierLabel;
 import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.exceptions.NetInfCheckedException;
@@ -60,8 +58,8 @@ public class BOResource extends NetInfResource {
     */
    @Get
    public Representation retrieveBO() {
-      Identifier identifier = createIdentifier();
-      
+      Identifier identifier = createIdentifier(hashOfPK, hashOfPKIdent, versionKind, uniqueLabel, versionNumber);
+
       InformationObject io = null;
       try {
          io = getNodeConnection().getIO(identifier);
@@ -75,7 +73,7 @@ public class BOResource extends NetInfResource {
             try {
                if (io instanceof DataObject) {
                   TransferDispatcher tsDispatcher = TransferDispatcher.getInstance();
-                  
+
                   final InputStream inStream = tsDispatcher.getStream((DataObject) io);
                   MediaType mdType = new MediaType(DatamodelUtils.getContentType(io));
 
@@ -89,7 +87,7 @@ public class BOResource extends NetInfResource {
                            IOUtils.closeQuietly(inStream);
                            IOUtils.closeQuietly(outStream);
                         }
-                        
+
                      }
                   };
                }
@@ -104,39 +102,4 @@ public class BOResource extends NetInfResource {
       }
       throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND);
    }
-
-   private Identifier createIdentifier() {
-      Identifier identifier = getDatamodelFactory().createIdentifier();
-      // HASH_OF_PK
-      IdentifierLabel hashLabel = getDatamodelFactory().createIdentifierLabel();
-      hashLabel.setLabelName(DefinedLabelName.HASH_OF_PK.toString());
-      hashLabel.setLabelValue(hashOfPK);
-      identifier.addIdentifierLabel(hashLabel);
-      // HASH_OF_PK_IDENT
-      IdentifierLabel hashIdentLabel = getDatamodelFactory().createIdentifierLabel();
-      hashIdentLabel.setLabelName(DefinedLabelName.HASH_OF_PK_IDENT.toString());
-      hashIdentLabel.setLabelValue(hashOfPKIdent.toUpperCase());
-      identifier.addIdentifierLabel(hashIdentLabel);
-      // VERSION_KIND
-      IdentifierLabel kindLabel = getDatamodelFactory().createIdentifierLabel();
-      kindLabel.setLabelName(DefinedLabelName.VERSION_KIND.toString());
-      kindLabel.setLabelValue(versionKind.toUpperCase());
-      identifier.addIdentifierLabel(kindLabel);
-      // UNIQUE_LABEL
-      if (uniqueLabel != null) {
-         IdentifierLabel labelLabel = getDatamodelFactory().createIdentifierLabel();
-         labelLabel.setLabelName(DefinedLabelName.UNIQUE_LABEL.toString());
-         labelLabel.setLabelValue(uniqueLabel);
-         identifier.addIdentifierLabel(labelLabel);
-      }
-      // VERSION_NUMBER
-      if (versionKind.equals("VERSIONED")) {
-         IdentifierLabel versionLabel = getDatamodelFactory().createIdentifierLabel();
-         versionLabel.setLabelName(DefinedLabelName.VERSION_NUMBER.toString());
-         versionLabel.setLabelValue(versionNumber);
-         identifier.addIdentifierLabel(versionLabel);
-      }
-      return identifier;
-   }
-
 }
