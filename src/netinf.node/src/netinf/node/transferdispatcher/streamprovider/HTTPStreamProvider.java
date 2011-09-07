@@ -1,7 +1,7 @@
 /**
  * 
  */
-package netinf.node.transferDeluxe.streamprovider;
+package netinf.node.transferdispatcher.streamprovider;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +21,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 
 /**
- * @author PG NetInf 3
+ * StreamProvider for HTTP protocol
+ * 
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class HTTPStreamProvider implements StreamProvider {
    private static final Logger LOG = Logger.getLogger(HTTPStreamProvider.class);
@@ -34,14 +36,14 @@ public class HTTPStreamProvider implements StreamProvider {
    }
 
    @Override
-   public InputStream getStream(Chunk chunk, String baseUrl) throws IOException {
+   public InputStream getStream(Chunk chunk, String chunkUrl) throws IOException {
       // determine range
       int chunkSizeInBytes = 256 * 1024;
       int from = chunkSizeInBytes * chunk.getNumber();
       int to = (chunkSizeInBytes * (chunk.getNumber() + 1)) - 1;
 
       HttpClient client = new DefaultHttpClient();
-      HttpGet httpGet = new HttpGet(baseUrl);
+      HttpGet httpGet = new HttpGet(chunkUrl);
       httpGet.setHeader("Range", "bytes=" + from + "-" + to);
       try {
          HttpResponse response = client.execute(httpGet);

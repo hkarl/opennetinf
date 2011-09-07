@@ -75,7 +75,7 @@ public class HTTPFileServer implements HttpHandler {
    private String ip;
 
    private boolean clearCacheOnStartup = true;
-   
+
    @Inject
    public HTTPFileServer(@Named("resolution.cache.httpPort") int port, @Named("resolution.cache.httpIP") String ip,
          @Named("resolution.cache.directory") String directory) {
@@ -90,11 +90,11 @@ public class HTTPFileServer implements HttpHandler {
          File[] files = cacheFolder.listFiles();
          for (File f : files) {
             if (f.isFile()) {
-                  f.delete();
+               f.delete();
             }
          }
       }
-      
+
    }
 
    /**
@@ -142,7 +142,7 @@ public class HTTPFileServer implements HttpHandler {
                stream.read(stringBuffer);
                h.set("Content-Type", new String(stringBuffer));
             }
-            
+
             httpExchange.sendResponseHeaders(200, file.length());
             IOUtils.copy(stream, httpExchange.getResponseBody());
 

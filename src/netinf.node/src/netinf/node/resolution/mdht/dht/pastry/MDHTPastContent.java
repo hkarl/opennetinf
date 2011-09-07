@@ -7,8 +7,10 @@ import rice.p2p.past.Past;
 import rice.p2p.past.PastContent;
 import rice.p2p.past.PastContentHandle;
 import rice.p2p.past.PastException;
+
 /***
  * The extension of the PastContent object to use with own NetInfPast. This represents the IOs stored in the MDHT
+ * 
  * @author PG NetInf 3
  * @since May 2011
  */
@@ -17,7 +19,7 @@ public class MDHTPastContent implements PastContent {
    private static final long serialVersionUID = -1631388806403566496L;
    private Id id;
    private InformationObject informationObject;
-   
+
    public MDHTPastContent(Id id, InformationObject io) {
       this.id = id;
       this.informationObject = io;

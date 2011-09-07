@@ -52,6 +52,8 @@ import com.google.inject.BindingAnnotation;
  * 
  * @author PG Augnet 2, University of Paderborn
  */
-@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+@BindingAnnotation
+@Target({ FIELD, PARAMETER, METHOD })
+@Retention(RUNTIME)
 public @interface EventService {
 }

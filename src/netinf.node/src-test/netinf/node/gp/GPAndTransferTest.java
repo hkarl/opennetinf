@@ -280,8 +280,8 @@ public class GPAndTransferTest {
 
       netinf.node.gp.messages.GPNetInfMessages.NIresolveCallback.Builder builder = NIresolveCallback.newBuilder();
       builder.setCallbackId(receiveNIresolve.getCallbackId());
-      builder.addResolutions(NIResolution.newBuilder().addCapabilities(receiveNIresolve.getCapabilities(0)).setTargetAddress(
-            TARGET_ADDRESS).setDestinationName(DESTINATION_NAME).build());
+      builder.addResolutions(NIResolution.newBuilder().addCapabilities(receiveNIresolve.getCapabilities(0))
+            .setTargetAddress(TARGET_ADDRESS).setDestinationName(DESTINATION_NAME).build());
 
       NIresolveCallback build = builder.build();
       communicator.sendMessage(build);

@@ -12,7 +12,7 @@ import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.exceptions.NetInfCheckedException;
 import netinf.common.utils.DatamodelUtils;
-import netinf.node.transferDeluxe.TransferDispatcher;
+import netinf.node.transferdispatcher.TransferDispatcher;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;

@@ -72,7 +72,7 @@ public class HTTPServer extends NetInfServer {
 
    @Inject
    public void injectProviderCommunicator(Provider<Communicator> provider) {
-      this.communicatorProvider = provider;
+      communicatorProvider = provider;
    }
 
    @Override
@@ -81,34 +81,34 @@ public class HTTPServer extends NetInfServer {
 
       try {
          // The second parameter represents the number of maximum tcp-connections.
-         this.server = HttpServer.create(new InetSocketAddress(this.port), 10);
-         this.server.createContext("/", new HTTPNetInfHandler());
+         server = HttpServer.create(new InetSocketAddress(port), 10);
+         server.createContext("/", new HTTPNetInfHandler());
       } catch (IOException e) {
-         LOG.error("Error encountered while initializing the HTTPServer on port: " + this.port, e);
+         LOG.error("Error encountered while initializing the HTTPServer on port: " + port, e);
          throw new NetInfCheckedException(e);
       }
 
       // start server to listen for requests
-      this.server.start();
-      this.running = true;
+      server.start();
+      running = true;
    }
 
    @Override
    public void stop() {
-      if (this.server != null) {
-         this.server.stop(0);
+      if (server != null) {
+         server.stop(0);
       }
-      this.running = false;
+      running = false;
    }
 
    @Override
    public String describe() {
-      return "HTTP on port " + this.port;
+      return "HTTP on port " + port;
    }
 
    @Override
    public boolean isRunning() {
-      return this.running;
+      return running;
    }
 
    /**
@@ -124,7 +124,7 @@ public class HTTPServer extends NetInfServer {
 
          LOG.debug("Creating new HTTPServerConnection on the Server");
          HTTPServerConnection newConnection = new HTTPServerConnection(httpExchange);
-         Communicator newCommunicator = HTTPServer.this.communicatorProvider.get();
+         Communicator newCommunicator = communicatorProvider.get();
          newCommunicator.setConnection(newConnection);
 
          startCommunicator(newCommunicator, false);

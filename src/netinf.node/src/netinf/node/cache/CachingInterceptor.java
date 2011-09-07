@@ -18,9 +18,9 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 /**
- * An Interceptor that coordinates all available caches
+ * An Interceptor that coordinates all available caches.
  * 
- * @author PG NetInf 3
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class CachingInterceptor implements ResolutionInterceptor {
 

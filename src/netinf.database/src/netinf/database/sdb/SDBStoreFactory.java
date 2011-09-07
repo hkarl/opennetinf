@@ -18,14 +18,14 @@ import com.hp.hpl.jena.sdb.util.StoreUtils;
 /**
  * Factory providing SDB Stores connected to a database.
  * 
- * @author PG NetInf 3, University of Paderborn
- *
+ * @author PG NetInf 3, University of Paderborn.
  */
 @Singleton
 public class SDBStoreFactory {
-   
-   private final LayoutType LAYOUT_TYPE = LayoutType.LayoutTripleNodesHash;
-   
+
+   private final LayoutType layoutType = LayoutType.LayoutTripleNodesHash;
+   private DatabaseType databaseType;
+
    private String dbType;
    private String dbName;
    private String host;
@@ -33,40 +33,52 @@ public class SDBStoreFactory {
    private String password;
    private String driver;
    private String jdbcURL;
-   
-   private DatabaseType databaseType;
-   
+
+   /**
+    * Constructor.
+    * 
+    * @param type
+    *           The SDB-type.
+    * @param name
+    *           The SDB-name.
+    */
    @Inject
    public SDBStoreFactory(@Named("rdf.db.sdbType") String type, @Named("rdf.db.sdbName") String name) {
-      this.dbType = type;
-      this.dbName = name;
+      dbType = type;
+      dbName = name;
    }
-   
+
    @Inject(optional = true)
    public void setHost(@Named("rdf.db.sdbHost") String host) {
       this.host = host;
    }
-   
+
    @Inject(optional = true)
    public void setUser(@Named("rdf.db.sdbUser") String user) {
       this.user = user;
    }
-   
+
    @Inject(optional = true)
    public void setPassword(@Named("rdf.db.sdbPassword") String pwd) {
-      this.password = pwd;
+      password = pwd;
    }
-   
+
    @Inject(optional = true)
    public void setDriver(@Named("rdf.db.driver") String driver) {
       this.driver = driver;
    }
-   
+
    @Inject(optional = true)
    public void setJdbcURL(@Named("rdf.db.jdbcURL") String jdbcURL) {
       this.jdbcURL = jdbcURL;
    }
-   
+
+   /**
+    * Creates the SDB-store.
+    * 
+    * @return The Store.
+    * @throws SQLException
+    */
    public Store createStore() throws SQLException {
       // Load driver once
       if (databaseType == null) {
@@ -84,7 +96,7 @@ public class SDBStoreFactory {
       connDesc.setJdbcURL(jdbcURL);
       SDBConnection conn = SDBFactory.createConnection(connDesc);
       // StoreDesc
-      StoreDesc storeDesc = new StoreDesc(LAYOUT_TYPE, databaseType);
+      StoreDesc storeDesc = new StoreDesc(layoutType, databaseType);
       // Connect and format store
       Store store = SDBFactory.connectStore(conn, storeDesc);
       if (!StoreUtils.isFormatted(store)) {
@@ -92,5 +104,5 @@ public class SDBStoreFactory {
       }
       return store;
    }
-   
+
 }

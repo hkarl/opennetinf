@@ -47,12 +47,16 @@ public abstract class NetInfResource extends ServerResource {
    /**
     * Creates a NetInf Identifier given a number of plain Strings.
     * 
-    * @param hashOfPK Hash of Public Key
-    * @param hashOfPKIdent Hash Algorithm
-    * @param versionKind Version Kind
-    * @param uniqueLabel Unique Label
-    * @param versionNumber Version Number
-    * 
+    * @param hashOfPK
+    *           Hash of Public Key
+    * @param hashOfPKIdent
+    *           Hash Algorithm
+    * @param versionKind
+    *           Version Kind
+    * @param uniqueLabel
+    *           Unique Label
+    * @param versionNumber
+    *           Version Number
     * @return NetInf Identifier
     */
    protected Identifier createIdentifier(String hashOfPK, String hashOfPKIdent, String versionKind, String uniqueLabel,

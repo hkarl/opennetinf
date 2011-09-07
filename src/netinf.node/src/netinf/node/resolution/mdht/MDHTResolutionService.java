@@ -44,7 +44,7 @@ import com.google.inject.Inject;
 public class MDHTResolutionService extends AbstractResolutionService {
 
    // TODO @razvan: take MDHT_LEVEL attribute in IO into account... (see PeersideCache)
-   
+
    private static final Logger LOG = Logger.getLogger(MDHTResolutionService.class);
    private static final String IDENTIFIER = "ni:name=value";
    private DatamodelFactory datamodelFactory;
@@ -137,7 +137,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
    public void put(InformationObject io) {
       LOG.log(DemoLevel.DEMO, "(MDHT ) Putting IO with Identifier: " + io.getIdentifier() + " on all levels");
       InformationObject informationObject = translator.toImpl(io);
-      
+
       try {
          validateIOForPut(informationObject);
       } catch (IllegalArgumentException ex) {
@@ -161,15 +161,15 @@ public class MDHTResolutionService extends AbstractResolutionService {
     * @return The level as integer if given, otherwise the maximum level.
     */
    private int getLevel(InformationObject io) {
-	  int retValue = dhts.size();
-	  List<Attribute> attributes = io.getAttribute(DefinedAttributeIdentification.MDHT_LEVEL.getURI());
-	  if (attributes.isEmpty()) 					//Use default size if the above-mentioned attribute is not defined
-		   return retValue;
+      int retValue = dhts.size();
+      List<Attribute> attributes = io.getAttribute(DefinedAttributeIdentification.MDHT_LEVEL.getURI());
+      if (attributes.isEmpty()) // Use default size if the above-mentioned attribute is not defined
+         return retValue;
       for (Attribute attr : attributes) {
-    	 Integer intValue = attr.getValue(Integer.class);
+         Integer intValue = attr.getValue(Integer.class);
          if (intValue != null) {
-        	 retValue = intValue > retValue ? retValue : intValue;	//Check to see if the given value more than maximum allowed
-        	 break;
+            retValue = intValue > retValue ? retValue : intValue; // Check to see if the given value more than maximum allowed
+            break;
          }
       }
       return retValue;

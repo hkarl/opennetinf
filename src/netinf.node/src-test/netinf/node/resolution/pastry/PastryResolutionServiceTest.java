@@ -53,18 +53,18 @@ import com.google.inject.Injector;
  */
 public class PastryResolutionServiceTest extends AbstractResolutionServiceTest {
 
-	@Before
-	public void setUp() throws Exception {
-		Injector injector = Guice.createInjector(new PastryTestModule());
-		ioHelper = injector.getInstance(InformationObjectHelper.class);
-		resolutionService = injector.getInstance(PastryResolutionService.class);
+   @Before
+   public void setUp() throws Exception {
+      Injector injector = Guice.createInjector(new PastryTestModule());
+      ioHelper = injector.getInstance(InformationObjectHelper.class);
+      resolutionService = injector.getInstance(PastryResolutionService.class);
 
-	}
+   }
 
-	@After
-	public void tearDown() throws Exception {
-		((PastryResolutionService) resolutionService).getPastryNode().destroy();
-		Thread.sleep(100);
-	}
+   @After
+   public void tearDown() throws Exception {
+      ((PastryResolutionService) resolutionService).getPastryNode().destroy();
+      Thread.sleep(100);
+   }
 
 }

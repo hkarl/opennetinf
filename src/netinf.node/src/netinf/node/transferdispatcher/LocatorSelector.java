@@ -1,4 +1,4 @@
-package netinf.node.transferDeluxe;
+package netinf.node.transferdispatcher;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,7 +10,9 @@ import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
 
 /**
- * @author PG NetInf 3
+ * Helper for iterating over a locator-list.
+ * 
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class LocatorSelector implements Iterator<String> {
 
@@ -18,12 +20,23 @@ public class LocatorSelector implements Iterator<String> {
    private List<Attribute> locatorList;
    private Iterator<Attribute> locatorIterator;
 
+   /**
+    * Constructor.
+    * 
+    * @param io
+    *           The IO.
+    */
    public LocatorSelector(InformationObject io) {
       this.io = io;
       locatorList = getLocatorList();
       locatorIterator = locatorList.iterator();
    }
 
+   /**
+    * Provides the list of locators of the underlying IO.
+    * 
+    * @return List of locators.
+    */
    private List<Attribute> getLocatorList() {
       List<Attribute> result = new ArrayList<Attribute>();
       List<Attribute> locators = io.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());

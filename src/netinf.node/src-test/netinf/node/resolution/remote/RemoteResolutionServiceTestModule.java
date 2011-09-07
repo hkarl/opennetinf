@@ -60,7 +60,7 @@ public class RemoteResolutionServiceTestModule extends AbstractModule {
       try {
          props.load(new FileInputStream("../configs/testing.properties"));
       } catch (FileNotFoundException e) {
-         
+
       } catch (IOException e) {
 
       }

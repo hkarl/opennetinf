@@ -51,7 +51,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
  * .
  * 
  * @author PG Augnet 2, University of Paderborn
- * 
  */
 public class GPListener implements Runnable {
 

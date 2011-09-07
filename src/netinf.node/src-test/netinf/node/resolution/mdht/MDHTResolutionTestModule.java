@@ -37,6 +37,7 @@ import com.google.inject.name.Names;
 
 /***
  * Test module for MDHT
+ * 
  * @author razvan
  * @deprecated
  */
@@ -51,9 +52,9 @@ public class MDHTResolutionTestModule extends AbstractModule {
       try {
          props.load(new FileInputStream("../configs/testing/testingMDHT.properties"));
       } catch (FileNotFoundException e) {
-    	 System.out.write(-1);
+         System.out.write(-1);
       } catch (IOException e) {
-    	 System.out.write(-2);
+         System.out.write(-2);
       }
 
       Names.bindProperties(binder(), props);

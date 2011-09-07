@@ -107,7 +107,7 @@ public class RDFResolutionService extends AbstractResolutionService implements R
 
    @Inject
    public RDFResolutionService(final DatamodelFactory dmfactory, final DatamodelTranslator datamodelTranslator,
-            SDBStoreFactory sdbStoreFactory) {
+         SDBStoreFactory sdbStoreFactory) {
       super();
       LOG.trace(null);
       this.overallDatamodelFactory = dmfactory;
@@ -122,14 +122,14 @@ public class RDFResolutionService extends AbstractResolutionService implements R
       try {
          this.store = sdbStoreFactory.createStore();
          this.dataset = SDBFactory.connectDataset(this.store);
-         this.model = SDBFactory.connectDefaultModel(this.store);            
+         this.model = SDBFactory.connectDefaultModel(this.store);
          this.model.setNsPrefix(DefinedRdfNames.NETINF_NAMESPACE_NAME, DefinedRdfNames.NETINF_RDF_SCHEMA_URI);
       } catch (Exception e) {
          LOG.error("The following error occured while trying to connect to SDB store: " + e.getMessage());
          LOG.error("Not connected to SDB store");
          return;
       }
-      
+
       if (!this.store.isClosed()) {
          LOG.debug("Successfully connected to SDB store");
       } else {

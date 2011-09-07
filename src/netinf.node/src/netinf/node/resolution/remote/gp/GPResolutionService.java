@@ -238,8 +238,7 @@ public class GPResolutionService implements ResolutionService {
       return remoteResolutionService;
    }
 
-   private synchronized RemoteResolutionService getRemoteResolutionService(NetInfObjectWrapper netInfObjectWrapper,
-         String address) {
+   private synchronized RemoteResolutionService getRemoteResolutionService(NetInfObjectWrapper netInfObjectWrapper, String address) {
       int realhash = createHash(netInfObjectWrapper, address);
 
       return runningRequests.get(realhash);

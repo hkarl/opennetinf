@@ -1,9 +1,11 @@
-package netinf.node.transferDeluxe.streamprovider;
+package netinf.node.transferdispatcher.streamprovider;
 
 import netinf.common.exceptions.NetInfCheckedException;
 
 /**
- * @author PG NetInf 3
+ * Exception if no correct StreamProvider has been found.
+ * 
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class NetInfNoStreamProviderFoundException extends NetInfCheckedException {
 

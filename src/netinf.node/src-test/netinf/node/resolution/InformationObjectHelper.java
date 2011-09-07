@@ -50,7 +50,7 @@ import netinf.common.datamodel.rdf.DefinedRdfNames;
 import com.google.inject.Inject;
 
 /**
- *A class to provide some InformationObjects for Unit Tests
+ * A class to provide some InformationObjects for Unit Tests
  * 
  * @author PG Augnet 2, University of Paderborn
  */

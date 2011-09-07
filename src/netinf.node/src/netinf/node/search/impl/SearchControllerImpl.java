@@ -133,8 +133,8 @@ public class SearchControllerImpl implements SearchController {
       final SCSearchResponse returnMessage = new SCSearchResponse();
 
       try {
-         Set<Identifier> identifiers = getByQueryTemplate(getByQueryTemplateRequest.getType(), getByQueryTemplateRequest
-               .getParameters(), getByQueryTemplateRequest.getSearchID());
+         Set<Identifier> identifiers = getByQueryTemplate(getByQueryTemplateRequest.getType(),
+               getByQueryTemplateRequest.getParameters(), getByQueryTemplateRequest.getSearchID());
          for (Identifier identifier : identifiers) {
             returnMessage.addResultIdentifier(identifier);
          }

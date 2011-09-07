@@ -94,7 +94,6 @@ public class NetInfNodeImpl implements NetInfNode {
       Identifier tmpIdentifier = datamodelFactory.createIdentifierFromString(nodeIdentityObjectIdentifier);
       this.nodeIdentityObjectIdentifier = tmpIdentifier;
    }
- 
 
    @Inject(optional = true)
    public void setGpNetInfInterface(@Nullable GPNetInfInterface gpNetInfInterface) {
@@ -253,7 +252,6 @@ public class NetInfNodeImpl implements NetInfNode {
          this.gpNetInfInterface = gpNetInfInterface;
       }
 
-      gpNetInfInterface.addName(nodeIdentityObjectIdentifier.toString() + GPNetInfInterfaceImpl.NAME_PORT_SEPERATOR + port,
-            list);
+      gpNetInfInterface.addName(nodeIdentityObjectIdentifier.toString() + GPNetInfInterfaceImpl.NAME_PORT_SEPERATOR + port, list);
    }
 }

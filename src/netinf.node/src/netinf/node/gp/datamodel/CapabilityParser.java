@@ -94,7 +94,7 @@ public class CapabilityParser {
       if (properties == null) {
          return result;
       }
-      
+
       // Check existence
       String propertyString = properties.getProperty(capabilityKey);
 

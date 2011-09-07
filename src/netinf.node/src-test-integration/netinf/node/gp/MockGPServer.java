@@ -158,8 +158,7 @@ public class MockGPServer implements Runnable {
 
       netinf.node.gp.messages.GPNetInfMessages.NIResolution.Builder resolutionBuilder = NIResolution.newBuilder();
       resolutionBuilder.setTargetAddress(properties.getProperty("netinf.gp.interface.test.node"));
-      resolutionBuilder.setDestinationName("SomeNetInfNode" + ":"
-            + properties.getProperty("netinf.gp.interface.test.node.port"));
+      resolutionBuilder.setDestinationName("SomeNetInfNode" + ":" + properties.getProperty("netinf.gp.interface.test.node.port"));
 
       // Set Capability
       NICapability capabilities = resolve.getCapabilities(0);

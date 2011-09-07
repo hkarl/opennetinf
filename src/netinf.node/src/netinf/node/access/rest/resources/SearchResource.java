@@ -20,7 +20,7 @@ import org.restlet.resource.Get;
 public class SearchResource extends NetInfResource {
 
    private static final Logger LOG = Logger.getLogger(SearchResource.class);
-   
+
    /**
     * Handler for GET-requests.
     * 

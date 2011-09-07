@@ -49,7 +49,6 @@ import netinf.node.search.rdf.SearchServiceRDF;
 
 import org.apache.log4j.Logger;
 
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 

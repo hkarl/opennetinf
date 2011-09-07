@@ -126,7 +126,6 @@ public class PastryModule extends PrivateModule {
       return new PersistentStorage(idf, "node", "data", -1, env);
    }
 
-
    @Provides
    Cache provideCache(MemoryStorage storage, Environment env) {
       return new LRUCache(storage, 4 * 1024 * 1024, env);

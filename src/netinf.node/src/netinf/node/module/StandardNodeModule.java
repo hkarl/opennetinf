@@ -117,9 +117,10 @@ public class StandardNodeModule extends AbstractNodeModule {
     */
    @Singleton
    @Provides
-   ResolutionService[] provideResolutionServices(RemoteResolutionFactory remoteResolutionFactory, RDFResolutionService rdfResolutionService) {
+   ResolutionService[] provideResolutionServices(RemoteResolutionFactory remoteResolutionFactory,
+         RDFResolutionService rdfResolutionService) {
       ResolutionService[] otherRS = { rdfResolutionService };
-      
+
       ResolutionService[] remoteRS = remoteResolutionFactory.getRemoteResolutionServices().toArray(new ResolutionService[] {});
       return (ResolutionService[]) ArrayUtils.addAll(remoteRS, otherRS);
    }

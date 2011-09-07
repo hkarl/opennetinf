@@ -62,7 +62,6 @@ import com.google.inject.Singleton;
  * The module for the node that sends the {@link NIresolve} message.
  * 
  * @author PG Augnet 2, University of Paderborn
- * 
  */
 public class ResolveNameNodeMockupModule extends AbstractNodeModule {
    public static final String NODE_PROPERTIES = "../netinf.node/src-test-integration/netinf/node/gp/resolveName.properties";

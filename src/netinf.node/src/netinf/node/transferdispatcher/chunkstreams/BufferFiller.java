@@ -1,4 +1,4 @@
-package netinf.node.transferDeluxe.chunkstreams;
+package netinf.node.transferdispatcher.chunkstreams;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -8,14 +8,16 @@ import java.util.concurrent.BlockingQueue;
 
 import netinf.node.chunking.Chunk;
 import netinf.node.chunking.ChunkedBO;
-import netinf.node.transferDeluxe.TransferDispatcher;
-import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
+import netinf.node.transferdispatcher.TransferDispatcher;
+import netinf.node.transferdispatcher.streamprovider.NetInfNoStreamProviderFoundException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 /**
- * @author PG NetInf 3
+ * BufferFiller. Used by {@link ConcurrentChunkStream}.
+ * 
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class BufferFiller extends Thread {
 
@@ -27,6 +29,9 @@ public class BufferFiller extends Thread {
    private List<Chunk> chunks;
    private BlockingQueue<byte[]> bufferQueue;
 
+   /**
+    * Constructor.
+    */
    public BufferFiller(ChunkedBO chunkedBO, int first, int incr, BlockingQueue<byte[]> queue) {
       chunks = chunkedBO.getChunks();
       baseUrls = chunkedBO.getBaseUrls();
@@ -60,7 +65,7 @@ public class BufferFiller extends Thread {
             interrupt();
             LOG.info("(BufferFiller ) Thread interrupted");
          } catch (IOException e) {
-            LOG.warn("(BufferFiller ) IOException:" + e.getMessage());;
+            LOG.warn("(BufferFiller ) IOException:" + e.getMessage());
          } finally {
             IOUtils.closeQuietly(in);
             IOUtils.closeQuietly(out);
@@ -90,7 +95,7 @@ public class BufferFiller extends Thread {
       }
       return null;
    }
-   
+
    /**
     * Interrupts the buffer thread and clears all remaining bytes in buffer.
     */

@@ -88,9 +88,9 @@ public class PastryTestModule extends AbstractModule {
       try {
          props.load(new FileInputStream("../configs/testing.properties"));
       } catch (FileNotFoundException e) {
-    	  System.out.write(-1);
+         System.out.write(-1);
       } catch (IOException e) {
-    	  System.out.write(-2);
+         System.out.write(-2);
       }
       bind(Properties.class).toInstance(props);
       Names.bindProperties(binder(), props);

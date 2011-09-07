@@ -43,27 +43,25 @@ public class ClientNodeModule extends AbstractNodeModule {
 
       // The ResolutionServices - binds the config and DHT instances
       install(new MDHTResolutionModule());
-      
-      //Need a binding to AccessServer
+
+      // Need a binding to AccessServer
       install(new RESTModule());
-      
+
       // The SearchServices
       install(new SearchServiceRDFModule());
 
       // Peer Caching
-      //install(new LocalIOCachingModule());
-      
-      //install(new NetworkCacheModule());
-      
-      //bind(StorageService.class).to(MDHTResolutionService.class).in(Singleton.class);
+      // install(new LocalIOCachingModule());
+
+      // install(new NetworkCacheModule());
+
+      // bind(StorageService.class).to(MDHTResolutionService.class).in(Singleton.class);
    }
 
    @Singleton
    @Provides
-   ResolutionService[] provideResolutionServices(RemoteResolutionFactory
-   remoteResolutionFactory) {
-     return remoteResolutionFactory.getRemoteResolutionServices().toArray(new
-   ResolutionService[] {});
+   ResolutionService[] provideResolutionServices(RemoteResolutionFactory remoteResolutionFactory) {
+      return remoteResolutionFactory.getRemoteResolutionServices().toArray(new ResolutionService[] {});
    }
 
    /**
@@ -78,7 +76,8 @@ public class ClientNodeModule extends AbstractNodeModule {
     */
    @Singleton
    @Provides
-   ResolutionInterceptor[] provideResolutionInterceptors(CachingInterceptor cache /*IOCacheImpl ioCache*/, LocatorSelectorImpl locatorSelector) {
+   ResolutionInterceptor[] provideResolutionInterceptors(CachingInterceptor cache /* IOCacheImpl ioCache */,
+         LocatorSelectorImpl locatorSelector) {
       return new ResolutionInterceptor[] { cache, locatorSelector };
    }
 
@@ -96,24 +95,22 @@ public class ClientNodeModule extends AbstractNodeModule {
       return new SearchService[] { searchServiceRdf };
    }
 
-
    @Singleton
    @Provides
    NetInfServer[] providesAccess(TCPServer tcpServer, HTTPServer httpServer) {
       return new NetInfServer[] { tcpServer, httpServer };
    }
-   
-   @Singleton 
+
+   @Singleton
    @Provides
    AccessServer[] providesAccessServer(AccessServer accServ) {
-	   return new AccessServer[] { accServ };
+      return new AccessServer[] { accServ };
    }
 
    /***** Uncomment below to provide Peerside and NetworkCaches ****/
-   /*@Singleton
-   @Provides
-   BOCacheServer[] provideBOCaches(NetworkCache nw ,PeersideCache ps) {
-      return new BOCacheServer[] { ps, nw };
-   }*/
+   /*
+    * @Singleton
+    * @Provides BOCacheServer[] provideBOCaches(NetworkCache nw ,PeersideCache ps) { return new BOCacheServer[] { ps, nw }; }
+    */
 
 }
