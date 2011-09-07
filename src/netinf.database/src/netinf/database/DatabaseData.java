@@ -43,7 +43,7 @@ import com.google.inject.name.Named;
 /**
  * A simple holder for the pieces of inforamtion needed for the database.
  * 
- * @author PG Augnet 2, University of Paderborn
+ * @author PG Augnet 2, University of Paderborn.
  */
 public class DatabaseData {
 
@@ -101,11 +101,11 @@ public class DatabaseData {
    }
 
    public void setDatabaseName(String database) {
-      this.databaseName = database;
+      databaseName = database;
    }
 
    public void setUser(String username) {
-      this.user = username;
+      user = username;
    }
 
    public void setPassword(String password) {

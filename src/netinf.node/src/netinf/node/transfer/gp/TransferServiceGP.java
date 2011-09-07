@@ -54,10 +54,9 @@ import com.google.inject.Inject;
 /**
  * A special {@link TransferService} for GP. Is capable to communicate with GP over the {@link GPNetInfInterfaceImpl}. The methods
  * {@link TransferServiceGP#startTransfer(String, String, String)} and
- * {@link TransferServiceGP#changeTransfer(String, String, boolean)} are pretty much adjusted for the integrated Scenario.
- * 
- * TODO: We are not allowed to store the TransferJobs, after they have been moved, since this is simply not necessary for GP. It
- * might lead to additional resource usage, although not necessary.
+ * {@link TransferServiceGP#changeTransfer(String, String, boolean)} are pretty much adjusted for the integrated Scenario. TODO:
+ * We are not allowed to store the TransferJobs, after they have been moved, since this is simply not necessary for GP. It might
+ * lead to additional resource usage, although not necessary.
  * 
  * @author PG Augnet 2, University of Paderborn
  */

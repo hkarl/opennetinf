@@ -41,8 +41,8 @@ import java.io.File;
 import java.io.IOException;
 
 import junit.framework.Assert;
-import netinf.node.transferDeluxe.TransferDispatcher;
-import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
+import netinf.node.transferdispatcher.TransferDispatcher;
+import netinf.node.transferdispatcher.streamprovider.NetInfNoStreamProviderFoundException;
 
 import org.junit.AfterClass;
 import org.junit.Test;

@@ -1,9 +1,9 @@
 package netinf.node.cache;
 
 /**
- * Interface for an CachingServer
+ * Interface for a CachingServer.
  * 
- * @author PG NetInf 3, University of Paderborn
+ * @author PG NetInf 3, University of Paderborn.
  */
 public interface BOCacheServer {
 

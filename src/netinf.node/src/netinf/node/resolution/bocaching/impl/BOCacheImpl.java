@@ -56,7 +56,7 @@ import netinf.common.security.Hashing;
 import netinf.common.utils.DatamodelUtils;
 import netinf.common.utils.Utils;
 import netinf.node.resolution.bocaching.BOCache;
-import netinf.node.transferDeluxe.TransferDispatcher;
+import netinf.node.transferdispatcher.TransferDispatcher;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;

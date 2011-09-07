@@ -55,52 +55,51 @@ import rice.p2p.past.PastException;
  */
 public class VersionPastContent implements PastContent {
 
-	private static final long serialVersionUID = 2224864664163318409L;
+   private static final long serialVersionUID = 2224864664163318409L;
 
-	private List<Identifier> identifiers;
-	private Id id;
+   private List<Identifier> identifiers;
+   private Id id;
 
-	public VersionPastContent(Identifier identifier, Id id) {
-		this.identifiers = new LinkedList<Identifier>();
-		this.identifiers.add(identifier);
-		this.id = id;
-	}
+   public VersionPastContent(Identifier identifier, Id id) {
+      this.identifiers = new LinkedList<Identifier>();
+      this.identifiers.add(identifier);
+      this.id = id;
+   }
 
+   @Override
+   public PastContent checkInsert(Id id, PastContent existingContent) throws PastException {
+      if (existingContent == null) {
+         return this;
+      }
+      if (existingContent instanceof VersionPastContent) {
+         VersionPastContent versionPastContent = (VersionPastContent) existingContent;
+         versionPastContent.appendIdentifier(identifiers.get(0));
+      }
 
-	@Override
-	public PastContent checkInsert(Id id, PastContent existingContent) throws PastException {
-		if (existingContent == null) {
-			return this;
-		}
-		if (existingContent instanceof VersionPastContent) {
-			VersionPastContent versionPastContent = (VersionPastContent) existingContent;
-			versionPastContent.appendIdentifier(identifiers.get(0));
-		}
+      return existingContent;
+   }
 
-		return existingContent;
-	}
+   @Override
+   public PastContentHandle getHandle(Past local) {
+      return new ContentHashPastContentHandle(local.getLocalNodeHandle(), getId());
+   }
 
-	@Override
-	public PastContentHandle getHandle(Past local) {
-		return new ContentHashPastContentHandle(local.getLocalNodeHandle(), getId());
-	}
+   @Override
+   public Id getId() {
+      return id;
+   }
 
-	@Override
-	public Id getId() {
-		return id;
-	}
+   @Override
+   public boolean isMutable() {
+      return true;
+   }
 
-	@Override
-	public boolean isMutable() {
-		return true;
-	}
+   public void appendIdentifier(Identifier identifier) {
+      identifiers.add(identifier);
+   }
 
-	public void appendIdentifier(Identifier identifier) {
-		identifiers.add(identifier);
-	}
-
-	public List<Identifier> getIdentifiers() {
-		return identifiers;
-	}
+   public List<Identifier> getIdentifiers() {
+      return identifiers;
+   }
 
 }

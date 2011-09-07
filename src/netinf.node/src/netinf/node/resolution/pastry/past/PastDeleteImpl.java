@@ -63,155 +63,155 @@ import rice.persistence.StorageManager;
  */
 public class PastDeleteImpl extends PastImpl {
 
-	/**
+   /**
     * The Class PastDeleteDeserializer.
     * 
     * @author PG Augnet 2, University of Paderborn
     */
-	protected class PastDeleteDeserializer extends PastDeserializer {
-		@Override
-		public Message deserialize(InputBuffer buf, short type, int priority, NodeHandle sender) throws IOException {
-			try {
-				if (type == DeleteMessage.TYPE) {
-					return new DeleteMessage(buf, endpoint);
-				} else {
-					return super.deserialize(buf, type, priority, sender);
-				}
-			} catch (IOException e) {
-				if (logger.level <= Logger.SEVERE) {
-					logger.log("Exception in deserializer in " + PastDeleteImpl.this.endpoint.toString() + ":" + instance + " " + e);
-				}
-				throw e;
-			}
-		}
-	}
+   protected class PastDeleteDeserializer extends PastDeserializer {
+      @Override
+      public Message deserialize(InputBuffer buf, short type, int priority, NodeHandle sender) throws IOException {
+         try {
+            if (type == DeleteMessage.TYPE) {
+               return new DeleteMessage(buf, endpoint);
+            } else {
+               return super.deserialize(buf, type, priority, sender);
+            }
+         } catch (IOException e) {
+            if (logger.level <= Logger.SEVERE) {
+               logger.log("Exception in deserializer in " + PastDeleteImpl.this.endpoint.toString() + ":" + instance + " " + e);
+            }
+            throw e;
+         }
+      }
+   }
 
-	public PastDeleteImpl(Node node, StorageManager manager, int replicas, String instance) {
-		super(node, manager, replicas, instance);
-		this.endpoint.setDeserializer(new PastDeleteDeserializer());
-	}
+   public PastDeleteImpl(Node node, StorageManager manager, int replicas, String instance) {
+      super(node, manager, replicas, instance);
+      this.endpoint.setDeserializer(new PastDeleteDeserializer());
+   }
 
-	public PastDeleteImpl(Node node, StorageManager manager, int replicas, String instance, PastPolicy policy) {
-		super(node, manager, replicas, instance, policy);
-		this.endpoint.setDeserializer(new PastDeleteDeserializer());
-	}
+   public PastDeleteImpl(Node node, StorageManager manager, int replicas, String instance, PastPolicy policy) {
+      super(node, manager, replicas, instance, policy);
+      this.endpoint.setDeserializer(new PastDeleteDeserializer());
+   }
 
-	public PastDeleteImpl(Node node, StorageManager manager, Cache backup, int replicas, String instance, PastPolicy policy,
-			StorageManager trash) {
-		super(node, manager, backup, replicas, instance, policy, trash);
-		this.endpoint.setDeserializer(new PastDeleteDeserializer());
-	}
+   public PastDeleteImpl(Node node, StorageManager manager, Cache backup, int replicas, String instance, PastPolicy policy,
+         StorageManager trash) {
+      super(node, manager, backup, replicas, instance, policy, trash);
+      this.endpoint.setDeserializer(new PastDeleteDeserializer());
+   }
 
-	public PastDeleteImpl(Node node, StorageManager manager, Cache backup, int replicas, String instance, PastPolicy policy,
-			StorageManager trash, boolean useOwnSocket) {
-		super(node, manager, backup, replicas, instance, policy, trash, useOwnSocket);
-		this.endpoint.setDeserializer(new PastDeleteDeserializer());
-	}
+   public PastDeleteImpl(Node node, StorageManager manager, Cache backup, int replicas, String instance, PastPolicy policy,
+         StorageManager trash, boolean useOwnSocket) {
+      super(node, manager, backup, replicas, instance, policy, trash, useOwnSocket);
+      this.endpoint.setDeserializer(new PastDeleteDeserializer());
+   }
 
-	public PastDeleteImpl(Node node, StorageManager manager, Cache backup, int replicas, String instance, PastPolicy policy,
-			StorageManager trash, SocketStrategy strategy) {
-		super(node, manager, backup, replicas, instance, policy, trash, strategy);
-		this.endpoint.setDeserializer(new PastDeleteDeserializer());
-	}
+   public PastDeleteImpl(Node node, StorageManager manager, Cache backup, int replicas, String instance, PastPolicy policy,
+         StorageManager trash, SocketStrategy strategy) {
+      super(node, manager, backup, replicas, instance, policy, trash, strategy);
+      this.endpoint.setDeserializer(new PastDeleteDeserializer());
+   }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void deliver(Id id, Message message) {
-		final PastMessage msg = (PastMessage) message;
-		if (!msg.isResponse() && msg instanceof DeleteMessage) {
-			DeleteMessage dmsg = (DeleteMessage) msg;
-			final Id msgid = dmsg.getDestination();
-			lockManager.lock(msgid, new StandardContinuation(getResponseContinuation(msg)) {
-				public void receiveResult(Object result) {
-					storage.unstore(msgid, new StandardContinuation(parent) {
-						public void receiveResult(Object o) {
-							getResponseContinuation(msg).receiveResult(o);
-							lockManager.unlock(msgid);
-						}
-					});
-				}
-			});
-		} else {
-			super.deliver(id, message);
-		}
-	}
+   @SuppressWarnings("unchecked")
+   @Override
+   public void deliver(Id id, Message message) {
+      final PastMessage msg = (PastMessage) message;
+      if (!msg.isResponse() && msg instanceof DeleteMessage) {
+         DeleteMessage dmsg = (DeleteMessage) msg;
+         final Id msgid = dmsg.getDestination();
+         lockManager.lock(msgid, new StandardContinuation(getResponseContinuation(msg)) {
+            public void receiveResult(Object result) {
+               storage.unstore(msgid, new StandardContinuation(parent) {
+                  public void receiveResult(Object o) {
+                     getResponseContinuation(msg).receiveResult(o);
+                     lockManager.unlock(msgid);
+                  }
+               });
+            }
+         });
+      } else {
+         super.deliver(id, message);
+      }
+   }
 
-	@SuppressWarnings("unchecked")
-	public void delete(final Id id, final Continuation command) {
-		if (logger.level <= Logger.FINER) {
-			logger.log("Deleting the object  with the id " + id);
-		}
+   @SuppressWarnings("unchecked")
+   public void delete(final Id id, final Continuation command) {
+      if (logger.level <= Logger.FINER) {
+         logger.log("Deleting the object  with the id " + id);
+      }
 
-		doDelete(id, new MessageBuilder() {
-			public PastMessage buildMessage() {
-				return new DeleteMessage(getUID(), getLocalNodeHandle(), id);
-			}
-		}, new StandardContinuation(command) {
-			public void receiveResult(final Object array) {
-				parent.receiveResult(array);
-			}
-		});
+      doDelete(id, new MessageBuilder() {
+         public PastMessage buildMessage() {
+            return new DeleteMessage(getUID(), getLocalNodeHandle(), id);
+         }
+      }, new StandardContinuation(command) {
+         public void receiveResult(final Object array) {
+            parent.receiveResult(array);
+         }
+      });
 
-	}
+   }
 
-	@SuppressWarnings("unchecked")
-	protected void doDelete(final Id id, final MessageBuilder builder, Continuation command) {
-		getHandles(id, replicationFactor + 1, new StandardContinuation(command) {
-			public void receiveResult(Object o) {
-				NodeHandleSet replicas = (NodeHandleSet) o;
-				if (logger.level <= Logger.FINER) {
-					logger.log("Received replicas " + replicas + " for id " + id);
-				}
+   @SuppressWarnings("unchecked")
+   protected void doDelete(final Id id, final MessageBuilder builder, Continuation command) {
+      getHandles(id, replicationFactor + 1, new StandardContinuation(command) {
+         public void receiveResult(Object o) {
+            NodeHandleSet replicas = (NodeHandleSet) o;
+            if (logger.level <= Logger.FINER) {
+               logger.log("Received replicas " + replicas + " for id " + id);
+            }
 
-				MultiContinuation multi = new MultiContinuation(parent, replicas.size()) {
-					@Override
-					public boolean isDone() throws Exception {
-						int numSuccess = 0;
-						for (int i = 0; i < haveResult.length; i++) {
-							if ((haveResult[i]) && (Boolean.TRUE.equals(result[i]))) {
-								numSuccess++;
-							}
-						}
+            MultiContinuation multi = new MultiContinuation(parent, replicas.size()) {
+               @Override
+               public boolean isDone() throws Exception {
+                  int numSuccess = 0;
+                  for (int i = 0; i < haveResult.length; i++) {
+                     if ((haveResult[i]) && (Boolean.TRUE.equals(result[i]))) {
+                        numSuccess++;
+                     }
+                  }
 
-						if (numSuccess >= (SUCCESSFUL_INSERT_THRESHOLD * haveResult.length)) {
-							return true;
-						}
+                  if (numSuccess >= (SUCCESSFUL_INSERT_THRESHOLD * haveResult.length)) {
+                     return true;
+                  }
 
-						if (super.isDone()) {
-							for (int i = 0; i < result.length; i++) {
-								if (result[i] instanceof Exception && logger.level <= Logger.WARNING) {
-									logger.logException("result[" + i + "]:", (Exception) result[i]);
-								}
-							}
+                  if (super.isDone()) {
+                     for (int i = 0; i < result.length; i++) {
+                        if (result[i] instanceof Exception && logger.level <= Logger.WARNING) {
+                           logger.logException("result[" + i + "]:", (Exception) result[i]);
+                        }
+                     }
 
-							throw new PastException("Had only " + numSuccess + " successful deletes out of " + result.length
-									+ " - aborting.");
-						}
-						return false;
-					}
+                     throw new PastException("Had only " + numSuccess + " successful deletes out of " + result.length
+                           + " - aborting.");
+                  }
+                  return false;
+               }
 
-					@Override
-					public Object getResult() {
-						Boolean[] b = new Boolean[result.length];
-						for (int i = 0; i < b.length; i++) {
-							b[i] = Boolean.valueOf((result[i] == null) || Boolean.TRUE.equals(result[i]));
-						}
-						return b;
-					}
-				};
+               @Override
+               public Object getResult() {
+                  Boolean[] b = new Boolean[result.length];
+                  for (int i = 0; i < b.length; i++) {
+                     b[i] = Boolean.valueOf((result[i] == null) || Boolean.TRUE.equals(result[i]));
+                  }
+                  return b;
+               }
+            };
 
-				for (int i = 0; i < replicas.size(); i++) {
-					NodeHandle handle = replicas.getHandle(i);
-					PastMessage m = builder.buildMessage();
-					Continuation c = new NamedContinuation("DeleteMessage to " + replicas.getHandle(i) + " for " + id, multi
-							.getSubContinuation(i));
+            for (int i = 0; i < replicas.size(); i++) {
+               NodeHandle handle = replicas.getHandle(i);
+               PastMessage m = builder.buildMessage();
+               Continuation c = new NamedContinuation("DeleteMessage to " + replicas.getHandle(i) + " for " + id, multi
+                     .getSubContinuation(i));
 
-					sendRequest(handle, m, c);
+               sendRequest(handle, m, c);
 
-				}
-			}
-		});
+            }
+         }
+      });
 
-	}
+   }
 
 }

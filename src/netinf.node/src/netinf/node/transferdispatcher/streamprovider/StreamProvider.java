@@ -1,4 +1,4 @@
-package netinf.node.transferDeluxe.streamprovider;
+package netinf.node.transferdispatcher.streamprovider;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,7 +6,9 @@ import java.io.InputStream;
 import netinf.node.chunking.Chunk;
 
 /**
- * @author PG NetInf 3
+ * Interface for all StreamProviders (FTP, HTTP,...)
+ * 
+ * @author PG NetInf 3, University of Paderborn.
  */
 public interface StreamProvider {
 
@@ -21,8 +23,8 @@ public interface StreamProvider {
     */
    InputStream getStream(String url) throws IOException;
 
-   InputStream getStream(Chunk chunk, String baseUrl) throws IOException;
-   
+   InputStream getStream(Chunk chunk, String chunkUrl) throws IOException;
+
    /**
     * Decides wether this URL can be handled or not.
     * 

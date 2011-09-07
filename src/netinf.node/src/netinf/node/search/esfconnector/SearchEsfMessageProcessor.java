@@ -110,8 +110,8 @@ public class SearchEsfMessageProcessor extends AbstractMessageProcessor {
          // delete information object
          InformationObject oldIO = eventMessage.getOldInformationObject();
          // mark information object for deletion
-         Attribute attr = dmFactory.createAttribute(DefinedAttributeIdentification.DELETE.getURI(), DeleteMode.DELETE_DATA
-               .getMode());
+         Attribute attr = dmFactory.createAttribute(DefinedAttributeIdentification.DELETE.getURI(),
+               DeleteMode.DELETE_DATA.getMode());
          attr.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
          oldIO.addAttribute(attr);
 

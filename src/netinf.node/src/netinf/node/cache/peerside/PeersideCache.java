@@ -13,11 +13,12 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 /**
- * @author PG NetInf 3, University of Paderborn
+ * The PeersideCache.
+ * 
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class PeersideCache implements BOCacheServer {
 
-   // TODO: cache is still not persistent
    private static final Logger LOG = Logger.getLogger(PeersideCache.class);
 
    private Cache cache;
@@ -43,6 +44,7 @@ public class PeersideCache implements BOCacheServer {
 
       // register shutdown listener
       Runtime.getRuntime().addShutdownHook(new Thread() {
+         @Override
          public void run() {
             LOG.info("(Ehcache ) shutdown!");
             manager.shutdown();
@@ -78,7 +80,7 @@ public class PeersideCache implements BOCacheServer {
 
    @Override
    public String getURL(String hash) {
-      return this.getAddress() + "/" + hash;
+      return getAddress() + "/" + hash;
    }
 
    @Override
@@ -96,7 +98,7 @@ public class PeersideCache implements BOCacheServer {
 
    @Override
    public int getScope() {
-      return this.mdhtScope;
+      return mdhtScope;
    }
 
 }

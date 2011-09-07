@@ -91,8 +91,7 @@ public class GPNetInfInterfaceImpl implements GPNetInfInterface {
 
    @Inject
    public GPNetInfInterfaceImpl(GPFactory gpFactory, @Named("netinf.gp.interface.host") final String host,
-         @Named("netinf.gp.interface.port") final String port, GPListener gpListener,
-         GPCommunicationBuffer gpCommunicationBuffer) {
+         @Named("netinf.gp.interface.port") final String port, GPListener gpListener, GPCommunicationBuffer gpCommunicationBuffer) {
       LOG.trace("Creating gp-interface on port '" + port + "'");
 
       this.gpFactory = gpFactory;

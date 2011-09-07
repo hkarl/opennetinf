@@ -49,25 +49,29 @@ import com.google.inject.Inject;
  */
 public class PastNodePair {
 
-	@Inject
-	public PastNodePair(PastryNode node, Past past) {
-		super();
-		this.node = node;
-		this.past = past;
-	}
-	private PastryNode node;
-	private Past past;
+   @Inject
+   public PastNodePair(PastryNode node, Past past) {
+      super();
+      this.node = node;
+      this.past = past;
+   }
 
-	public PastryNode getNode() {
-		return node;
-	}
-	public void setNode(PastryNode node) {
-		this.node = node;
-	}
-	public Past getPast() {
-		return past;
-	}
-	public void setPast(Past past) {
-		this.past = past;
-	}
+   private PastryNode node;
+   private Past past;
+
+   public PastryNode getNode() {
+      return node;
+   }
+
+   public void setNode(PastryNode node) {
+      this.node = node;
+   }
+
+   public Past getPast() {
+      return past;
+   }
+
+   public void setPast(Past past) {
+      this.past = past;
+   }
 }

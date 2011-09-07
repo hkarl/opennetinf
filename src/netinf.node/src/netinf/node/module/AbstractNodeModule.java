@@ -95,7 +95,6 @@ public abstract class AbstractNodeModule extends AbstractModule {
       this.properties = properties;
    }
 
-
    @Override
    protected void configure() {
       if (this.properties != null) {

@@ -1,4 +1,4 @@
-package netinf.node.transferDeluxe;
+package netinf.node.transferdispatcher;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -13,20 +13,22 @@ import netinf.common.log.demo.DemoLevel;
 import netinf.node.chunking.Chunk;
 import netinf.node.chunking.ChunkedBO;
 import netinf.node.chunking.NetInfNotChunkableException;
-import netinf.node.transferDeluxe.chunkstreams.ConcurrentChunkStream;
-import netinf.node.transferDeluxe.chunkstreams.SequentialChunkStream;
-import netinf.node.transferDeluxe.streamprovider.FTPStreamProvider;
-import netinf.node.transferDeluxe.streamprovider.HTTPStreamProvider;
-import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
-import netinf.node.transferDeluxe.streamprovider.StreamProvider;
+import netinf.node.transferdispatcher.chunkstreams.ConcurrentChunkStream;
+import netinf.node.transferdispatcher.chunkstreams.SequentialChunkStream;
+import netinf.node.transferdispatcher.streamprovider.FTPStreamProvider;
+import netinf.node.transferdispatcher.streamprovider.HTTPStreamProvider;
+import netinf.node.transferdispatcher.streamprovider.NetInfNoStreamProviderFoundException;
+import netinf.node.transferdispatcher.streamprovider.StreamProvider;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 /**
- * @author PG NetInf 3
- * @pat.name Singleton
- * @pat.task Forces that only one instance of this class exists
+ * The TransferDispatcher. Responsible for Providing stream to IOs/Files.
+ * 
+ * @author PG NetInf 3, University of Paderborn.
+ * @pat.name Singleton.
+ * @pat.task Forces that only one instance of this class exists.
  */
 public final class TransferDispatcher {
 
@@ -35,13 +37,18 @@ public final class TransferDispatcher {
    private static TransferDispatcher instance;
    private int chunkingTechnique = 1;
 
+   /**
+    * Constructor.
+    */
    private TransferDispatcher() {
       addStreamProviders();
    }
 
+   /**
+    * Adds available StreamProviders to the TD.
+    */
    private void addStreamProviders() {
       streamProviders = new ArrayList<StreamProvider>();
-
       streamProviders.add(new FTPStreamProvider());
       streamProviders.add(new HTTPStreamProvider());
    }
@@ -49,7 +56,7 @@ public final class TransferDispatcher {
    /**
     * Provides the singleton instance of a TransferDispatcher.
     * 
-    * @return The TransferDispatcher
+    * @return The TransferDispatcher.
     */
    public static synchronized TransferDispatcher getInstance() {
       if (instance == null) {
@@ -58,18 +65,46 @@ public final class TransferDispatcher {
       return instance;
    }
 
+   /**
+    * Provides a stream to the given url.
+    * 
+    * @param url
+    *           The url of the file.
+    * @return The Stream.
+    * @throws IOException
+    * @throws NetInfNoStreamProviderFoundException
+    */
    public InputStream getStream(String url) throws IOException, NetInfNoStreamProviderFoundException {
       LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Getting Transfer-Stream from: " + url);
       StreamProvider dl = getStreamProvider(url);
       return dl.getStream(url);
    }
 
-   public InputStream getStream(Chunk chunk, String baseUrl) throws IOException, NetInfNoStreamProviderFoundException {
-      LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Getting Transfer-Stream for Chunk from: " + baseUrl);
-      StreamProvider dl = getStreamProvider(baseUrl);
-      return dl.getStream(chunk, baseUrl);
+   /**
+    * Provides the stream to a given chunk.
+    * 
+    * @param chunk
+    *           The chunk-object.
+    * @param chunkUrl
+    *           The url to the chunk.
+    * @return Stream to the chunk.
+    * @throws IOException
+    * @throws NetInfNoStreamProviderFoundException
+    */
+   public InputStream getStream(Chunk chunk, String chunkUrl) throws IOException, NetInfNoStreamProviderFoundException {
+      LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Getting Transfer-Stream for Chunk from: " + chunkUrl);
+      StreamProvider dl = getStreamProvider(chunkUrl);
+      return dl.getStream(chunk, chunkUrl);
    }
 
+   /**
+    * Provides the stream by a given DO.
+    * 
+    * @param dataObj
+    *           The DO.
+    * @return Stream to the underlying BO.
+    * @throws IOException
+    */
    public InputStream getStream(DataObject dataObj) throws IOException {
       LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Getting Transfer-Stream from IO: " + dataObj.getIdentifier());
 
@@ -110,6 +145,18 @@ public final class TransferDispatcher {
       throw new IOException("Stream could not be provided");
    }
 
+   /**
+    * Saves the a file (url) to the given destination.
+    * 
+    * @param url
+    *           The source of the file (e.g. http).
+    * @param destination
+    *           Destination of the file (diskpath).
+    * @param withContentType
+    *           If the content-type should be encoded into the saved file.
+    * @throws NetInfNoStreamProviderFoundException
+    * @throws IOException
+    */
    public void getStreamAndSave(String url, String destination, boolean withContentType)
          throws NetInfNoStreamProviderFoundException, IOException {
 

@@ -19,15 +19,17 @@ import netinf.common.utils.Utils;
 import netinf.node.api.impl.LocalNodeConnection;
 import netinf.node.chunking.Chunk;
 import netinf.node.chunking.ChunkedBO;
-import netinf.node.transferDeluxe.LocatorSelector;
-import netinf.node.transferDeluxe.TransferDispatcher;
-import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
+import netinf.node.transferdispatcher.LocatorSelector;
+import netinf.node.transferdispatcher.TransferDispatcher;
+import netinf.node.transferdispatcher.streamprovider.NetInfNoStreamProviderFoundException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 /**
- * @author PG NetInf 3
+ * A single CacheJob. Used by {@link CachingInterceptor}
+ * 
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class CacheJob extends Thread {
 

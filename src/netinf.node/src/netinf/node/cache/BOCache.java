@@ -12,9 +12,9 @@ import netinf.common.utils.Utils;
 import org.apache.log4j.Logger;
 
 /**
- * General Cache Class
+ * General Cache Class.
  * 
- * @author PG NetInf 3
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class BOCache {
 

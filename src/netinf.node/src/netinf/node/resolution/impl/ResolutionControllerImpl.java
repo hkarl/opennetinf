@@ -268,7 +268,7 @@ public class ResolutionControllerImpl implements ResolutionController {
             ResolutionService rs = this.identityToResolutionServices.get(rsIdentity);
             if (rs == null) {
                throw new NetInfResolutionException(
-               "The requested resolution service is not registered in the resolution controller");
+                     "The requested resolution service is not registered in the resolution controller");
             }
             try {
                rs.put(informationObject);
@@ -320,10 +320,10 @@ public class ResolutionControllerImpl implements ResolutionController {
       }
       // Added by NetInf 3 - New type of one-way message (MDHT ACK) received
       if (netInfMessage instanceof RSMDHTAck) {
-    	  //RSMDHTAck rsMdhtAck = (RSMDHTAck) netInfMessage;
-    	  LOG.info("(Resolution Controller) Got ACK from Past Node");
-    	  //Explicit return null, in case somebody adds code after this
-    	  return null;
+         // RSMDHTAck rsMdhtAck = (RSMDHTAck) netInfMessage;
+         LOG.info("(Resolution Controller) Got ACK from Past Node");
+         // Explicit return null, in case somebody adds code after this
+         return null;
       }
       return null;
    }
@@ -388,8 +388,8 @@ public class ResolutionControllerImpl implements ResolutionController {
          if (resolutionServicesToUse == null || resolutionServicesToUse.isEmpty()) {
             put(informationObject, rsPutRequest.getUserName(), rsPutRequest.getPrivateKey());
          } else {
-            put(informationObject, rsPutRequest.getResolutionServicesToUse(), rsPutRequest.getUserName(), rsPutRequest
-                  .getPrivateKey());
+            put(informationObject, rsPutRequest.getResolutionServicesToUse(), rsPutRequest.getUserName(),
+                  rsPutRequest.getPrivateKey());
          }
          // }
 

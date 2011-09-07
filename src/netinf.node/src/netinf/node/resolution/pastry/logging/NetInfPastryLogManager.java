@@ -47,11 +47,11 @@ import rice.environment.logging.Logger;
  */
 public class NetInfPastryLogManager implements LogManager {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Logger getLogger(Class clazz, String instance) {
-		org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(clazz);
-		return new NetInfPastryLogger(log);
-	}
+   @SuppressWarnings("unchecked")
+   @Override
+   public Logger getLogger(Class clazz, String instance) {
+      org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(clazz);
+      return new NetInfPastryLogger(log);
+   }
 
 }

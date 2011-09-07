@@ -53,29 +53,29 @@ import rice.p2p.past.messaging.ContinuationMessage;
  */
 public class DeleteMessage extends ContinuationMessage {
 
-	/**
+   /**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 1L;
 
-	public static final short TYPE = 111;
+   public static final short TYPE = 111;
 
-	public DeleteMessage(InputBuffer buf, Endpoint endpoint) throws IOException {
-		super(buf, endpoint);
-	}
+   public DeleteMessage(InputBuffer buf, Endpoint endpoint) throws IOException {
+      super(buf, endpoint);
+   }
 
-	public DeleteMessage(int uid, NodeHandle source, Id dest) {
-		super(uid, source, dest);
-	}
+   public DeleteMessage(int uid, NodeHandle source, Id dest) {
+      super(uid, source, dest);
+   }
 
-	@Override
-	public void serialize(OutputBuffer buf) throws IOException {
-		super.serialize(buf, true);
-	}
+   @Override
+   public void serialize(OutputBuffer buf) throws IOException {
+      super.serialize(buf, true);
+   }
 
-	@Override
-	public short getType() {
-		return TYPE;
-	}
+   @Override
+   public short getType() {
+      return TYPE;
+   }
 
 }

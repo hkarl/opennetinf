@@ -52,14 +52,10 @@ import netinf.node.transfer.TransferController;
 /**
  * This is the interface that represents a whole running NetInfNode. It can be seen as a facade to access the
  * {@link ResolutionController}, the {@link SearchController}, and the {@link TransferController}. Accordingly, it is possible to
- * access each of these controllers directly from the instance that has this type.
- * 
- * There is always only one instance of this type within the whole NetInfNode - this is guaranteed via GUICE.
- * 
- * The most important method of this interface is {@link NetInfNode#processNetInfMessage(NetInfMessage)}. This method can be
- * called with every request message. It processes the message, by delegating it to the appropriate controller, and returns the
- * result as a new {@link NetInfMessage}.
- * 
+ * access each of these controllers directly from the instance that has this type. There is always only one instance of this type
+ * within the whole NetInfNode - this is guaranteed via GUICE. The most important method of this interface is
+ * {@link NetInfNode#processNetInfMessage(NetInfMessage)}. This method can be called with every request message. It processes the
+ * message, by delegating it to the appropriate controller, and returns the result as a new {@link NetInfMessage}.
  * 
  * @author PG Augnet 2, University of Paderborn
  */

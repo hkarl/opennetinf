@@ -1,4 +1,4 @@
-package netinf.node.transferDeluxe.chunkstreams;
+package netinf.node.transferdispatcher.chunkstreams;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -11,7 +11,9 @@ import java.util.concurrent.BlockingQueue;
 import netinf.node.chunking.ChunkedBO;
 
 /**
- * @author PG NetInf 3
+ * Concurrent streaming of chunks.
+ * 
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class ConcurrentChunkStream extends InputStream {
 
@@ -24,6 +26,9 @@ public class ConcurrentChunkStream extends InputStream {
    private int max;
    private int cur;
 
+   /**
+    * Constructor.
+    */
    public ConcurrentChunkStream(ChunkedBO chunkedBO) {
       max = chunkedBO.getTotalNoOfChunks() - 1;
       cur = 0;
@@ -33,9 +38,9 @@ public class ConcurrentChunkStream extends InputStream {
       bufferQueues = new ArrayList<BlockingQueue<byte[]>>(noOfFiller);
       bufferFillers = new ArrayList<BufferFiller>(noOfFiller);
       for (int i = 0; i < noOfFiller; i++) {
-         BlockingQueue<byte[]> buffer = new ArrayBlockingQueue<byte[]>(noOfFiller); 
+         BlockingQueue<byte[]> buffer = new ArrayBlockingQueue<byte[]>(noOfFiller);
          bufferQueues.add(buffer);
-         BufferFiller filler = new BufferFiller(chunkedBO, i, noOfFiller, buffer); 
+         BufferFiller filler = new BufferFiller(chunkedBO, i, noOfFiller, buffer);
          bufferFillers.add(filler);
          filler.start();
       }
@@ -70,7 +75,7 @@ public class ConcurrentChunkStream extends InputStream {
          return read();
       }
    }
-   
+
    @Override
    public void close() throws IOException {
       for (BufferFiller filler : bufferFillers) {

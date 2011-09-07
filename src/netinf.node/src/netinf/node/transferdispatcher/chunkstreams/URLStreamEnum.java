@@ -1,4 +1,4 @@
-package netinf.node.transferDeluxe.chunkstreams;
+package netinf.node.transferdispatcher.chunkstreams;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,13 +7,15 @@ import java.util.List;
 
 import netinf.node.chunking.Chunk;
 import netinf.node.chunking.ChunkedBO;
-import netinf.node.transferDeluxe.TransferDispatcher;
-import netinf.node.transferDeluxe.streamprovider.NetInfNoStreamProviderFoundException;
+import netinf.node.transferdispatcher.TransferDispatcher;
+import netinf.node.transferdispatcher.streamprovider.NetInfNoStreamProviderFoundException;
 
 import org.apache.log4j.Logger;
 
 /**
- * @author PG NetInf 3
+ * Enumeration of InputStreams. Used by {@link SequentialChunkStream}.
+ * 
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class URLStreamEnum implements Enumeration<InputStream> {
 
@@ -23,6 +25,9 @@ public class URLStreamEnum implements Enumeration<InputStream> {
    private int curChunk;
    private List<Chunk> chunks;
 
+   /**
+    * Constructor.
+    */
    public URLStreamEnum(ChunkedBO chunkedBO) {
       chunks = chunkedBO.getChunks();
       maxChunk = chunks.size();

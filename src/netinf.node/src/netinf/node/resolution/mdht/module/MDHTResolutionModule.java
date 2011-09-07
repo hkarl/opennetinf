@@ -29,70 +29,65 @@ public class MDHTResolutionModule extends AbstractModule {
    protected void configure() {
       bind(MDHTResolutionService.class);
    }
-   
+
    @Provides
    List<DHTConfiguration> provideDHTConfigurations() {
       List<DHTConfiguration> configs = new ArrayList<DHTConfiguration>();
 
       String configFileName;
       try {
-      /*** Each MDHT node determines its own configuration file to use ***/
-      configFileName = getLocalHostname(); // This never really throws SocketException
+         /*** Each MDHT node determines its own configuration file to use ***/
+         configFileName = getLocalHostname(); // This never really throws SocketException
 
-      Properties configFile = new Properties();
+         Properties configFile = new Properties();
 
-      if (fileExists(configFileName) == false) {
-    	  configFileName  = "../configs/mdht/default.properties"; //default
-      }
-      FileInputStream in;
+         if (fileExists(configFileName) == false) {
+            configFileName = "../configs/mdht/default.properties"; // default
+         }
+         FileInputStream in;
 
-      in = new FileInputStream(configFileName);
+         in = new FileInputStream(configFileName);
 
-	  configFile.load(in);
+         configFile.load(in);
 
-	  int noOfLevels = Integer.parseInt(configFile.getProperty("mdht.numberoflevels"));
-	  for (int i = 0; i < noOfLevels; i++) {
-		  String bootHost = configFile.getProperty("mdht." + i + ".boothost"); // Use localhost to start own node
-		  int bootPort = Integer.parseInt(configFile.getProperty("mdht." + i + ".bootport"));
-		  int listenPort = Integer.parseInt(configFile.getProperty("mdht." + i + ".listenport"));
-		  DHTConfiguration config = new DHTConfiguration(bootHost, bootPort, listenPort, i);
-	      configs.add(config);
-	  }
-	  in.close();
+         int noOfLevels = Integer.parseInt(configFile.getProperty("mdht.numberoflevels"));
+         for (int i = 0; i < noOfLevels; i++) {
+            String bootHost = configFile.getProperty("mdht." + i + ".boothost"); // Use localhost to start own node
+            int bootPort = Integer.parseInt(configFile.getProperty("mdht." + i + ".bootport"));
+            int listenPort = Integer.parseInt(configFile.getProperty("mdht." + i + ".listenport"));
+            DHTConfiguration config = new DHTConfiguration(bootHost, bootPort, listenPort, i);
+            configs.add(config);
+         }
+         in.close();
       } catch (IOException e) {
-    	return null;
-   	 }
+         return null;
+      }
       return configs;
    }
 
-private String getLocalHostname() throws SocketException {
-	String configFileName  = "../configs/mdht/default.properties"; //default
-	for (
-    		    final Enumeration<NetworkInterface> interfaces =
-    		        NetworkInterface.getNetworkInterfaces();
-    		    interfaces.hasMoreElements();
-    		) {
-    		    final NetworkInterface cur = interfaces.nextElement();
+   private String getLocalHostname() throws SocketException {
+      String configFileName = "../configs/mdht/default.properties"; // default
+      for (final Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces(); interfaces.hasMoreElements();) {
+         final NetworkInterface cur = interfaces.nextElement();
 
-    		    if (cur.isLoopback()) {
-    		        continue;
-    		    }
+         if (cur.isLoopback()) {
+            continue;
+         }
 
+         for (final InterfaceAddress addr : cur.getInterfaceAddresses()) {
+            final InetAddress inet_addr = addr.getAddress();
 
-    		    for (final InterfaceAddress addr : cur.getInterfaceAddresses()) {
-    		        final InetAddress inet_addr = addr.getAddress();
+            if (!(inet_addr instanceof Inet4Address)) {
+               continue;
+            }
+            configFileName = "../configs/mdht/" + inet_addr.getHostName() + ".properties";
+         }
+      }
+      return configFileName;
+   }
 
-    		        if (!(inet_addr instanceof Inet4Address)) {
-    		            continue;
-    		        }
-    		        configFileName = "../configs/mdht/"
-    		        	+ inet_addr.getHostName() + ".properties";
-    		    }
-    		}
-	return configFileName;
-}
-	private boolean fileExists(String fileName) {
-		File f = new File(fileName);
-		return f.exists();
-	}
+   private boolean fileExists(String fileName) {
+      File f = new File(fileName);
+      return f.exists();
+   }
 }

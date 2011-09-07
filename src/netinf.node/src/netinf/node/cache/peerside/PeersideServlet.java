@@ -17,17 +17,33 @@ import org.apache.commons.io.IOUtils;
  * Simple HttpServlet serving elements stored in the PeersideCache. Allowed HTTP methods are HEAD and GET. The Range header is
  * supported as well.
  * 
- * @author PG NetInf 3, University of Paderborn
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class PeersideServlet extends HttpServlet {
 
    private static final long serialVersionUID = 2029221260528771761L;
    private Cache cache;
 
+   /**
+    * Constructor.
+    * 
+    * @param cache
+    *           The adapted cache.
+    */
    public PeersideServlet(Cache cache) {
       this.cache = cache;
    }
 
+   /**
+    * HEAD and GET operations.
+    * 
+    * @param req
+    *           The Request.
+    * @param resp
+    *           The response.
+    * @param writeContent
+    * @throws IOException
+    */
    private void doHeadOrGet(HttpServletRequest req, HttpServletResponse resp, boolean writeContent) throws IOException {
       String elementKey = req.getPathInfo();
       if (elementKey.startsWith("/") && elementKey.length() >= 1) {

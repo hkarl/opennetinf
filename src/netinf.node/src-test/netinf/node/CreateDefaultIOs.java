@@ -256,7 +256,7 @@ public class CreateDefaultIOs {
       }
 
       Attribute representsAttr = datamodelFactory.createAttribute(DefinedAttributeIdentification.REPRESENTS.getURI(),
-      "ShoppingList");
+            "ShoppingList");
       representsAttr.setAttributePurpose(DefinedAttributePurpose.USER_ATTRIBUTE.toString());
       io.addAttribute(representsAttr);
 
@@ -346,7 +346,7 @@ public class CreateDefaultIOs {
       // Lastly we create an InformationObject containing a HTTP_URL
 
       InformationObject ioTest = ValidCreator
-      .createValidInformationObject(testIdentity, DefinedVersionKind.UNVERSIONED, "IOTEST");
+            .createValidInformationObject(testIdentity, DefinedVersionKind.UNVERSIONED, "IOTEST");
       if (ioTest == null) {
          LOG.error("Could not create Information Object.");
       }

@@ -20,9 +20,9 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 /**
- * Ehcache-Server adapter for NetInfCache
+ * Ehcache-Server adapter for NetInfCache.
  * 
- * @author PG NetInf 3, University of Paderborn
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class NetworkCache implements BOCacheServer {
 
@@ -208,7 +208,7 @@ public class NetworkCache implements BOCacheServer {
 
    @Override
    public int getScope() {
-      return this.mdhtScope;
+      return mdhtScope;
    }
 
 }

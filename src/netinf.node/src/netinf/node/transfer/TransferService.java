@@ -48,7 +48,6 @@ public interface TransferService {
 
    /**
     * The destination might be <code>null</code>. In that case, the {@link TransferService} determines the destination on its own.
-    * 
     * Is intended to start the {@link ExecutableTransferJob} via the method {@link ExecutableTransferJob#startTransferJob()}.
     * 
     * @param source

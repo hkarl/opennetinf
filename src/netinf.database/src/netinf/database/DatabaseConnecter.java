@@ -48,7 +48,7 @@ import com.google.inject.Inject;
 /**
  * This class encapsulates the natural sql-{@link Connection}, and sets up this connection appropriatelly.
  * 
- * @author PG Augnet 2, University of Paderborn
+ * @author PG Augnet 2, University of Paderborn.
  */
 public class DatabaseConnecter {
 

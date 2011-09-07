@@ -1,4 +1,4 @@
-package netinf.node.transferDeluxe.streamprovider;
+package netinf.node.transferdispatcher.streamprovider;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,12 +7,14 @@ import java.net.URL;
 import netinf.node.chunking.Chunk;
 
 /**
- * @author PG NetInf 3
+ * StreamProvider for FTP protocol.
+ * 
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class FTPStreamProvider implements StreamProvider {
 
    private String providerName = "FTP Streamprovider";
-   
+
    @Override
    public InputStream getStream(String url) throws IOException {
       URL conn = new URL(url);
@@ -24,11 +26,11 @@ public class FTPStreamProvider implements StreamProvider {
       if (url == null) {
          return false;
       }
-      
+
       if (url.startsWith("ftp://")) {
          return true;
       }
-      
+
       return false;
    }
 
@@ -41,7 +43,7 @@ public class FTPStreamProvider implements StreamProvider {
    public InputStream getStream(Chunk chunk, String baseUrl) throws IOException {
       // TODO Auto-generated method stub
       return new InputStream() {
-         
+
          @Override
          public int read() throws IOException {
             return -1;

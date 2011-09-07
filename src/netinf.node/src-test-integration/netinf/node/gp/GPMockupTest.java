@@ -80,8 +80,7 @@ public class GPMockupTest {
 
    @BeforeClass
    public static void setup() throws IOException {
-      Properties properties = Utils
-            .loadProperties("../netinf.node/src-test-integration/netinf/node/gp/communicator.properties");
+      Properties properties = Utils.loadProperties("../netinf.node/src-test-integration/netinf/node/gp/communicator.properties");
       PropertyConfigurator.configure(properties);
       int resolveNamePort = Integer.parseInt(properties.getProperty("netinf.gp.interface.port.resolveNamePort"));
       int addNamePort = Integer.parseInt(properties.getProperty("netinf.gp.interface.port.addNamePort"));

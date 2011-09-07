@@ -63,14 +63,14 @@ public class TestConnectionToSDBDatabase {
    public void testConnection() {
       final Properties properties = Utils.loadProperties(CONFIGS_TESTING_PROPERTIES);
 
-      final StoreDesc storeDesc = new StoreDesc(properties.getProperty("resolution_rdf_db_layout"), properties
-            .getProperty("resolution_rdf_db_type"));
+      final StoreDesc storeDesc = new StoreDesc(properties.getProperty("resolution_rdf_db_layout"),
+            properties.getProperty("resolution_rdf_db_type"));
       JDBC.loadDriver(properties.getProperty("resolution_rdf_db_driver"));
       final String jdbcURL = "jdbc:" + properties.getProperty("resolution_rdf_db_type").toLowerCase() + "://"
             + properties.getProperty("resolution_rdf_db_host") + ":" + properties.getProperty("resolution_rdf_db_port") + "/"
             + properties.getProperty("resolution_rdf_db_dbname");
-      final SDBConnection conn = new SDBConnection(jdbcURL, properties.getProperty("resolution_rdf_db_user"), properties
-            .getProperty("resolution_rdf_db_pw"));
+      final SDBConnection conn = new SDBConnection(jdbcURL, properties.getProperty("resolution_rdf_db_user"),
+            properties.getProperty("resolution_rdf_db_pw"));
       final Store store = SDBFactory.connectStore(conn, storeDesc);
 
       Assert.assertFalse(store.isClosed());
