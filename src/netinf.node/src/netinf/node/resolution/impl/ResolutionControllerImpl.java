@@ -212,6 +212,7 @@ public class ResolutionControllerImpl implements ResolutionController {
          this.supportedOperations.add(RSGetRequest.class);
          this.supportedOperations.add(RSPutRequest.class);
          this.supportedOperations.add(RSGetServicesRequest.class);
+         this.supportedOperations.add(RSMDHTAck.class);
       }
 
       return this.supportedOperations;

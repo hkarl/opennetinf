@@ -157,7 +157,8 @@ public class MessageEncoderXML extends MessageEncoderAbstract {
 
    private void encodeRSMDHTAck(Document xml, RSMDHTAck m,
 		SerializeFormat serializeFormat) {
-	
+	   
+	   appendElementWithValue(xml, xml.getFirstChild(), EL_USER_NAME, m.getUserName().toString());
    }
 
    private void encodeESFFetchMissedEventsResponse(Document xml, ESFFetchMissedEventsResponse m, SerializeFormat serializeFormat) {
@@ -332,22 +333,8 @@ public class MessageEncoderXML extends MessageEncoderAbstract {
    private NetInfMessage decodeRSMDHTAck(Node root,
 		SerializeFormat serializeFormat) {
 	   RSMDHTAck decodedMsg = new RSMDHTAck();
-	      Node sourceNode = getFirstElementByTagName(root, EL_PRIVATE_KEY);
-	      if (sourceNode != null) {
-	    	  decodedMsg.setErrorMessage(sourceNode.getTextContent());
-	      }
-	      decodedMsg.setPrivateKey(sourceNode.getTextContent());
-	      Node errorMsgNode = getFirstElementByTagName(root, EL_ERROR_MESSAGE);
-	      if (errorMsgNode != null) {
-	         decodedMsg.setErrorMessage(errorMsgNode.getTextContent());
-	      }
-
-	      Node idNode = getFirstElementByTagName(root, EL_IDENTITY);
-	      if (idNode != null) {
-	         decodedMsg.setErrorMessage(errorMsgNode.getTextContent());
-	      }
-
-	      return decodedMsg;
+	   //Add any special processing instructions for this message here
+	   return decodedMsg;
 }
 
 /**
