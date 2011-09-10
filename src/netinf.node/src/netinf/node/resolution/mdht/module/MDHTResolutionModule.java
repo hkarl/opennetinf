@@ -27,7 +27,6 @@ package netinf.node.resolution.mdht.module;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -46,7 +45,11 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * @author PG NetInf 3
+ * This module is designed to instantiate an MDHT resolution service to be used with other NetInf
+ * modules. It will attempt to read its configuration from files in the /configs/mdht subfolder. If
+ * not found it will just use the default.properties file i.e. create a 3-Level MDHT and be a seed node.
+ * @author PG NetInf 3, University of Paderborn
+ * @since 2011
  */
 public class MDHTResolutionModule extends AbstractModule {
 
@@ -62,11 +65,11 @@ public class MDHTResolutionModule extends AbstractModule {
       String configFileName;
       try {
          /*** Each MDHT node determines its own configuration file to use ***/
-         configFileName = getLocalHostname(); // This never really throws SocketException
+         configFileName = getConfigFileForHostname(); // This never really throws SocketException
 
          Properties configFile = new Properties();
 
-         if (fileExists(configFileName) == false) {
+         if (!fileExists(configFileName)) {
             configFileName = "../configs/mdht/default.properties"; // default
          }
          FileInputStream in;
@@ -90,27 +93,39 @@ public class MDHTResolutionModule extends AbstractModule {
       return configs;
    }
 
-   private String getLocalHostname() throws SocketException {
+   /**
+    * Gets the hostname associated with a local/LAN address.
+    * @return The name of the configuration file which corresponds to this local node.
+    * @throws SocketException If the network interfaces cannot be enumerated.
+    */
+   private String getConfigFileForHostname() throws SocketException {
       String configFileName = "../configs/mdht/default.properties"; // default
+      // Retrieve all the network interfaces for the local host
       for (final Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces(); interfaces.hasMoreElements();) {
          final NetworkInterface cur = interfaces.nextElement();
 
+         // Not interested in loopback interfaces
          if (cur.isLoopback()) {
             continue;
          }
 
          for (final InterfaceAddress addr : cur.getInterfaceAddresses()) {
-            final InetAddress inet_addr = addr.getAddress();
+            final InetAddress inetAddr = addr.getAddress();
 
-            if (!(inet_addr instanceof Inet4Address)) {
+            if (!(inetAddr instanceof Inet4Address)) {
                continue;
             }
-            configFileName = "../configs/mdht/" + inet_addr.getHostName() + ".properties";
+            configFileName = "../configs/mdht/" + inetAddr.getHostName() + ".properties";
          }
       }
       return configFileName;
    }
 
+   /**
+    * Checks if a specific file exists.
+    * @param fileName The file name to check.
+    * @return {@code true} if the file exists, otherwise {@code false}
+    */
    private boolean fileExists(String fileName) {
       File f = new File(fileName);
       return f.exists();

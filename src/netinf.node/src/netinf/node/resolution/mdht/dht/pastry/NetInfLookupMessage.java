@@ -30,20 +30,34 @@ import rice.p2p.commonapi.NodeHandle;
 import rice.p2p.past.messaging.LookupMessage;
 
 /***
- * Custom LookupMessage for the NetInfPast application. Triggered when an object (IO) is sought for in the PAST layer
- * 
- * @author PG NetInf3
+ * Custom LookupMessage for the NetInfPast application. 
+ * Triggered when an object (IO) is sought for in the PAST layer.
+ * For usage see the @see get(Identifier id, int level) method of FreePastryDHT.
+ * @author PG NetInf3, University of Paderborn
+ * @since 2011
  */
 public class NetInfLookupMessage extends LookupMessage {
 
    private static final long serialVersionUID = 6146689282945987009L;
    private int level;
 
+   /**
+    * Constructs a NetInfLookupMessage with the specified options.
+    * @param uid The UID of the PAST application. @see NetInfPast lookup for an example.
+    * @param id The Pastry (commonAPI) Id of the stored content.
+    * @param source The NodeHandle of the node starting the search.
+    * @param dest The Pastry (commonAPI) Id to be searched for. ATTENTION: This can be a content ID!
+    * @param level The MDHT level on which the message is created.
+    */
    public NetInfLookupMessage(int uid, Id id, NodeHandle source, Id dest, int level) {
       super(uid, id, source, dest);
       this.level = level;
    }
 
+   /**
+    * Get the level at which this IO is stored.
+    * @return The level number. Numbering starts at 0.
+    */
    public int getLevel() {
       return level;
    }

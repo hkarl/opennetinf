@@ -35,18 +35,30 @@ import rice.p2p.commonapi.rawserialization.OutputBuffer;
 import rice.p2p.util.rawserialization.JavaSerializer;
 
 /**
- * @author PG NetInf3
+ * This class represents a NetInf-Specific Pastry message.
+ * @author PG NetInf3, University of Paderborn
+ * @since 2011
  */
 public class NetInfDHTMessage implements Message, Serializable {
 
    private static final long serialVersionUID = 6466970856585627245L;
 
-   // Pastry ID of the sender node
+   /**
+    *  Pastry ID of the sender node.
+    */
    private Id from;
 
-   // Pastry ID of the target node
+   /**
+    *  Pastry ID of the target node.
+    */
    private Id to;
 
+   /**
+    * Parameterized constructor for this class. Creates a message with the specified from
+    * and to addresses 
+    * @param from The NodeHandle of the sending node.
+    * @param to The Pastry ID of the target node. 
+    */
    public NetInfDHTMessage(NodeHandle from, Id to) {
       this.from = from.getId();
       this.to = to;
@@ -61,6 +73,11 @@ public class NetInfDHTMessage implements Message, Serializable {
       return Message.DEFAULT_PRIORITY;
    }
 
+   /**
+    * Method used for serializing the message.
+    * @param buf The output buffer.
+    * @throws IOException When content cannot be written to the output buffer.
+    */
    public void serialize(OutputBuffer buf) throws IOException {
       JavaSerializer.serialize(this, buf);
    }

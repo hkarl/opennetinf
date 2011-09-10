@@ -32,7 +32,8 @@ import java.net.UnknownHostException;
 
 import netinf.common.datamodel.Identifier;
 import netinf.common.datamodel.InformationObject;
-import netinf.node.resolution.ResolutionService;
+import netinf.common.exceptions.NetInfResolutionException;
+import netinf.common.log.demo.DemoLevel;
 import netinf.node.resolution.mdht.MDHTResolutionService;
 import netinf.node.resolution.mdht.dht.DHT;
 import netinf.node.resolution.mdht.dht.DHTConfiguration;
@@ -140,22 +141,16 @@ public class FreePastryDHT implements DHT, Application {
 
    throws IOException {
 
-      // Set the reference to the parent MDHT
+      this.parent = pParent;	// Set the reference to the parent MDHT
 
-      this.parent = pParent;
-
-      // PastryNode setup
-
+      // PastryNode setup, including logging. Change the WARNING below to DEBUG if needed.
       environment = new Environment();
-
       environment.getParameters().setString("logging_enable", "true");
-
       environment.getParameters().setString("loglevel", "WARNING");
 
+      // Instruct FreePastry to force start a seed node if given boostrap host is "localhost".
       if (bootHost.contains("localhost")) {
-
          environment.getParameters().setString("rice_socket_seed", "true");
-
       }
 
       NodeIdFactory nodeIdFactory = new RandomNodeIdFactory(environment);
@@ -164,19 +159,16 @@ public class FreePastryDHT implements DHT, Application {
 
       pastryNode = pastryNodeFactory.newNode();
 
-      // Past setup
-
+      // Past setup. This is the storage layer application built on top of FreePastry.
+      
       pastryIdFactory = new PastryIdFactory(environment);
-
       Storage storage = new MemoryStorage(pastryIdFactory);
-
       StorageManager storageManager = new StorageManagerImpl(pastryIdFactory, storage, new EmptyCache(pastryIdFactory));
 
-      // boot address
-
+      // Create an InetSocketAddress object from the hostname and port.
       bootAddress = new InetSocketAddress(bootHost, bootPort);
 
-      // We are only going to use one instance of this application on each PastryNode
+      // We are only going to use one instance of this application on each PastryNode.
       this.endpoint = pastryNode.buildEndpoint(this, "NetInfMDHTNode");
       this.endpoint.register();
 
@@ -207,7 +199,7 @@ public class FreePastryDHT implements DHT, Application {
 
          }
       }
-      LOG.info("(FreePastryDHT) Finished starting pastry node" + pastryNode);
+      LOG.log(DemoLevel.DEMO, "(FreePastryDHT) Finished starting pastry node " + pastryNode);
    }
 
    public InformationObject get(Identifier id, int level) {
@@ -229,13 +221,14 @@ public class FreePastryDHT implements DHT, Application {
          }
       }
 
-      // Not found, instruct parent to look in next ring
+      // Not found, instruct parent to look in next ring. Recursive and blocking.
       retIO = parent.get(lookupId, level + 1);
       return retIO;
    }
 
-   // Version of the get function for looking up p2p.commonapi.Ids directly
-
+   /**
+    *  Version of the get function for looking up p2p.commonapi.Ids directly
+    */
    public InformationObject get(Id id, int level) {
 
       ExternalContinuation<PastContent, Exception> lookupCont = new ExternalContinuation<PastContent, Exception>();
@@ -255,7 +248,7 @@ public class FreePastryDHT implements DHT, Application {
             return result.getInformationObject();
          }
       }
-      // Not found, instruct parent to look in next ring
+      // Not found, instruct parent to look in next ring. Recursive and blocking.
       retIO = parent.get(id, level + 1);
       return retIO;
    }
@@ -269,11 +262,13 @@ public class FreePastryDHT implements DHT, Application {
     *           The level we are currently on
     */
    public final void notifyParent(final Id id, final int level) {
+	  // The comment below is intentional. The value of the get request isn't really used.
+	  // I believe the line below can actually be completely removed, have not had enough
+	  // time to test.
       /* InformationObject retIO = */parent.get(id, level + 1);
       LOG.info("Parent to be notified. Level is " + level);
-      parent.switchRingUpwards(level);
-      // Not found, instruct parent to look in next ring
-      // retIO = parent.get(id, level+1);
+      
+      parent.switchRingUpwards(level);	//Display progress in the log file
    }
 
    /**
@@ -308,15 +303,15 @@ public class FreePastryDHT implements DHT, Application {
 
          if (insertCont.exceptionThrown()) {
             Exception exception = insertCont.getException();
-            LOG.error(exception.getMessage());
+            throw new NetInfResolutionException("(FreePastryDHT) Could not insert Information Object", exception);
          } else {
             Boolean[] result = (Boolean[]) insertCont.getResult();
             LOG.info("(FreePastryDHT) " + result.length + " objects have been inserted at node ");
 
          }
       } catch (UnknownHostException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
+         LOG.error("(FreePastryDHT) Unable to convert the source hostname of the sending node. Please check name resolution and try again");
+         LOG.error("(FreePastryDHT) Original message: " + e.getMessage());
       }
    }
 
@@ -325,7 +320,11 @@ public class FreePastryDHT implements DHT, Application {
       pastryNode.destroy();
       environment.destroy();
    }
-
+   /**
+    * Method used to route a message to a specific FreePastry node. Currently not used, but left
+    * for convenience, in case this might be needed.
+    * @param nh The NodeHandle identifying the node to send the message to.
+    */
    public void routeMyMsgDirect(NodeHandle nh) {
       LOG.info("(FreePastryDHT) Sending direct ACK to node " + nh);
       Message msg = new NetInfDHTMessage(endpoint.getLocalNodeHandle(), nh.getId());
@@ -343,15 +342,38 @@ public class FreePastryDHT implements DHT, Application {
       }
    }
 
+   /**
+    * This is where one can add forwarding logic in the FreePastry DHT itself. You may decide
+    * to not forward specific types of messages etc. Add logic to the forward-Method below in
+    * order to implement your filter.
+    */
    @Override
    public boolean forward(RouteMessage arg0) {
       // Always forward messages
       return true;
    }
 
+   /**
+    * This method is called by FreePastry when the neighbor set of a node changes.
+    * Currently used to display these changes - joins/leaves - for debug purposes.
+    */
    @Override
    public void update(NodeHandle arg0, boolean arg1) {
-      // TODO Auto-generated method stub
+	   if (arg1) { // This means a join
+		   LOG.debug("(FreePastryDHT) Node " + arg0 + " detected a join in its neighbor set.");
+	   } else {    // This means a leave
+		   LOG.debug("(FreePastryDHT) Node " + arg0 + " detected a leave in its neighbor set.");
+	   }
+	   
+   }
+   
+   @Override
+   protected void finalize() throws Throwable {
+      LOG.info("(FreePastryDHT) Pastry node is destroyed");
+      if (pastryNode != null) {
+         pastryNode.destroy();
+      }
+      super.finalize();
    }
 
 }
