@@ -38,6 +38,7 @@ import java.util.Map;
 import netinf.common.communication.AtomicMessage;
 import netinf.common.communication.Connection;
 import netinf.common.communication.MessageEncoderXML;
+import netinf.common.communication.SerializeFormat;
 import netinf.common.communication.TCPConnection;
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.Identifier;
@@ -74,7 +75,6 @@ public class MDHTResolutionService extends AbstractResolutionService {
    private static final Logger LOG = Logger.getLogger(MDHTResolutionService.class);
    
    
-   private static final String IDENTIFIER = "ni:name=value";
    /**
     * The data model factory for IOs. This is injected via Guice. 
     */
@@ -348,7 +348,9 @@ public class MDHTResolutionService extends AbstractResolutionService {
          // Build NetInf Message
          RSMDHTAck mdhtAckMsg = new RSMDHTAck();
 
-         mdhtAckMsg.setPrivateKey(IDENTIFIER);
+        
+         mdhtAckMsg.setUserName(this.getIdentity().getName());
+         mdhtAckMsg.setSerializeFormat(SerializeFormat.RDF);
          // Send message
          LOG.info("(MDHT) Sending ACK to sender");
          conn.send(new AtomicMessage(MessageEncoderXML.ENCODER_ID, localXmlEncoder.encodeMessage(mdhtAckMsg)));

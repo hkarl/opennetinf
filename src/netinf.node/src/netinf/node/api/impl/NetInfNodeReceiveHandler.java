@@ -54,11 +54,20 @@ public class NetInfNodeReceiveHandler implements AsyncReceiveHandler {
    public void receivedMessage(NetInfMessage message, Communicator communicator) {
       LOG.trace(null);
       NetInfMessage result = this.netInfNode.processNetInfMessage(message);
-
+      boolean isAckOrOtherMessage = false;
+      if (null == result) {
+    	  isAckOrOtherMessage = true;
+      }
+    	  
       try {
-         communicator.send(result);
+    	  if (isAckOrOtherMessage) {
+    		// We do not need to send a response to this type of messages
+    		LOG.info("(NetInf Node) Got an ACK message or some other message not requiring a response");
+    	  } else {
+    		  communicator.send(result);
+    	  }
       } catch (NetInfCheckedException e) {
-         LOG.error("The following message could not be send: " + result, e);
+         LOG.error("The following message could not be sent: " + result, e);
       }
    }
 }
