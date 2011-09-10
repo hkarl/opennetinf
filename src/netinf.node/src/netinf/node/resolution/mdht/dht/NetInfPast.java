@@ -61,39 +61,38 @@ public class NetInfPast extends PastImpl {
 
    public NetInfPast(Node node, StorageManager manager, int replicas, String instance, PastPolicy policy) {
       super(node, manager, replicas, instance, policy);
-      // TODO Auto-generated constructor stub
    }
 
    public NetInfPast(Node node, StorageManager manager, Cache backup, int replicas, String instance, PastPolicy policy,
          StorageManager trash) {
       super(node, manager, backup, replicas, instance, policy, trash);
-      // TODO Auto-generated constructor stub
    }
 
    public NetInfPast(Node node, StorageManager manager, Cache backup, int replicas, String instance, PastPolicy policy,
          StorageManager trash, boolean useOwnSocket) {
       super(node, manager, backup, replicas, instance, policy, trash, useOwnSocket);
-      // TODO Auto-generated constructor stub
    }
 
    public NetInfPast(Node node, StorageManager manager, Cache backup, int replicas, String instance, PastPolicy policy,
          StorageManager trash, SocketStrategy strategy) {
       super(node, manager, backup, replicas, instance, policy, trash, strategy);
-      // TODO Auto-generated constructor stub
    }
 
    @SuppressWarnings("unchecked")
+   /**
+    * Handle the event where a NetInfMessage is received by the current PAST node.
+    */
    public void deliver(Id id, Message message) {
       final PastMessage msg = (PastMessage) message;
       if (!msg.isResponse() && msg instanceof NetInfLookupMessage) {
-         // Get the level
+         
          final NetInfLookupMessage niMsg = (NetInfLookupMessage) msg;
-         final int level = niMsg.getLevel();
+         final int level = niMsg.getLevel(); // Get the level
          final Id objectId = id;
          if (this.application instanceof FreePastryDHT) {
             final FreePastryDHT fpParent = (FreePastryDHT) application;
 
-            // if the data is here, we send the reply, as well as push a cached copy
+            // If the data is here, we send the reply, as well as push a cached copy
             // back to the previous node
             storage.getObject(niMsg.getId(), new StandardContinuation(getResponseContinuation(niMsg)) {
                public void receiveResult(Object o) {
@@ -108,14 +107,17 @@ public class NetInfPast extends PastImpl {
          if (msg instanceof NetInfInsertMessage) {
             final NetInfInsertMessage imsg = (NetInfInsertMessage) msg;
             if (this.application instanceof FreePastryDHT) {
+               // Need to get a reference to the FreePastry DHT "parent"  implementation.
                final FreePastryDHT fpParent = (FreePastryDHT) application;
                if (imsg.getLevel() == imsg.getMaxLevels()) {
+            	   // Send the ACK message
                   fpParent.notifyParentAck(id, imsg.getAddress());
                }
             }
 
          }
       }
+      // This is required to also handle the regular type of messages
       super.deliver(id, message);
    }
 

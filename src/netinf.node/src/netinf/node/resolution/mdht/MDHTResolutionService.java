@@ -68,43 +68,59 @@ import com.google.inject.Inject;
  */
 public class MDHTResolutionService extends AbstractResolutionService {
 
-   // TODO @razvan: take MDHT_LEVEL attribute in IO into account... (see PeersideCache)
-
+   /***
+    * Logger object - used by log4j.
+    */
    private static final Logger LOG = Logger.getLogger(MDHTResolutionService.class);
+   
+   
    private static final String IDENTIFIER = "ni:name=value";
+   /**
+    * The data model factory for IOs. This is injected via Guice. 
+    */
    private DatamodelFactory datamodelFactory;
-   // private Map<Integer,InformationObject> openRequests;
-   // private DatamodelFactoryRdf localRdfFactory;
+   
    private MessageEncoderXML localXmlEncoder;
    private InetAddress localNodeIp;
-   // private ExecutorService executorService;
-
-   // table of MDHT levels
+   
+   /**
+    *  The table of MDHT levels. Each level is a DHT object.
+    */
    private Map<Integer, DHT> dhts = new Hashtable<Integer, DHT>();
 
    private DatamodelTranslator translator;
 
+   /**
+    * Inject the DatamodelTranslator via Google Guice. This is needed for
+    * Java/Rdf format change.
+    * @param translator The translator object.
+    */
    @Inject
    public void setDatamodelTranslator(DatamodelTranslator translator) {
       this.translator = translator;
    }
 
+   /**
+    * Inject the DatamodelFactory via Google Guice.
+    * @param factory The factory object.
+    */
    @Inject
    public void setDatamodelFactory(DatamodelFactory factory) {
       datamodelFactory = factory;
    }
 
    /**
-    * Constructor
+    * Parameterized constructor. This is also used by Guice when instantiating the class.
+    * @param configs The list of configuration objects. See DHTConfiguration.
+    * @param rdfFactory The injected DatamodelFactory for Rdf serialization.
+    * @param xmlEncoder The message encoder object, XML format.
     */
    @Inject
    public MDHTResolutionService(List<DHTConfiguration> configs, DatamodelFactoryRdf rdfFactory, MessageEncoderXML xmlEncoder) {
       super();
       // this.localRdfFactory = rdfFactory;
       localXmlEncoder = xmlEncoder;
-      // executorService = Executors.newFixedThreadPool(2);
-      // Initialize requests hash
-      // this.openRequests = new Hashtable<Integer, InformationObject>();
+      
       // Create DHTs
       for (DHTConfiguration config : configs) {
          try {
@@ -126,6 +142,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
       try {
          localNodeIp = InetAddress.getLocalHost();
       } catch (UnknownHostException e) {
+    	 // This happens sometimes on linux hosts with raw IPs, just use hostnames most of the time. 
          LOG.error("(MDHT ) Weird, could not obtain local IP");
       }
       LOG.log(DemoLevel.DEMO, "(MDHT ) Starting MDHT RS with " + configs.size() + " levels");
@@ -135,13 +152,19 @@ public class MDHTResolutionService extends AbstractResolutionService {
       return new FreePastryDHT(config, this);
    }
 
+   /**
+    * This is the intercepted get-Method, the entry point of every request. 
+    */
    @Override
    public InformationObject get(Identifier identifier) {
       LOG.info("(MDHT ) Getting IO with Identifier " + identifier);
-      // this.openRequests.put(key, value)
+      
       return get(identifier, 0);
    }
 
+   /**
+    * This is the intercepted getAllVersions-Method.
+    */
    @Override
    public List<Identifier> getAllVersions(Identifier identifier) {
       LOG.info("(MDHT ) Getting all Versions with Identifier " + identifier);
@@ -155,8 +178,8 @@ public class MDHTResolutionService extends AbstractResolutionService {
       }
    }
 
-   /*
-    * Default put: put on every level
+   /**
+    * Default put: put an IO on every level.
     */
    @Override
    public void put(InformationObject io) {
@@ -172,9 +195,11 @@ public class MDHTResolutionService extends AbstractResolutionService {
       // take level into account, if available
       int upToThisLevel = getLevel(io);
 
+      int nLevels = dhts.size() - 1;
+      
       for (int level = 0; level < upToThisLevel; level++) {
-         dhts.get(level).put(informationObject, level, dhts.size() - 1, localNodeIp.getAddress());
-         LOG.info("(MDHT ) Put IO at level " + level);
+         dhts.get(level).put(informationObject, level, nLevels, localNodeIp.getAddress());
+         LOG.log(DemoLevel.DEMO, "(MDHT ) Put IO at level " + level);
       }
    }
 
@@ -188,8 +213,9 @@ public class MDHTResolutionService extends AbstractResolutionService {
    private int getLevel(InformationObject io) {
       int retValue = dhts.size();
       List<Attribute> attributes = io.getAttribute(DefinedAttributeIdentification.MDHT_LEVEL.getURI());
-      if (attributes.isEmpty()) // Use default size if the above-mentioned attribute is not defined
+      if (attributes.isEmpty()) { // Use default size if the above-mentioned attribute is not defined
          return retValue;
+      }
       for (Attribute attr : attributes) {
          Integer intValue = attr.getValue(Integer.class);
          if (intValue != null) {
@@ -200,34 +226,55 @@ public class MDHTResolutionService extends AbstractResolutionService {
       return retValue;
    }
 
+   /**
+    * A variant of the put-Method, where the IO is only registered up to a specified level. Level numbering
+    * starts at 0.
+    * @param io The Information Object to store.
+    * @param maxLevel The level number up to which the IO should be stored.
+    */
    public void put(InformationObject io, int maxLevel) {
-      LOG.log(DemoLevel.DEMO, "(MDHT ) Putting IO with Identifier: " + io.getIdentifier() + " upto level " + maxLevel);
+      LOG.log(DemoLevel.DEMO, "(MDHT ) Putting IO with Identifier: " + io.getIdentifier() + " up to level " + maxLevel);
       int levels = maxLevel;
+      
+      // Limit the possible puts in case of a wrong/invalid parameter
       if (levels > dhts.size()) {
          levels = dhts.size();
       }
+      
       for (int level = 0; level < levels; level++) {
          dhts.get(level).put(io, level, levels - 1, localNodeIp.getAddress());
-         LOG.info("(MDHT ) Put IO at level " + level);
+         LOG.log(DemoLevel.DEMO, "(MDHT ) Put IO at level " + level);
       }
    }
 
+   
    @Override
+   /**
+    * The delete method is not implemented/not relevant. Guaranteed deletes from a DHT may be impossible
+    * to achieve. Should be, however, handled in future implementations. 
+    * @see /netinf.node/src/netinf/node/resolution/pastry/past/PastDeleteImpl.java For the implementation
+    * of the last Project Group.
+    */
    public void delete(Identifier identifier) {
-      // TODO Auto-generated method stub
    }
 
+   /**
+    * A textual description of the service itself.
+    */
    @Override
    public String describe() {
-      return "MDHT Resolution Server";
+      return "MDHT Resolution System";
    }
 
+   /**
+    * Create the IdentityObject for this resolution service describing itself and its location.
+    */
    @Override
    protected ResolutionServiceIdentityObject createIdentityObject() {
       ResolutionServiceIdentityObject identity = datamodelFactory.createDatamodelObject(ResolutionServiceIdentityObject.class);
       identity.setName("MDHT Resolution Service");
       identity.setDefaultPriority(70);
-      identity.setDescription("This is a mdht resolution service running on "); // TODO ? ...on what?
+      identity.setDescription("This is the MDHT resolution service running on " + localNodeIp.getHostName());
       return identity;
    }
 
@@ -279,9 +326,13 @@ public class MDHTResolutionService extends AbstractResolutionService {
       return result;
    }
 
+   /**
+    * This method has mostly debugging purposes, it just displays a message when the current MDHT
+    * node receives a signal from the underlying DHT that it needs to search a level upwards.
+    * @param nextLevel The next level. Remember that level numbering starts at 0.
+    */
    public void switchRingUpwards(int nextLevel) {
       LOG.info("(MDHT) Switching ring from " + (nextLevel - 1) + " to " + nextLevel);
-      // TODO: Not yet implemented
    }
 
    public void sendRemoteAck(final InetAddress targetNodeAddr) {

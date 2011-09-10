@@ -33,17 +33,32 @@ import rice.p2p.past.PastContent;
 import rice.p2p.past.messaging.InsertMessage;
 
 /***
- * Custom InsertMessage for the NetInfPast application. Triggered when an object (IO) is inserted in the PAST layer
- * 
- * @author PG NetInf3
+ * Custom InsertMessage for the NetInfPast application. 
+ * Triggered when an object (IO) is inserted in the PAST layer.
+ * The MDHT system currently takes care of putting an IO at every level, which is why a new NetInfInsertMessage
+ * will be created. @see MDHTResolutionService put method for more details.
+ * @author PG NetInf3, University of Paderborn
+ * @since 2011
  */
 public class NetInfInsertMessage extends InsertMessage {
 
    private static final long serialVersionUID = 283952122270522339L;
+   /**
+    * The address of the source node. Used for sending the ACK message after storing IO.
+    */
    private InetAddress sourceAddr;
+   
+   /**
+    * Parameter indicating the level AT WHICH the message should be inserted.
+    */
    private int level;
+   
+   /**
+    * Parameter indicating the level UP TO WHICH this message is to be stored.
+    */
    private int maxlevels;
 
+   
    public NetInfInsertMessage(int uid, PastContent content, NodeHandle source, Id dest, InetAddress sAddr, int level,
          int maxLevels) {
       super(uid, content, source, dest);
@@ -52,14 +67,26 @@ public class NetInfInsertMessage extends InsertMessage {
       this.maxlevels = maxLevels;
    }
 
+   /**
+    * Get the source address.
+    * @return The address of the sending node.
+    */
    public InetAddress getAddress() {
       return this.sourceAddr;
    }
 
+   /**
+    * Get the level at which this IO is stored.
+    * @return The level number. Numbering starts at 0.
+    */
    public int getLevel() {
       return this.level;
    }
 
+   /**
+    * Get the maximum number of levels in the MDHT.
+    * @return The stored max number of levels. 
+    */
    public int getMaxLevels() {
       return this.maxlevels;
    }
