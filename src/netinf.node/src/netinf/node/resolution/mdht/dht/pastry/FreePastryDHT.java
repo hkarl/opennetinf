@@ -49,7 +49,6 @@ import rice.p2p.commonapi.Id;
 import rice.p2p.commonapi.Message;
 import rice.p2p.commonapi.NodeHandle;
 import rice.p2p.commonapi.RouteMessage;
-import rice.p2p.past.PastContent;
 import rice.pastry.NodeIdFactory;
 import rice.pastry.PastryNode;
 import rice.pastry.PastryNodeFactory;
@@ -204,7 +203,7 @@ public class FreePastryDHT implements DHT, Application {
 
    public InformationObject get(Identifier id, int level) {
 
-      ExternalContinuation<PastContent, Exception> lookupCont = new ExternalContinuation<PastContent, Exception>();
+      ExternalContinuation<Object, Exception> lookupCont = new ExternalContinuation<Object, Exception>();
       InformationObject retIO = null;
       Id lookupId = pastryIdFactory.buildId(id.toString());
 
@@ -231,7 +230,7 @@ public class FreePastryDHT implements DHT, Application {
     */
    public InformationObject get(Id id, int level) {
 
-      ExternalContinuation<PastContent, Exception> lookupCont = new ExternalContinuation<PastContent, Exception>();
+      ExternalContinuation<Object, Exception> lookupCont = new ExternalContinuation<Object, Exception>();
 
       InformationObject retIO = null;
 

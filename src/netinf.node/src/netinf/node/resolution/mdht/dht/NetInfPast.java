@@ -94,7 +94,7 @@ public class NetInfPast extends PastImpl {
 
             // If the data is here, we send the reply, as well as push a cached copy
             // back to the previous node
-            storage.getObject(niMsg.getId(), new StandardContinuation(getResponseContinuation(niMsg)) {
+            storage.getObject(niMsg.getId(), new StandardContinuation<Object, Exception>(getResponseContinuation(niMsg)) {
                public void receiveResult(Object o) {
                   // LOG.info("Received object " + o + " for id " + lmsg.getId());
                   fpParent.notifyParent(objectId, level);
@@ -122,10 +122,10 @@ public class NetInfPast extends PastImpl {
    }
 
    @SuppressWarnings("unchecked")
-   public void lookup(final Id id, final int level, final boolean cache, final Continuation command) {
+   public void lookup(final Id id, final int level, final boolean cache, final Continuation<Object, Exception> command) {
       logger.log(" Performing lookup on " + id.toStringFull());
 
-      storage.getObject(id, new StandardContinuation(command) {
+      storage.getObject(id, new StandardContinuation<Object, Exception>(command) {
          public void receiveResult(Object o) {
             if (o != null) {
                command.receiveResult(o);
@@ -149,13 +149,13 @@ public class NetInfPast extends PastImpl {
                            command.receiveResult(o);
                         }
                      } else {
-                        lookupHandles(id, replicationFactor + 1, new Continuation() {
+                        lookupHandles(id, replicationFactor + 1, new Continuation<Object, Exception>() {
                            public void receiveResult(Object o) {
                               PastContentHandle[] handles = (PastContentHandle[]) o;
 
                               for (int i = 0; i < handles.length; i++) {
                                  if (handles[i] != null) {
-                                    fetch(handles[i], new StandardContinuation(parent) {
+                                    fetch(handles[i], new StandardContinuation<Object, Exception>(parent) {
                                        public void receiveResult(final Object o) {
                                           // lastly, try and cache object locally for future use
                                           if (cache) {
