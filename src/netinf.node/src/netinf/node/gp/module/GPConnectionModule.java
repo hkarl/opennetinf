@@ -36,8 +36,10 @@ import com.google.inject.Singleton;
 /**
  * This module contains all the classes which are necessary, in order to be connected to GP.
  * 
+ * @deprecated Usage of GP is not recommended
  * @author PG Augnet 2, University of Paderborn
  */
+@Deprecated
 public class GPConnectionModule extends AbstractModule {
 
    public GPConnectionModule() {

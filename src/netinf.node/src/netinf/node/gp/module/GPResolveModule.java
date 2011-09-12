@@ -38,8 +38,10 @@ import com.google.inject.AbstractModule;
  * bindings for a class which is responsible of selecting among the suitable {@link NetInfNode}s (which all have to fulfill the
  * capability-requirements).
  * 
+ * @deprecated Usage of GP is not recommended
  * @author PG Augnet 2, University of Paderborn
  */
+@Deprecated
 public class GPResolveModule extends AbstractModule {
 
    @Override

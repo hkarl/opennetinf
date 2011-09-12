@@ -31,7 +31,7 @@
   </appender> 
   
   <root> 
-    <priority value ="INFO" />
+    <priority value ="ALL" />
     <appender-ref ref="A1" />
     <appender-ref ref="A2" />
     <appender-ref ref="SOCK" />

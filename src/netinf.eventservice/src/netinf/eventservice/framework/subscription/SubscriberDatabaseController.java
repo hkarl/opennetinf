@@ -327,8 +327,7 @@ public class SubscriberDatabaseController {
     * @param subscriberNetInf
     * @param subscriptionIdentification
     */
-   public void removeSubscriptionMessageFromSubscriberNetInf(SubscriberNetInf subscriberNetInf,
-         String subscriptionIdentification) {
+   public void removeSubscriptionMessageFromSubscriberNetInf(SubscriberNetInf subscriberNetInf, String subscriptionIdentification) {
       LOG.trace(null);
 
       String eventContainerID = subscriberNetInf.getEventContainerID().toString();
