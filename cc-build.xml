@@ -1,0 +1,9 @@
+<project name="cc-build" default="build">
+	<taskdef resource="net/sourceforge/ant4hg/taskdefs/antlib.xml" />
+	<target name="build">
+		<hg cmd="pull" dir="." update="true"/>
+		<hg cmd="update"/>
+		<ant antfile="build.xml" dir="src/netinf.node" />
+		<ant antfile="build.xml" dir="dist" />
+	</target>
+</project>
