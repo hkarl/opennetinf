@@ -177,10 +177,10 @@
 
 	<target name="jar_libs">
                 <copy todir="${libs.location}">
-			<fileset dir="/home/netinf/builds/checkout/CurrentRepository/src/netinf.node/lib"/>
+			<fileset dir="${netinf.node.location}/lib"/>
                 </copy>
                 <copy todir="${libs.location}">
-			<fileset dir="/home/netinf/builds/checkout/CurrentRepository/src/netinf.common/lib"/>
+			<fileset dir="${netinf.common.location}/lib"/>
 		</copy>
 	</target>
 
