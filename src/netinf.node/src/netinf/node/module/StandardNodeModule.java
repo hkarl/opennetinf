@@ -25,8 +25,6 @@
  */
 package netinf.node.module;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import netinf.access.HTTPServer;
 import netinf.access.NetInfServer;
 import netinf.access.TCPServer;
@@ -51,6 +49,8 @@ import netinf.node.search.SearchService;
 import netinf.node.search.rdf.SearchServiceRDF;
 import netinf.node.search.rdf.module.SearchServiceRDFModule;
 import netinf.node.transfer.TransferService;
+
+import org.apache.commons.lang.ArrayUtils;
 
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -79,8 +79,6 @@ public class StandardNodeModule extends AbstractNodeModule {
       install(new DatamodelTranslationModule());
 
       // ResolutionServices
-      // install(new LocalResolutionModule());
-      // install(new MDHTResolutionModule());
       install(new RDFResolutionServiceModule());
 
       // SearchServices
@@ -88,10 +86,6 @@ public class StandardNodeModule extends AbstractNodeModule {
 
       // RESTful API
       install(new RESTModule());
-
-      // Caches
-      // install(new LocalIOCachingModule());
-      // install(new BOCachingModule());
    }
 
    /**
@@ -108,14 +102,9 @@ public class StandardNodeModule extends AbstractNodeModule {
    ResolutionService[] provideResolutionServices(RemoteResolutionFactory remoteResolutionFactory,
          RDFResolutionService rdfResolutionService) {
       ResolutionService[] otherRS = { rdfResolutionService };
-
       ResolutionService[] remoteRS = remoteResolutionFactory.getRemoteResolutionServices().toArray(new ResolutionService[] {});
       return (ResolutionService[]) ArrayUtils.addAll(remoteRS, otherRS);
    }
-
-   // ResolutionService[] provideResolutionServices(MDHTResolutionService mdhtResolutionService) {
-   // return new ResolutionService[] { mdhtResolutionService };
-   // }
 
    /**
     * This method provides all the {@link ResolutionInterceptor}s which are automatically inserted into the node. In order to get
@@ -132,10 +121,6 @@ public class StandardNodeModule extends AbstractNodeModule {
    ResolutionInterceptor[] provideResolutionInterceptors(CachingInterceptor caching) {
       return new ResolutionInterceptor[] { caching };
    }
-
-   // ResolutionInterceptor[] provideResolutionInterceptors(IOCacheImpl ioCache, LocatorSelectorImpl locatorSelector) {
-   // return new ResolutionInterceptor[] { ioCache, locatorSelector };
-   // }
 
    /**
     * This method provides all the {@link SearchService}s which are automatically inserted into the node. In order to get an

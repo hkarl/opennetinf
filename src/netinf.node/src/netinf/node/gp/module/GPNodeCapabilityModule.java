@@ -39,8 +39,10 @@ import com.google.inject.Singleton;
  * This {@link AbstractModule} is able to provide the capabilities, which belong to the current {@link NetInfNode}. The
  * capabilities are read from the {@link Properties} of the current {@link NetInfNode}.
  * 
+ * @deprecated Usage of GP is not recommended
  * @author PG Augnet 2, University of Paderborn
  */
+@Deprecated
 public class GPNodeCapabilityModule extends AbstractModule {
 
    private final Properties properties;

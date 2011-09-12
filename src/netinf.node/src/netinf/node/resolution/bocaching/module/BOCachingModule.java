@@ -25,6 +25,7 @@
  */
 package netinf.node.resolution.bocaching.module;
 
+import netinf.node.cache.peerside.PeersideCache;
 import netinf.node.resolution.bocaching.BOCache;
 import netinf.node.resolution.bocaching.impl.BOCacheImpl;
 
@@ -34,15 +35,16 @@ import com.google.inject.Singleton;
 /**
  * The Class BOCachingModule.
  * 
+ * @deprecated Replaced by {@link PeersideCache}
  * @author PG Augnet 2, University of Paderborn
  */
+@Deprecated
 public class BOCachingModule extends PrivateModule {
 
    @Override
    protected void configure() {
       bind(BOCache.class).to(BOCacheImpl.class).in(Singleton.class);
       expose(BOCache.class);
-
    }
 
 }
