@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<packager-module version="1.0"> 
+    <property name="name" value="${ivy.packager.module}" /> 
+    <property name="revision" value="${ivy.packager.revision}" /> 
+    
+    <resource
+      url="http://www.migcalendar.com/miglayout/versions/${revision}/${name}-${revision}-swing.jar"
+      sha1="36ddb2b7ed01edc81cb0c056b50d6cdf7d9423e9"
+      tofile="artifacts/jars/${name}.jar" />
+</packager-module> 
