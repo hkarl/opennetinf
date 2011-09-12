@@ -44,13 +44,10 @@ import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.mdht.MDHTResolutionService;
 import netinf.node.resolution.mdht.module.MDHTResolutionModule;
-import netinf.node.resolution.remote.RemoteResolutionFactory;
 import netinf.node.search.SearchService;
 import netinf.node.search.rdf.SearchServiceRDF;
 import netinf.node.search.rdf.module.SearchServiceRDFModule;
 import netinf.node.transfer.TransferService;
-
-import org.apache.commons.lang.ArrayUtils;
 
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -98,11 +95,9 @@ public class NodeCModule extends AbstractNodeModule {
     */
    @Singleton
    @Provides
-   ResolutionService[] provideResolutionServices(RemoteResolutionFactory remoteResolutionFactory,
-         MDHTResolutionService mdhtResolutionService) {
+   ResolutionService[] provideResolutionServices(MDHTResolutionService mdhtResolutionService) {
       ResolutionService[] otherRS = { mdhtResolutionService };
-      ResolutionService[] remoteRS = remoteResolutionFactory.getRemoteResolutionServices().toArray(new ResolutionService[] {});
-      return (ResolutionService[]) ArrayUtils.addAll(remoteRS, otherRS);
+      return otherRS;
    }
 
    /**
