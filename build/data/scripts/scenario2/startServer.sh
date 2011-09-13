@@ -1,4 +1,5 @@
 #!/bin/bash
+cd `dirname "$0"`
 ./killJava.sh
 ./clearLogs.sh
 ./mysqlServer.sh

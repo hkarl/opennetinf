@@ -1,0 +1,48 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:netinf="http://rdf.netinf.org/2009/netinf-rdf/1.0/#">
+  <rdf:Description>
+    <netinf:transportedIO>
+      <rdf:Description rdf:about="ni:HASH_OF_PK=560822d0da71369f1efe70fb96c7a9aa586b9836~HASH_OF_PK_IDENT=SHA1~VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=TEST">
+        <netinf:hash_of_data rdf:parseType="Resource">
+          <netinf:attributePurpose>SYSTEM_ATTRIBUTE</netinf:attributePurpose>
+          <netinf:attributeValue>String:d1994db39551f0ae95faa2bf817d6648f0700db1</netinf:attributeValue>
+        </netinf:hash_of_data>
+        <netinf:http_url rdf:parseType="Resource">
+          <netinf:attributePurpose>LOCATOR_ATTRIBUTE</netinf:attributePurpose>
+          <netinf:attributeValue>String:http://www.michael-hess.net/sonstiges/Testbild.jpg</netinf:attributeValue>
+        </netinf:http_url>
+        <netinf:http_url rdf:parseType="Resource">
+          <netinf:attributePurpose>LOCATOR_ATTRIBUTE</netinf:attributePurpose>
+          <netinf:attributeValue>String:http://www.uni-paderborn.de/typo3conf/ext/upb_template/templates/images/unipad.png</netinf:attributeValue>
+        </netinf:http_url>
+        <netinf:authorized_writers rdf:parseType="Resource">
+          <netinf:writer rdf:parseType="Resource">
+            <netinf:attributePurpose>SYSTEM_ATTRIBUTE</netinf:attributePurpose>
+            <netinf:attributeValue>String:ni:HASH_OF_PK=560822d0da71369f1efe70fb96c7a9aa586b9836~HASH_OF_PK_IDENT=SHA1~VERSION_KIND=UNVERSIONED?http://rdf.netinf.org/2009/netinf-rdf/1.0/#public_key</netinf:attributeValue>
+          </netinf:writer>
+          <netinf:attributePurpose>SYSTEM_ATTRIBUTE</netinf:attributePurpose>
+          <netinf:attributeValue>String:ni:HASH_OF_PK=560822d0da71369f1efe70fb96c7a9aa586b9836~HASH_OF_PK_IDENT=SHA1~VERSION_KIND=UNVERSIONED?http://rdf.netinf.org/2009/netinf-rdf/1.0/#public_key</netinf:attributeValue>
+        </netinf:authorized_writers>
+        <netinf:owner rdf:parseType="Resource">
+          <netinf:attributePurpose>SYSTEM_ATTRIBUTE</netinf:attributePurpose>
+          <netinf:attributeValue>String:ni:HASH_OF_PK=560822d0da71369f1efe70fb96c7a9aa586b9836~HASH_OF_PK_IDENT=SHA1~VERSION_KIND=UNVERSIONED?http://rdf.netinf.org/2009/netinf-rdf/1.0/#public_key</netinf:attributeValue>
+        </netinf:owner>
+        <netinf:public_key rdf:parseType="Resource">
+          <netinf:attributePurpose>SYSTEM_ATTRIBUTE</netinf:attributePurpose>
+          <netinf:attributeValue>String:rO0ABXNyABRqYXZhLnNlY3VyaXR5LktleVJlcL35T7OImqVDAgAETAAJYWxnb3JpdGhtdAASTGph
+dmEvbGFuZy9TdHJpbmc7WwAHZW5jb2RlZHQAAltCTAAGZm9ybWF0cQB+AAFMAAR0eXBldAAbTGph
+dmEvc2VjdXJpdHkvS2V5UmVwJFR5cGU7eHB0AANSU0F1cgACW0Ks8xf4BghU4AIAAHhwAAAAojCB
+nzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAs3jzl4khVEF/MTImK7LwuNlB74xnry2Zv1anq5bB
+lKwxmfB7WvM7TNGRwyPi0dLkr0wVJfYyFHjT+IgduVqkAblM52TN3JkS9Txno+6vESdKOFICf+UX
+AbCWMOTuFynsbY+NQVw16+ESjHWP4RBIxbxrIgBk0LhYoZw07grcDQUCAwEAAXQABVguNTA5fnIA
+GWphdmEuc2VjdXJpdHkuS2V5UmVwJFR5cGUAAAAAAAAAABIAAHhyAA5qYXZhLmxhbmcuRW51bQAA
+AAAAAAAAEgAAeHB0AAZQVUJMSUM=
+</netinf:attributeValue>
+        </netinf:public_key>
+      </rdf:Description>
+    </netinf:transportedIO>
+    <netinf:ioType>netinf.common.datamodel.rdf.DataObjectRdf</netinf:ioType>
+  </rdf:Description>
+</rdf:RDF>
+
