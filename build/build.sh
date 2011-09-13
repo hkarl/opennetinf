@@ -15,7 +15,7 @@ cd dist/scripts
 
 source ~/.netinf/settings
 
-if [ ! -L ~/netinf/ManagementToolIdentifiers ]; then
+if [ ! -L ~/.netinf/ManagementToolIdentifiers ]; then
 	ln -s ${DP_LOC}/ManagementToolIdentifiers ~/.netinf/ManagementToolIdentifiers
 fi
 

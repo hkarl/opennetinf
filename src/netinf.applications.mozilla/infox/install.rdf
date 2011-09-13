@@ -9,7 +9,7 @@
 		<em:creator>NetInf.net</em:creator>
 		<em:description>Enables Web browsing via NetInf InformationObjects</em:description>
 		<em:homepageURL>http://www.netinf.org/</em:homepageURL>
-		<em:aboutURL>http://www.netinf.org/about-2/license</em:aboutURL>
+		<em:aboutURL>http://www.netinf.org/about-2/license/</em:aboutURL>
 		<em:optionsURL>chrome://infox/content/options.xul</em:optionsURL>
 		<em:iconURL>chrome://infox/icon.png</em:iconURL>
 		<em:targetApplication>
