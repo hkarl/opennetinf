@@ -421,7 +421,7 @@ var InFox = {
 	addDOreference: function(uriOfDO) {
 		LOG.info("(REST ) requesting " + uriOfDO);
 		var client	= new XMLHttpRequest();
-		var url = 'http:/' + this.SERVER + ':' + this.RESTPORT + '/io/' + uriOfDO;
+		var url = 'http://' + this.SERVER + ':' + this.RESTPORT + '/io/' + uriOfDO;
 		
 		client.open("GET", url, true);
 		client.setRequestHeader("Content-type", "text/plain");
@@ -446,7 +446,7 @@ var InFox = {
 					spanClass = 'pdf';
 				}
 				
-				var linkToDO = 'http:/' + InFox.SERVER + ':' + InFox.RESTPORT + '/' + uriOfDO;
+				var linkToDO = 'http://' + InFox.SERVER + ':' + InFox.RESTPORT + '/' + uriOfDO;
 				var doEntry = '<p><span class="' + spanClass + '"><a href="' + linkToDO + '">Download as ' + contentType + '</a></span></p>';
 				
 				// append at popup
@@ -482,7 +482,7 @@ var InFox = {
 	 */
 	handleRESTDO: function(strIdentifier, htmlAnchor) {
 		LOG.info('(REST ) building RESTified url - RESTful interface will choose appropriate locator');
-		var redirect = 'http:/' + this.SERVER + ':' + this.RESTPORT + '/ni:' + strIdentifier;
+		var redirect = 'http://' + this.SERVER + ':' + this.RESTPORT + '/ni:' + strIdentifier;
 		this.handleRedirect(redirect, htmlAnchor);
 	},
 	
