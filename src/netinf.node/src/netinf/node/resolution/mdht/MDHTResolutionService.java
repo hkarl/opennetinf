@@ -236,6 +236,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
       LOG.log(DemoLevel.DEMO, "(MDHT ) Putting IO with Identifier: " + io.getIdentifier() + " up to level " + maxLevel);
       int levels = maxLevel;
       
+
       // Limit the possible puts in case of a wrong/invalid parameter
       if (levels > dhts.size()) {
          levels = dhts.size();
@@ -314,6 +315,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
     */
    private InformationObject get(Identifier id, int level) {
 
+	  Identifier implid = translator.toImpl(id);
       InformationObject result = null;
       if (level >= dhts.size()) {
          return result;
@@ -321,7 +323,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
       DHT crtLevel = dhts.get(level);
 
       if (crtLevel != null) {
-         result = crtLevel.get(id, level);
+         result = crtLevel.get(implid, level);
       }
       return result;
    }

@@ -171,7 +171,7 @@ public class FreePastryDHT implements DHT, Application {
       this.endpoint = pastryNode.buildEndpoint(this, "NetInfMDHTNode");
       this.endpoint.register();
 
-      past = new NetInfPast(pastryNode, storageManager, 0, pastName, this);
+      past = new NetInfPast(pastryNode, storageManager, 2, pastName, this);
    }
 
    public FreePastryDHT(DHTConfiguration config, MDHTResolutionService pParent) throws IOException {
@@ -205,7 +205,7 @@ public class FreePastryDHT implements DHT, Application {
 
       ExternalContinuation<Object, Exception> lookupCont = new ExternalContinuation<Object, Exception>();
       InformationObject retIO = null;
-      Id lookupId = pastryIdFactory.buildId(id.toString());
+      Id lookupId = pastryIdFactory.buildId(new String(id.serializeToBytes()));
 
       past.lookup(lookupId, level, false, lookupCont);
       lookupCont.sleep();
@@ -286,7 +286,9 @@ public class FreePastryDHT implements DHT, Application {
    @Override
    public final void put(InformationObject io, int level, int maxlevels, byte[] sourceAddr) {
 
-      MDHTPastContent content = new MDHTPastContent(pastryIdFactory.buildId(io.getIdentifier().toString()), io);
+	 
+	  Id ofio1 = pastryIdFactory.buildId(new String(io.getIdentifier().serializeToBytes()));
+      MDHTPastContent content = new MDHTPastContent(ofio1, io);
 
       ExternalContinuation<Boolean[], Exception> insertCont = new ExternalContinuation<Boolean[], Exception>();
 
@@ -305,7 +307,14 @@ public class FreePastryDHT implements DHT, Application {
             throw new NetInfResolutionException("(FreePastryDHT) Could not insert Information Object", exception);
          } else {
             Boolean[] result = (Boolean[]) insertCont.getResult();
-            LOG.info("(FreePastryDHT) " + result.length + " objects have been inserted at node ");
+            for (int ctr = 0; ctr < result.length; ctr++) {
+                if (result[ctr].booleanValue()) {
+                	LOG.info("(FreePastryDHT) " + result.length + " objects have been inserted at node ");
+                } else {
+                	LOG.error("(FreePastryDHT) " + result.length + " objects have NOT been inserted at node ");
+                }
+              }
+            //LOG.info("(FreePastryDHT) " + result.length + " objects have been inserted at node ");
 
          }
       } catch (UnknownHostException e) {
