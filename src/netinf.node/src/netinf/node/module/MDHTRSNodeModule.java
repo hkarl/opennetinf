@@ -14,7 +14,6 @@ import netinf.node.access.rest.module.RESTModule;
 import netinf.node.cache.BOCacheServer;
 import netinf.node.cache.CachingInterceptor;
 import netinf.node.cache.network.NetworkCache;
-import netinf.node.cache.peerside.PeersideCache;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.mdht.MDHTResolutionService;
@@ -137,7 +136,7 @@ public class MDHTRSNodeModule extends AbstractNodeModule {
 
 	   @Singleton
 	   @Provides
-	   BOCacheServer[] provideBOCaches(NetworkCache nw, PeersideCache ps) {
-	      return new BOCacheServer[] { ps, nw };
+	   BOCacheServer[] provideBOCaches(NetworkCache nw/*, PeersideCache ps*/) {
+	      return new BOCacheServer[] { /*ps,*/ nw };
 	   }
 }
