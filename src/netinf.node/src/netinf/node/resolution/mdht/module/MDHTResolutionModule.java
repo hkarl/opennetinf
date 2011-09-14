@@ -75,6 +75,8 @@ public class MDHTResolutionModule extends AbstractModule {
 
          Properties configFile = new Properties();
 
+         configFileName = configFileName.toLowerCase(); //Make case insensitive
+         
          if (!fileExists(configFileName)) {
             configFileName = "../configs/mdht/default.properties"; // default
          }
@@ -135,7 +137,7 @@ public class MDHTResolutionModule extends AbstractModule {
     * @return {@code true} if the file exists, otherwise {@code false}
     */
    private boolean fileExists(String fileName) {
-      File f = new File(fileName.toLowerCase());
+      File f = new File(fileName);
       return f.exists();
    }
 }
