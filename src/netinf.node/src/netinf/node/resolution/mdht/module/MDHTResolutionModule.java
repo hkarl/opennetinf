@@ -38,6 +38,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import netinf.node.resolution.mdht.MDHTResolutionService;
 import netinf.node.resolution.mdht.dht.DHTConfiguration;
 
@@ -53,6 +55,10 @@ import com.google.inject.Provides;
  */
 public class MDHTResolutionModule extends AbstractModule {
 
+	/**
+	 * The local log4j logger;
+	 */
+   private static final Logger LOG = Logger.getLogger(MDHTResolutionModule.class);
    @Override
    protected void configure() {
       bind(MDHTResolutionService.class);
@@ -72,10 +78,12 @@ public class MDHTResolutionModule extends AbstractModule {
          if (!fileExists(configFileName)) {
             configFileName = "../configs/mdht/default.properties"; // default
          }
+         
+         LOG.debug("(MDHT-Config) Using config file " + configFileName);
          FileInputStream in;
 
          in = new FileInputStream(configFileName);
-
+         
          configFile.load(in);
 
          int noOfLevels = Integer.parseInt(configFile.getProperty("mdht.numberoflevels"));
@@ -115,19 +123,19 @@ public class MDHTResolutionModule extends AbstractModule {
             if (!(inetAddr instanceof Inet4Address)) {
                continue;
             }
-            configFileName = "../configs/mdht/" + inetAddr.getHostName() + ".properties";
+            return "../configs/mdht/" + inetAddr.getHostName() + ".properties";
          }
       }
       return configFileName;
    }
 
    /**
-    * Checks if a specific file exists.
+    * Checks if a specific file exists. The file name is case insensitive.
     * @param fileName The file name to check.
     * @return {@code true} if the file exists, otherwise {@code false}
     */
    private boolean fileExists(String fileName) {
-      File f = new File(fileName);
+      File f = new File(fileName.toLowerCase());
       return f.exists();
    }
 }
