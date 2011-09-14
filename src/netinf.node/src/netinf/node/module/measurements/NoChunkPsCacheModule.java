@@ -28,7 +28,7 @@ package netinf.node.module.measurements;
 import netinf.access.HTTPServer;
 import netinf.access.NetInfServer;
 import netinf.access.TCPServer;
-import netinf.common.datamodel.impl.module.DatamodelImplModule;
+import netinf.common.datamodel.rdf.module.DatamodelRdfModule;
 import netinf.common.datamodel.translation.module.DatamodelTranslationModule;
 import netinf.common.utils.Utils;
 import netinf.node.access.AccessServer;
@@ -65,7 +65,7 @@ public class NoChunkPsCacheModule extends AbstractNodeModule {
       super.configure();
 
       // The Datamodel
-      install(new DatamodelImplModule());
+      install(new DatamodelRdfModule());
       install(new DatamodelTranslationModule());
 
       // The ResolutionServices - binds the config and DHT instances
