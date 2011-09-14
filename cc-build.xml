@@ -1,9 +1,10 @@
+<!-- Current working directory is whatever directory the repository was cloned in. All directories like build, src etc. are available from here -->
 <project name="cc-build" default="build">
-	<taskdef resource="net/sourceforge/ant4hg/taskdefs/antlib.xml" />
-	<target name="build">
-		<hg cmd="pull" dir="." update="true"/>
-		<hg cmd="update"/>
-		<ant antfile="build.xml" dir="src/netinf.node" />
-		<ant antfile="build.xml" dir="dist" />
-	</target>
+        <!--taskdef resource="net/sourceforge/ant4hg/taskdefs/antlib.xml" /-->
+        <target name="build">
+                <!--hg cmd="pull" dir="." update="true"/>
+                <hg cmd="update"/-->
+                <ant antfile="build.xml" dir="src/netinf.node" />
+                <ant antfile="build.xml" dir="build" target="jar_node" />
+        </target>
 </project>
