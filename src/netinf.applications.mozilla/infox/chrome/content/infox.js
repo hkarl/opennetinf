@@ -248,9 +248,9 @@ var InFox = {
 	
 	getRestAddress: function(asXML, identifier){
 		if (asXML === true) {
-			return 'http:/' + this.SERVER + ':' + this.RESTPORT + '/io/ni:' + identifier;
+			return 'http://' + this.SERVER + ':' + this.RESTPORT + '/io/ni:' + identifier;
 		} else {
-			return 'http:/' + this.SERVER + ':' + this.RESTPORT + '/ni:' + identifier;
+			return 'http://' + this.SERVER + ':' + this.RESTPORT + '/ni:' + identifier;
 		}
 	},
 	
