@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+  <appender name="A1" class="org.apache.log4j.ConsoleAppender">
+    <param name="Target" value="System.out" />
+    <param name="Threshold" value="debug" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{HH:mm:ss,SSS} [%-5p] %m%n" />
+    </layout>
+  </appender>
+  <appender name="A2" class="org.apache.log4j.FileAppender">
+    <param name="Append" value="true" />
+    <param name="File" value="../logs/managementtool.log" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{HH:mm:ss,SSS} [%-5p] %m%n" />
+    </layout>
+  </appender>
+  <appender name="SOCK" class="org.apache.log4j.net.SocketAppender">
+    <param name="RemoteHost" value="localhost" />
+    <param name="Port" value="4560" />
+    <param name="LocationInfo" value="true" />
+    <param name="Application" value="mgmt" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%6r %-5p [%t] %c#%M - %m%n" />
+    </layout>
+  </appender>
+  <appender name="GUI" class="netinf.tools.iomanagement.log.TextAreaAppender">
+    <param name="Threshold" value="info" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%m%n" />
+    </layout>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="LevelMin" value="info" />
+      <param name="LevelMax" value="error" />
+    </filter>
+  </appender>
+  <root>
+    <priority value="trace" />
+    <appender-ref ref="A1" />
+    <appender-ref ref="A2" />
+    <appender-ref ref="SOCK" />
+    <appender-ref ref="GUI" />
+  </root>
+</log4j:configuration>

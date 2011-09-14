@@ -1,0 +1,22 @@
+syntax: glob
+
+# backup files
+*.bak
+*.backup
+*~
+*.aux
+*.orig
+
+# log files
+*.log
+
+# checkstyle files
+*.checkstyle
+
+# libraries
+*.jar
+
+# bins and dist
+syntax: regexp
+/bin/
+/dist/
