@@ -41,6 +41,7 @@ import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.datamodel.attribute.DefinedAttributeIdentification;
 import netinf.common.security.Hashing;
 import netinf.common.utils.Utils;
+import netinf.node.transferdispatcher.LocatorSelector;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -54,7 +55,7 @@ import org.apache.log4j.Logger;
 /**
  * This class represents a chunked BO.
  * 
- * @author PG NetInf 3, University of Paderborn
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class ChunkedBO {
 
@@ -64,6 +65,13 @@ public class ChunkedBO {
    private int totalNoOfChunks;
    private List<String> baseUrls;
 
+   /**
+    * Constructor.
+    * 
+    * @param dataObject
+    *           The given DO.
+    * @throws NetInfNotChunkableException
+    */
    public ChunkedBO(DataObject dataObject) throws NetInfNotChunkableException {
       List<Attribute> chunks = this.getChunks(dataObject);
       if (chunks == null || chunks.isEmpty()) {
@@ -86,23 +94,27 @@ public class ChunkedBO {
       }
    }
 
+   /**
+    * Provides a list with only range enabled locators.
+    * 
+    * @param obj
+    *           The DataObject.
+    * @return The locator list.
+    */
    private List<String> getRangeEnabledLocators(DataObject obj) {
       List<String> urls = new ArrayList<String>();
-      List<Attribute> attrs = obj.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
-      for (Attribute attr : attrs) {
-         String loc = attr.getValue(String.class);
 
+      LocatorSelector selector = new LocatorSelector(obj);
+      while (selector.hasNext()) {
+         String loc = selector.next();
          if (providesRanges(loc)) {
             LOG.info("(ChunkedBO ) URL provides RANGEs: " + loc);
-            if (loc.contains("localhost")) {
-               urls.add(0, loc); // prefer local cache
-            } else {
-               urls.add(loc);
-            }
+            urls.add(loc);
          } else {
             LOG.info("(ChunkedBO ) URL provides NOT RANGEs: " + loc);
          }
       }
+
       return urls;
    }
 
