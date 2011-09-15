@@ -26,6 +26,8 @@
 package netinf.node.transferdispatcher;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -63,13 +65,38 @@ public class LocatorSelector implements Iterator<String> {
     * @return List of locators.
     */
    private List<Attribute> getLocatorList() {
+      // return list
       List<Attribute> result = new ArrayList<Attribute>();
-      List<Attribute> locators = io.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
+      // get all locators...
+      List<Attribute> locators = this.io.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.getAttributePurpose());
+      // ...but exclude chunk attributes
       for (Attribute locator : locators) {
          if (locator.getIdentification() != DefinedAttributeIdentification.CHUNK.getURI()) {
             result.add(locator);
          }
       }
+
+      Collections.sort(result, new Comparator<Attribute>() {
+         @Override
+         public int compare(Attribute o1, Attribute o2) {
+            Attribute prioAttr1 = o1.getSingleSubattribute(DefinedAttributeIdentification.LOCATOR_PRIORITY.getURI());
+            Attribute prioAttr2 = o2.getSingleSubattribute(DefinedAttributeIdentification.LOCATOR_PRIORITY.getURI());
+            int prio1 = 9999; // very low priority if now field specified
+            int prio2 = 9999;
+
+            if (prioAttr1 != null) {
+               prio1 = prioAttr1.getValue(Integer.class);
+            }
+
+            if (prioAttr2 != null) {
+               prio2 = prioAttr2.getValue(Integer.class);
+            }
+
+            return new Integer(prio1).compareTo(prio2);
+         }
+      });
+
+      // return sorted prority sorted list
       return result;
    }
 
