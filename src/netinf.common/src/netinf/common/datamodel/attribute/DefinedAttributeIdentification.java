@@ -43,7 +43,8 @@ public enum DefinedAttributeIdentification {
    PERSON_ADDRESS("person_address", true),
    PERSON_BIRTHDAY("person_birthday", true),
    PERSON_HOMEPAGE("person_homepage", true),
-   MDHT_LEVEL("mdht_level", true),        // specifies in which level the IO will be publiched (only mdht related)
+   MDHT_LEVEL("mdht_level", true),        // specifies in which level the IO will be published (only mdht related)
+   LOCATOR_PRIORITY("locator_priority", true), // specifies the priority for a locator
    
    // for chunking
    CHUNKED("chunked", true),              // indicates whether a locator is chunk/range enabled or not 

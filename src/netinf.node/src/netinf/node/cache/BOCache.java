@@ -169,21 +169,41 @@ public class BOCache {
       chunkFlag.setValue("true");
       attribute.addSubattribute(chunkFlag);
 
+      // add cache priority = cache level
+      Attribute locPrio = dataObject.getDatamodelFactory().createAttribute();
+      locPrio.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+      locPrio.setIdentification(DefinedAttributeIdentification.LOCATOR_PRIORITY.getURI());
+      locPrio.setValue(mdhtLevel);
+      attribute.addSubattribute(locPrio);
+
+      // add new locator
       if (!dataObject.getAttributes().contains(attribute)) {
          dataObject.addAttribute(attribute);
       }
 
-      if (mdhtLevel > 0) {
-         // level attribute
-         Attribute level = dataObject.getDatamodelFactory().createAttribute();
-         level.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.toString());
-         level.setIdentification(DefinedAttributeIdentification.MDHT_LEVEL.getURI());
-         level.setValue(mdhtLevel);
+      // level attribute
+      Attribute level = dataObject.getDatamodelFactory().createAttribute();
+      level.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.toString());
+      level.setIdentification(DefinedAttributeIdentification.MDHT_LEVEL.getURI());
+      level.setValue(mdhtLevel);
 
-         if (!dataObject.getAttributes().contains(level)) {
-            dataObject.addAttribute(level);
-         }
+      // add/set level attribute
+      Attribute levelAttr = dataObject.getSingleAttribute(DefinedAttributeIdentification.MDHT_LEVEL.getURI());
+      if (levelAttr != null) {
+         levelAttr.setValue(mdhtLevel);
+      } else {
+         dataObject.addAttribute(level);
       }
+
+   }
+
+   /**
+    * Gets the scope of this cache.
+    * 
+    * @return The scope/mdht level.
+    */
+   public int getScope() {
+      return mdhtLevel;
    }
 
 }

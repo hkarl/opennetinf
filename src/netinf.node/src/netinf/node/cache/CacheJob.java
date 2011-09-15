@@ -89,35 +89,68 @@ public class CacheJob extends Thread {
    public void run() {
       // if it should be cached is already checked in CachingInterceptor
 
+      // download file
       String cachedTmpFile = downloadAndCheckHashOfFile();
       if (cachedTmpFile == null) {
          return;
       }
 
-      for (BOCache useCache : usedCaches) {
-         LOG.info("(CacheJob ) CachingJob started...: " + useCache.getName());
-         boolean success = useCache.cache(toBeCached, cachedTmpFile);
-         if (success) {
-            LOG.info("(CacheJob ) CachingJob finished...");
-         } else {
-            LOG.info("(CacheJob ) CachingJob FAILED...");
-         }
-      }
-
+      // add chunk list
       if (useChunking) {
          addChunkList(cachedTmpFile);
       }
 
+      // store in available caches - top down to avoid false overwriting
+      while (this.cachesExist()) {
+         BOCache useCache = this.getNextCacheTopDown();
+         if (useCache != null) {
+            LOG.info("(CacheJob ) CachingJob STARTED for: " + useCache.getName());
+            boolean success = useCache.cache(toBeCached, cachedTmpFile);
+            if (success) {
+               LOG.info("(CacheJob ) CachingJob FINISHED for: " + useCache.getName());
+               // put into RS
+               try {
+                  LOG.info("(CacheJob ) Putting back to RS (+ new locator from caching) for: " + useCache.getName());
+                  connection.putIO(toBeCached);
+               } catch (NetInfCheckedException e) {
+                  LOG.warn("(CacheJob ) Error during putting back... " + e.getMessage());
+               }
+            } else {
+               LOG.info("(CacheJob ) CachingJob FAILED for: " + useCache.getName());
+            }
+         }
+      }
+
       // delete after caching
       deleteTmpFile(cachedTmpFile);
+   }
 
-      // call RS
-      try {
-         LOG.info("(CacheJob ) Putting back to RS (+ new locators from caching)...");
-         connection.putIO(toBeCached);
-      } catch (NetInfCheckedException e) {
-         LOG.warn("(CacheJob ) Error during putting back... " + e.getMessage());
+   private boolean cachesExist() {
+      if (usedCaches.isEmpty()) {
+         return false;
       }
+      return true;
+   }
+
+   private BOCache getNextCacheTopDown() {
+      BOCache returnCache = null;
+      int level = -1;
+
+      // get highest available cache
+      for (BOCache useCache : usedCaches) {
+         if (useCache.getScope() >= level) {
+            level = useCache.getScope();
+            returnCache = useCache;
+         }
+      }
+
+      // remove from current list
+      if (returnCache != null) {
+         usedCaches.remove(returnCache);
+      }
+
+      // return
+      return returnCache;
    }
 
    /**
