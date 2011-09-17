@@ -202,10 +202,9 @@ public class FreePastryDHT implements DHT, Application {
    }
 
    public InformationObject get(Identifier id, int level) {
-
       ExternalContinuation<Object, Exception> lookupCont = new ExternalContinuation<Object, Exception>();
       InformationObject retIO = null;
-      Id lookupId = pastryIdFactory.buildId(new String(id.serializeToBytes()));
+      Id lookupId = pastryIdFactory.buildId(id.toString());
 
       past.lookup(lookupId, level, false, lookupCont);
       lookupCont.sleep();
@@ -285,9 +284,7 @@ public class FreePastryDHT implements DHT, Application {
 
    @Override
    public final void put(InformationObject io, int level, int maxlevels, byte[] sourceAddr) {
-
-	 
-	  Id ofio1 = pastryIdFactory.buildId(new String(io.getIdentifier().serializeToBytes()));
+      Id ofio1 = pastryIdFactory.buildId(io.getIdentifier().toString());
       MDHTPastContent content = new MDHTPastContent(ofio1, io);
 
       ExternalContinuation<Boolean[], Exception> insertCont = new ExternalContinuation<Boolean[], Exception>();
