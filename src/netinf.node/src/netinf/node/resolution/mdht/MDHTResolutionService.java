@@ -235,7 +235,7 @@ public class MDHTResolutionService extends AbstractResolutionService {
    public void put(InformationObject io, int maxLevel) {
       LOG.log(DemoLevel.DEMO, "(MDHT ) Putting IO with Identifier: " + io.getIdentifier() + " up to level " + maxLevel);
       int levels = maxLevel;
-      
+      io = translator.toImpl(io);
 
       // Limit the possible puts in case of a wrong/invalid parameter
       if (levels > dhts.size()) {
