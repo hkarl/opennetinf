@@ -44,6 +44,7 @@ import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.mdht.MDHTResolutionService;
 import netinf.node.resolution.mdht.module.MDHTResolutionModule;
+import netinf.node.resolution.rdf.RDFResolutionService;
 import netinf.node.resolution.rdf.module.RDFResolutionServiceModule;
 import netinf.node.search.SearchService;
 import netinf.node.search.rdf.SearchServiceRDF;
@@ -97,9 +98,8 @@ public class NodeCModule extends AbstractNodeModule {
     */
    @Singleton
    @Provides
-   ResolutionService[] provideResolutionServices(MDHTResolutionService mdhtResolutionService) {
-      ResolutionService[] otherRS = { mdhtResolutionService };
-      return otherRS;
+   ResolutionService[] provideResolutionServices(MDHTResolutionService mdhtRS, RDFResolutionService rdfRS) {
+      return new ResolutionService[] { mdhtRS, rdfRS };
    }
 
    /**
