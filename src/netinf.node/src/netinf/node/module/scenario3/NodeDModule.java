@@ -75,7 +75,7 @@ public class NodeDModule extends AbstractNodeModule {
       install(new DatamodelTranslationModule());
 
       // ResolutionServices
-      install(new MDHTResolutionModule());
+      install(new MDHTResolutionModule(NODE_PROPERTIES));
 
       // SearchServices
       install(new SearchServiceRDFModule());
