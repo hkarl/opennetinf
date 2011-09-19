@@ -110,6 +110,9 @@ public abstract class NetInfObjectWrapperImpl implements Serializable, NetInfObj
 
    @Override
    public DatamodelFactory getDatamodelFactory() {
+      if (datamodelFactory == null) {
+         datamodelFactory = new DatamodelFactoryImpl();
+      }
       return datamodelFactory;
    }
 
