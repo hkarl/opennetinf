@@ -1,0 +1,133 @@
+#!/bin/bash
+
+#####
+# This script creates a developement environment for OpenNetInf
+#####
+
+# --- Configuration ---
+
+# Location for the environment ("." for current directory, "~" for HOME)
+LOCATION="."
+
+# Name of environment directory
+DIRNAME="OpenNetInfEnvironment"
+
+# Location of the repository to use
+REPO="https://opennetinf.googlecode.com/hg/"
+
+# Location of the library-zip (URL or local)
+LIBS_LOCATION="http://opennetinf.googlecode.com/hg/libs/libs.zip"
+
+# Location of eclipse TGZ (empty for auto-download!)
+ECLIPSELOC=""
+
+# Delete eclipse archive after unpacking
+# !ALSO APPLIES TO FILES LOCATED VIA ECLIPSELOC!
+# "true" for yes, other for no
+DEL_ECLIPSE="true"
+
+# --- no need to edit below this line ---
+
+# set some internal variables
+LOCATION="`readlink -nf "${LOCATION}"`"
+I_TARGETDIR="`readlink -nf "${LOCATION}/${DIRNAME}"`"
+I_REPODIRNAME="repository"
+I_WSDIRNAME="workspace"
+I_BITS="`getconf LONG_BIT`"
+I_ECLIPSEFILE="eclipse_helios_${I_BITS}.tgz"
+
+# sanity checks
+if [ -z "${REPO}" ]; then
+	echo "ERROR: no repository set, please set variable REPO in $0"
+	exit 1
+fi
+
+# check existing repo
+echo -n "Checking for existing environment in ${I_TARGETDIR}: "
+if [ -d "${I_TARGETDIR}" ]; then
+	echo "exists, exiting"
+	exit 1
+else
+	echo "doesn't exist"
+fi
+
+# create
+echo "Creating environment in ${I_TARGETDIR}"
+mkdir "${I_TARGETDIR}"
+pushd "${I_TARGETDIR}" >& /dev/null
+
+# checkout
+echo "Checking out Sources from ${REPO}"
+hg clone "${REPO}" "${I_REPODIRNAME}" >& /dev/null
+
+# libs
+# WARNING: this is in no way beautiful style!
+echo "Adding libraries from ${LIBS_LOCATION}"
+cd ${I_REPODIRNAME}
+# try unzip
+unzip ${LIBS_LOCATION} >& /dev/null
+if [ $? -ne 0 ]; then
+	wget "${LIBS_LOCATION}" -Olibs.zip -q >& /dev/null
+	EC="$?"
+	unzip libs.zip >& /dev/null
+	EC="`expr $? + $EC`"
+	rm -rf libs.zip >& /dev/null
+	EC="`expr $? + $EC`"
+	if [ $EC -ne 0 ]; then
+		echo "ERROR, aborting"
+		exit 1
+	fi
+fi
+cd ..
+
+# eclipse
+
+if [ ! -f "${ECLIPSELOC}" ]; then
+	case ${I_BITS} in
+		32)
+			ECLIPSEURL="http://mirror.netcologne.de/eclipse/technology/epp/downloads/release/helios/SR1/eclipse-java-helios-SR1-linux-gtk.tar.gz"
+			;;
+		64)
+			ECLIPSEURL="http://mirror.netcologne.de/eclipse/technology/epp/downloads/release/helios/SR1/eclipse-java-helios-SR1-linux-gtk-x86_64.tar.gz"
+			;;
+		*)
+			echo "Invalid value for BITS: ${I_BITS}. Please set manually in $0"
+			exit 1
+	esac
+	echo -e "\nDownloading and unpacking ${I_BITS}-Bit-Version of Eclipse IDE for Java Developers"
+	wget "${ECLIPSEURL}" -O${I_ECLIPSEFILE}
+	echo ""
+else
+	I_ECLIPSEFILE="`readlink -nf "${ECLIPSELOC}"`"
+fi
+
+tar xzf ${I_ECLIPSEFILE}
+
+if [ "x$DEL_ECLIPSE" == "xtrue" ]; then
+	rm -rf ${I_ECLIPSEFILE}
+fi
+
+echo "Preparing workspace"
+mkdir ${I_WSDIRNAME}
+mkdir eclipse/configuration/.settings
+cat <<EOF > eclipse/configuration/.settings/org.eclipse.ui.ide.prefs
+#Tue Sep 28 11:14:54 CEST 2010
+RECENT_WORKSPACES_PROTOCOL=3
+MAX_RECENT_WORKSPACES=5
+SHOW_WORKSPACE_SELECTION_DIALOG=false
+eclipse.preferences.version=1
+RECENT_WORKSPACES=${I_TARGETDIR}/${I_WSDIRNAME}
+EOF
+echo ""
+echo "Please import all Projects from ${I_TARGETDIR}/${I_REPODIRNAME}/src into your workspace."
+echo "To do this, please right-click in the Package Explorer view, choose \"Import..\", then choose"
+echo "General->\"Existing Projects into Workspace\" and select the folder above as root directory."
+echo "Check all boxes and click Finish."
+echo ""
+echo "Press any key to continue"
+read x
+
+echo "Starting Eclipse"
+cd eclipse
+./eclipse &
+popd >& /dev/null

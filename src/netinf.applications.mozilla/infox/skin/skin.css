@@ -1,0 +1,171 @@
+/*
+Copyright (C) 2009,2010 University of Paderborn, Computer Networks Group
+Copyright (C) 2009,2010 Christian Dannewitz <christian.dannewitz@upb.de>
+Copyright (C) 2009,2010 Thorsten Biermann <thorsten.biermann@upb.de>
+
+Copyright (C) 2009,2010 Eduard Bauer <edebauer@mail.upb.de>
+Copyright (C) 2009,2010 Matthias Becker <matzeb@mail.upb.de>
+Copyright (C) 2009,2010 Frederic Beister <azamir@zitmail.uni-paderborn.de>
+Copyright (C) 2009,2010 Nadine Dertmann <ndertmann@gmx.de>
+Copyright (C) 2009,2010 Martin Dräxler <draexler@mail.uni-paderborn.de>
+Copyright (C) 2009,2010 Michael Kionka <mkionka@mail.upb.de>
+Copyright (C) 2009,2010 Mario Mohr <mmohr@mail.upb.de>
+Copyright (C) 2009,2010 Felix Steffen <felix.steffen@gmx.de>
+Copyright (C) 2009,2010 Sebastian Stey <sebstey@mail.upb.de>
+Copyright (C) 2009,2010 Steffen Weber <stwe@mail.upb.de>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+Neither the name of the University of Paderborn nor the
+names of its contributors may be used to endorse or promote products
+derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/* Plugin User Interface */
+#infox-gp-switchdevice-button {
+	list-style-image: url("chrome://infox/skin/redirect.png");
+}
+
+#infox-statusbar-status {
+	width: 83px;
+	margin: 0 5px;
+}
+
+/* NetInf Links */
+a.netinf-selected {
+	display: inline-block;
+    border: 1px solid #dedede;
+    border-top: 1px solid #eee;
+    border-left: 1px solid #eee;
+    color: #336699;
+	font-size: 12px;
+	font-weight: bold;
+    font-family: "Lucida Grande", Tahoma, Arial, Verdana, sans-serif;
+    line-height: 130%;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 3px 6px 3px 20px; /* Links */
+    margin: 4px;
+    background-image: url("chrome://infox/skin/oni16.png");
+    background-repeat: no-repeat;
+    background-position: 2px 50%;
+}
+a.netinf-selected:hover {
+    background-color: #dff4ff;
+    border: 1px solid #c2e1ef;
+}
+a.netinf-selected:active{
+    background-color: #6299c5;
+    border:1px solid #6299c5;
+    color: #fff;
+}
+
+/* RESTful Popup Tooltip */
+#RestPopup {
+	font-family: "Lucida Grande", Tahoma, Arial, Verdana, sans-serif;
+	padding: 0;
+	position: fixed;
+	background: #FFF;
+	border: 4px solid #E2E2E2;
+	-moz-border-radius: 4px;
+	box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.4);
+	z-index: 2;
+	color: #454545;
+	font-size: 13px;
+	text-align: left;
+	min-width: 200px;
+	max-width: 340px;
+}
+#RestPopup h3 {
+	padding: 7px 12px 7px 6px;
+	margin: 0;
+	background: #F1F1F1;
+}
+#RestPopup h3 span {
+	padding-left: 24px;
+}
+#RestPopup h3 span.identityObject {
+	background: #F1F1F1 url("chrome://infox/skin/icons/iotypes/identityObject.png") no-repeat left center;
+}
+#RestPopup h3 span.informationObject {
+	background: #F1F1F1 url("chrome://infox/skin/icons/iotypes/informationObject.png") no-repeat left center;
+}
+#RestDescription {
+	font-style: italic;
+	text-align: justify;
+	padding: 5px 9px;
+	margin: 0;
+}
+#RestPopupContent {
+	padding: 5px 9px;
+	margin: 0;
+}
+#RestPopupContent a, #RestPopupFooter  a {
+	color: #0000C0;
+	text-decoration: underline;
+}
+#RestPopupContent a:hover, #RestPopupFooter a:hover {
+	color: #333;
+	text-decoration: none;
+}
+#RestPopupContent span {
+	width: 100%;
+	margin: 4px 4px 4px 6px;
+	padding: 0;
+}
+/* Files */
+#RestPopup span.pdf {
+	padding: 0 0 0 20px;
+	background: url("chrome://infox/skin/icons/file/file_pdf.png") no-repeat left center;
+}
+#RestPopup span.image {
+	padding: 0 0 0 20px;
+	background: url("chrome://infox/skin/icons/file/file_image.png") no-repeat left center;
+}
+#RestPopup span.video {
+	padding: 0 0 0 20px;
+	background: url("chrome://infox/skin/icons/file/file_video.png") no-repeat left center;
+}
+#RestPopup span.default {
+	padding: 0 0 0 20px;
+	background: url("chrome://infox/skin/icons/file/file_default.png") no-repeat left center;
+}
+#RestPopup p {
+	margin: 5px;
+}
+#RestPopupContent img {
+	vertical-align: middle;
+}
+#RestPopupClose {
+	font-size: 16px;
+	line-height: 10px;
+	right: 6px;
+	top: 4px;
+	position: absolute;
+	display: block;
+	cursor: pointer;
+	text-decoration: none;
+}
+#RestPopupFooter {
+	margin: 0;
+	padding: 2px 4px;
+	text-align: right;
+	background: #F5F5F5;
+}
