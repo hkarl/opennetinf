@@ -107,7 +107,8 @@ var InFox = {
 	  this.init();
 	},
 	
-	/* Mouse Click Observer. Checks whether a NetInf link is clicked or not.
+	/* 
+	 * Mouse Click Observer. Checks whether a NetInf link is clicked or not.
 	 */
 	registerClickObserver: function(event) {
 		var doc = event.originalTarget;
@@ -318,7 +319,7 @@ var InFox = {
 	 * Forwards to the specified error page
 	 */
 	goToErrorPage: function() {
-		LOG.info("Forwarding to http://www.netinf.org/infoxerror/");
+		LOG.info("Forwarding to " + ERROR_PAGE);
 		content.location.href = ERROR_PAGE;
 	},
 	
@@ -329,17 +330,19 @@ var InFox = {
 		// generate and show popup
 		InFox.createPopup(ioXML, strIdentifier, htmlAnchor, false);
 		
+		// -> used when DOs has been loaded async and the content type was stated in the DO
 		// add referenced DOs, if existing
-		jQuery(ioXML).find('netinf\\:referenced_do').each(function(){
-			LOG.info("(REST ) adding referenced DOs");
-			var $uriOfDO = jQuery(this).find('netinf\\:attributeValue');
-			var uriOfDO = InFox.removeStringPrefix($uriOfDO.text());
-			InFox.addDOreference(uriOfDO);
-		});
+		//jQuery(ioXML).find('netinf\\:referenced_do').each(function(){
+		//	LOG.info("(REST ) adding referenced DOs");
+		//	var $uriOfDO = jQuery(this).find('netinf\\:attributeValue');
+		//	LOG.info("(REST ) uriOfDO: " + $uriOfDO.text());
+		//	var uriOfDO = InFox.removeStringPrefix($uriOfDO.text());
+		//	InFox.addDOreference(uriOfDO);
+		//});
 	},	
 	
 	/**
-	 * 
+	 * Generates a popup window.
 	 */
 	createPopup: function(ioXML, strIdentifier, htmlAnchor, isIDO) {
 		// get name of the IO
@@ -367,7 +370,37 @@ var InFox = {
 		popupHtml += '<h3><span class="' + h3Class + '">' + ioName + '</span></h3>';
 		popupHtml += '<a id="RestPopupClose">x</a>'; 
 		popupHtml += '<div id="RestDescription">' + ioDesc + '</div>';
-		popupHtml += '<div id="RestPopupContent"></div>';
+		popupHtml += '<div id="RestPopupContent">'; 
+		
+		// add DOs, if existing
+		jQuery(ioXML).find('netinf\\:referenced_do').each(function(){
+			
+			// get content type
+			var contentType = InFox.getAttributeValue(this, 'netinf\\:content_type');
+			if (contentType === null) {
+				contentType = 'application/octet-stream'; // unknown
+			}
+			
+			// remove content attribute ->confused the identifier value... -.-
+			jQuery('netinf\\:content_type', this).remove();
+			
+			// build entry
+			var spanClass = 'default';
+			if (contentType.indexOf("video") != -1) {
+				spanClass = 'video';
+			} else if (contentType.indexOf("image") != -1) {
+				spanClass = 'image';
+			} else if (contentType.indexOf("pdf") != -1) {
+				spanClass = 'pdf';
+			}
+			var uriOfDO = InFox.removeStringPrefix(jQuery(this).text());
+			var linkToDO = 'http://' + InFox.SERVER + ':' + InFox.RESTPORT + '/' + uriOfDO;
+			var doEntry = '<p><span class="' + spanClass + '"><a href="' + linkToDO + '">' + contentType + '</a></span></p>';
+			popupHtml += doEntry;
+			LOG.info("(REST ) adding referenced DO: " + uriOfDO);
+		});
+		
+		popupHtml += '</div>';
 		popupHtml += '<div id="RestPopupFooter"><a href="' + InFox.getRestAddress(true, strIdentifier) + '">show IO</a></div>';
 		popupHtml += '</div>';
 		
@@ -395,9 +428,16 @@ var InFox = {
         	leftPos = position.left - popupWidth + aElemWidth;
         }
         
+        var topPos = 0;
+        if (position.top < windowHeight/2) { // link is on top
+        	topPos = position.top + 5;
+        } else { // link is on bottom
+        	topPos = position.top - popupHeight - 10;
+        }
+        
         jQuery('#RestPopup', docContext).css({  
         	"position": "absolute",  
-        	"top": position.top - popupHeight,  
+        	"top": topPos,  
         	"left": leftPos  
         	}); 
         
@@ -405,6 +445,7 @@ var InFox = {
         jQuery('#RestPopupClose', docContext).click(function(){
         	jQuery('#RestPopup', docContext).remove();
         });  
+        
         // close on click outside of popup
 		jQuery('body', docContext).click(function(e) {
       		if (!jQuery(e.target).parents().andSelf().is('#RestPopup')) {
@@ -447,7 +488,7 @@ var InFox = {
 				}
 				
 				var linkToDO = 'http://' + InFox.SERVER + ':' + InFox.RESTPORT + '/' + uriOfDO;
-				var doEntry = '<p><span class="' + spanClass + '"><a href="' + linkToDO + '">Download as ' + contentType + '</a></span></p>';
+				var doEntry = '<p><span class="' + spanClass + '"><a href="' + linkToDO + '">' + contentType + '</a></span></p>';
 				
 				// append at popup
 				jQuery('#RestPopupContent', docContext).append(doEntry);
@@ -465,7 +506,7 @@ var InFox = {
 	},
 	
 	/*
-	 * Returns the value of a given attribute in a XML document 
+	 * Returns the value of a given attribute in a XML document. 
 	 */
 	getAttributeValue: function(xml, attribute) {
 		var $value = jQuery(xml).find(attribute);

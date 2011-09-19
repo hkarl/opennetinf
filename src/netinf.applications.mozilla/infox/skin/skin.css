@@ -132,15 +132,19 @@ a.netinf-selected:active{
 }
 /* Files */
 #RestPopup span.pdf {
+	padding: 0 0 0 20px;
 	background: url("chrome://infox/skin/icons/file/file_pdf.png") no-repeat left center;
 }
 #RestPopup span.image {
+	padding: 0 0 0 20px;
 	background: url("chrome://infox/skin/icons/file/file_image.png") no-repeat left center;
 }
 #RestPopup span.video {
+	padding: 0 0 0 20px;
 	background: url("chrome://infox/skin/icons/file/file_video.png") no-repeat left center;
 }
 #RestPopup span.default {
+	padding: 0 0 0 20px;
 	background: url("chrome://infox/skin/icons/file/file_default.png") no-repeat left center;
 }
 #RestPopup p {
