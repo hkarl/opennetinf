@@ -41,7 +41,6 @@ import netinf.node.module.AbstractNodeModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.locator.impl.LocatorSelectorImpl;
-import netinf.node.resolution.mdht.module.MDHTResolutionModule;
 import netinf.node.resolution.remote.RemoteResolutionFactory;
 import netinf.node.search.SearchService;
 import netinf.node.search.rdf.SearchServiceRDF;
@@ -68,9 +67,6 @@ public class NoChunkBothCacheModule extends AbstractNodeModule {
       // The Datamodel
       install(new DatamodelRdfModule());
       install(new DatamodelTranslationModule());
-
-      // The ResolutionServices - binds the config and DHT instances
-      install(new MDHTResolutionModule());
 
       // Need a binding to AccessServer
       install(new RESTModule());
