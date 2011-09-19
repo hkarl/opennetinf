@@ -45,6 +45,7 @@ import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
 import netinf.node.resolution.mdht.MDHTResolutionService;
 import netinf.node.resolution.mdht.module.MDHTResolutionModule;
+import netinf.node.resolution.rdf.module.RDFResolutionServiceModule;
 import netinf.node.search.SearchService;
 import netinf.node.search.rdf.SearchServiceRDF;
 import netinf.node.search.rdf.module.SearchServiceRDFModule;
@@ -77,6 +78,7 @@ public class NodeAModule extends AbstractNodeModule {
 
       // ResolutionServices
       install(new MDHTResolutionModule(NODE_PROPERTIES));
+      install(new RDFResolutionServiceModule());
 
       // SearchServices
       install(new SearchServiceRDFModule());
