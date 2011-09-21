@@ -1,0 +1,1 @@
+In this directory you can manually add libraries (*.jar files) which could not be retrieved by Ivy or have been retrieved in a faulty version. Please see the netinf build.xml target "libs" to see how to use the files in this folder.
