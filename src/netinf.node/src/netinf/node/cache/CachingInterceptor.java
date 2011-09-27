@@ -35,6 +35,8 @@ import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.attribute.Attribute;
 import netinf.common.utils.DatamodelUtils;
 import netinf.node.api.impl.LocalNodeConnection;
+import netinf.node.cache.network.NetworkCache;
+import netinf.node.cache.peerside.PeersideCache;
 import netinf.node.resolution.ResolutionInterceptor;
 
 import org.apache.log4j.Logger;
@@ -72,14 +74,27 @@ public class CachingInterceptor implements ResolutionInterceptor {
    }
 
    @Inject(optional = true)
-   public void setCaches(BOCacheServer[] server) {
-      for (BOCacheServer serv : server) {
-         if (!serv.isConnected()) {
-            LOG.info("(CachingInterceptor ) " + serv.getClass().getSimpleName() + " not connected");
+   public void setPeersideCaches(List<PeersideCache> caches) {
+      for (PeersideCache cache : caches) {
+         if (!cache.isConnected()) {
+            LOG.info("(CachingInterceptor ) PeersideCache " + cache.getAddress() + " is not connected");
          } else {
-            BOCache cache = new BOCache(serv, serv.getClass().getSimpleName(), serv.getScope());
-            usedCaches.add(cache);
-            LOG.info("(CachingInterceptor ) " + cache.getName() + " connected");
+            BOCache peerCache = new BOCache((BOCacheServer) cache, "PeersideCache", cache.getScope());
+            usedCaches.add(peerCache);
+            LOG.info("(CachingInterceptor ) " + cache.getAddress() + " connected");
+         }
+      }
+   }
+
+   @Inject(optional = true)
+   public void setNeworkCaches(List<NetworkCache> caches) {
+      for (NetworkCache cache : caches) {
+         if (!cache.isConnected()) {
+            LOG.info("(CachingInterceptor ) NetworkCache " + cache.getAddress() + " is not connected");
+         } else {
+            BOCache netCache = new BOCache((BOCacheServer) cache, "NetworkCache", cache.getScope());
+            usedCaches.add(netCache);
+            LOG.info("(CachingInterceptor ) " + cache.getAddress() + " connected");
          }
       }
    }

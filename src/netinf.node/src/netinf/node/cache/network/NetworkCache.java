@@ -41,9 +41,6 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
 /**
  * Ehcache-Server adapter for NetInfCache.
  * 
@@ -62,9 +59,7 @@ public class NetworkCache implements BOCacheServer {
     * @param host
     *           address where the server is hosted
     */
-   @Inject
-   public NetworkCache(@Named("network.cache.address") final String host, @Named("network.cache.port") final String port,
-         @Named("network.cache.tablename") final String tablename, @Named("network.mdht.scope") final int scope) {
+   public NetworkCache(String host, String port, String tablename, int scope) {
 
       mdhtScope = scope;
 

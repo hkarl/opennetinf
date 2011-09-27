@@ -34,9 +34,6 @@ import netinf.node.cache.BOCacheServer;
 
 import org.apache.log4j.Logger;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
 /**
  * The PeersideCache.
  * 
@@ -59,9 +56,7 @@ public class PeersideCache implements BOCacheServer {
    /**
     * Constructor
     */
-   @Inject
-   public PeersideCache(@Named("peerside.mdht.scope") final int scope, @Named("peerside.access.host") String host,
-         @Named("peerside.access.port") int port) {
+   public PeersideCache(int scope, String host, int port) {
 
       // create manager with default config and init cache
       manager = CacheManager.create(ehcacheConfigPath);

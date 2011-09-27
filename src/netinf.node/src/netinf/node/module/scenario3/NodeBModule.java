@@ -36,9 +36,8 @@ import netinf.common.utils.Utils;
 import netinf.node.access.AccessServer;
 import netinf.node.access.rest.RESTAccessServer;
 import netinf.node.access.rest.module.RESTModule;
-import netinf.node.cache.BOCacheServer;
 import netinf.node.cache.CachingInterceptor;
-import netinf.node.cache.network.NetworkCache;
+import netinf.node.cache.network.NetworkCacheModule;
 import netinf.node.module.AbstractNodeModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
@@ -81,6 +80,9 @@ public class NodeBModule extends AbstractNodeModule {
 
       // RESTful API
       install(new RESTModule());
+
+      // Caches
+      install(new NetworkCacheModule(NODE_PROPERTIES));
    }
 
    /**
@@ -125,7 +127,7 @@ public class NodeBModule extends AbstractNodeModule {
    @Singleton
    @Provides
    SearchService[] provideSearchServices() {
-      return new SearchService[] { };
+      return new SearchService[] {};
    }
 
    /**
@@ -152,12 +154,6 @@ public class NodeBModule extends AbstractNodeModule {
    @Provides
    AccessServer[] provideAccessServers(RESTAccessServer rest) {
       return new AccessServer[] { rest };
-   }
-
-   @Singleton
-   @Provides
-   BOCacheServer[] provideBOCaches(NetworkCache nw) {
-      return new BOCacheServer[] { nw };
    }
 
 }
