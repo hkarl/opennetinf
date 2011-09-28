@@ -33,6 +33,7 @@ import netinf.common.datamodel.DataObject;
 import netinf.common.datamodel.DefinedAttributePurpose;
 import netinf.common.datamodel.InformationObject;
 import netinf.common.datamodel.attribute.Attribute;
+import netinf.common.log.demo.DemoLevel;
 import netinf.common.utils.DatamodelUtils;
 import netinf.node.api.impl.LocalNodeConnection;
 import netinf.node.cache.network.NetworkCache;
@@ -68,8 +69,10 @@ public class CachingInterceptor implements ResolutionInterceptor {
       this.useChunking = useChunking;
       if (this.useChunking) {
          LOG.info("(CachingInterceptor ) Chunking is enabled");
+         LOG.log(DemoLevel.DEMO, "(Caching ) I use CHUNKING for caching BOs");
       } else {
          LOG.info("(CachingInterceptor ) Chunking is NOT enabled");
+         LOG.log(DemoLevel.DEMO, "(Caching ) I do not use CHUNKING for caching BOs");
       }
    }
 
@@ -78,10 +81,12 @@ public class CachingInterceptor implements ResolutionInterceptor {
       for (PeersideCache cache : caches) {
          if (!cache.isConnected()) {
             LOG.info("(CachingInterceptor ) PeersideCache " + cache.getAddress() + " is not connected");
+            LOG.log(DemoLevel.DEMO, "(Caching ) I cannot cache via the PEERSIDECACHE on: " + cache.getAddress());
          } else {
             BOCache peerCache = new BOCache((BOCacheServer) cache, "PeersideCache", cache.getScope());
             usedCaches.add(peerCache);
             LOG.info("(CachingInterceptor ) " + cache.getAddress() + " connected");
+            LOG.log(DemoLevel.DEMO, "(Caching ) I can cache via the PEERSIDECACHE on: " + cache.getAddress());
          }
       }
    }
@@ -91,10 +96,12 @@ public class CachingInterceptor implements ResolutionInterceptor {
       for (NetworkCache cache : caches) {
          if (!cache.isConnected()) {
             LOG.info("(CachingInterceptor ) NetworkCache " + cache.getAddress() + " is not connected");
+            LOG.log(DemoLevel.DEMO, "(Caching ) I cannot cache via the NetworkCache on: " + cache.getAddress());
          } else {
             BOCache netCache = new BOCache((BOCacheServer) cache, "NetworkCache", cache.getScope());
             usedCaches.add(netCache);
             LOG.info("(CachingInterceptor ) " + cache.getAddress() + " connected");
+            LOG.log(DemoLevel.DEMO, "(Caching ) I can cache via the NetworkCache on: " + cache.getAddress());
          }
       }
    }

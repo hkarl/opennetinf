@@ -53,8 +53,7 @@ public class Chunk {
    public Chunk(String hash, int number) {
       this.hash = hash;
       this.number = number;
-
-      LOG.log(DemoLevel.DEMO, "(Chunk ) Chunk created with HASH: " + hash + " NUMBER: " + number);
+      LOG.log(DemoLevel.DEMO, "(Chunk ) Chunk created with HASH: " + hash + " and NUMBER: " + number);
    }
 
    /**
@@ -67,8 +66,7 @@ public class Chunk {
       Attribute hashAttr = chunkAttr.getSingleSubattribute(DefinedAttributeIdentification.HASH_OF_CHUNK.getURI());
       hash = hashAttr.getValue(String.class);
       number = chunkAttr.getValue(Integer.class);
-
-      LOG.log(DemoLevel.DEMO, "(Chunk ) Chunk created with HASH: " + hash + " NUMBER: " + number);
+      LOG.log(DemoLevel.DEMO, "(Chunk ) Chunk created with HASH: " + hash + " and NUMBER: " + number);
    }
 
    /**

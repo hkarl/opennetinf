@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
+import netinf.common.log.demo.DemoLevel;
 import netinf.node.chunking.Chunk;
 import netinf.node.chunking.ChunkedBO;
 import netinf.node.transferdispatcher.TransferDispatcher;
@@ -75,6 +76,7 @@ public class BufferFiller extends Thread {
             for (String baseUrl : baseUrls) {
                try {
                   Chunk chunk = getChunkByNumber(curr);
+                  LOG.log(DemoLevel.DEMO, "(TD ) Serving Chunk No: " + curr + " of total " + max);
                   System.out.println("curr = " + curr + " chunk: " + chunk + " max:" + max);
                   in = TransferDispatcher.getInstance().getStream(chunk, baseUrl);
                   curr += incr;

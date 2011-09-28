@@ -105,9 +105,11 @@ public class CacheJob extends Thread {
          BOCache useCache = this.getNextCacheTopDown();
          if (useCache != null) {
             LOG.info("(CacheJob ) CachingJob STARTED for: " + useCache.getName());
+            LOG.log(DemoLevel.DEMO, "(CacheJob ) Caching STARTED for: " + useCache.getName());
             boolean success = useCache.cache(toBeCached, cachedTmpFile);
             if (success) {
                LOG.info("(CacheJob ) CachingJob FINISHED for: " + useCache.getName());
+               LOG.log(DemoLevel.DEMO, "(CacheJob ) Caching FINISHED for: " + useCache.getName());
                // put into RS
                try {
                   LOG.info("(CacheJob ) Putting back to RS (+ new locator from caching) for: " + useCache.getName());
@@ -173,10 +175,11 @@ public class CacheJob extends Thread {
             IOUtils.closeQuietly(fis);
 
             if (hashOfBO.equalsIgnoreCase(Utils.hexStringFromBytes(hashBytes))) {
+               LOG.log(DemoLevel.DEMO, "(CacheJob ) Hash of file is VALID");
                return destination;
             } else {
                LOG.info("Hash of file: " + hashOfBO + " -- Other: " + Utils.hexStringFromBytes(hashBytes));
-               LOG.log(DemoLevel.DEMO, "(NODE ) Hash of downloaded file is invalid. Trying next locator");
+               LOG.log(DemoLevel.DEMO, "(CacheJob ) Hash of downloaded file is invalid. Trying next locator");
             }
 
          } catch (FileNotFoundException ex) {
