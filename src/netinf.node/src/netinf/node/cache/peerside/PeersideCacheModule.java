@@ -45,7 +45,7 @@ import com.google.inject.name.Named;
  * @author PG NetInf 3, University of Paderborn.
  */
 public class PeersideCacheModule extends AbstractModule {
-   
+
    private static final Logger LOG = Logger.getLogger(PeersideCacheModule.class);
 
    private Properties properties;
@@ -64,7 +64,7 @@ public class PeersideCacheModule extends AbstractModule {
       List<PeersideCache> peerCaches = new ArrayList<PeersideCache>();
       for (int i = 0; i < numberOfcaches; i++) {
          String host = properties.getProperty("peerside.cache." + i + ".access.host");
-         if (host.equals("localhost")) {
+         if (host.equals("localhost") || host.equals("127.0.0.1")) {
             try {
                host = InetAddress.getLocalHost().getHostName();
                LOG.info("(PeersideCache ) Using hostname '" + host + "' instead of 'localhost'");

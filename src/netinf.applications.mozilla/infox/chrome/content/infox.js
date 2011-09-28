@@ -87,7 +87,7 @@ var InFox = {
 		
 		// other settings
 		TIMEOUT_TIME = 5000; // 5 seconds
-		ERROR_PAGE = "http://www.netinf.org/infoxerror/";
+		ERROR_PAGE = "chrome://infox/content/errorpage.html";
 		
 		this.updateUI();
 	},
