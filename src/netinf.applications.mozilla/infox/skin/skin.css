@@ -169,3 +169,19 @@ a.netinf-selected:active{
 	text-align: right;
 	background: #F5F5F5;
 }
+
+/* Error Page */
+#errorpage {
+	margin: 0;
+	background: #f5f5f5;
+	padding: 60px;
+	color: #336699;
+}
+#errortitle {
+	padding: 14 0 14 80px;
+	background: url("chrome://infox/skin/oni64.png") no-repeat left center;
+}
+#errorsubtitle {
+	padding: 0 0 0 80px;
+}
+	
