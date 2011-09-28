@@ -100,7 +100,7 @@ public final class TransferDispatcher {
     * @throws NetInfNoStreamProviderFoundException
     */
    public InputStream getStream(String url) throws IOException, NetInfNoStreamProviderFoundException {
-      LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Getting Transfer-Stream from: " + url);
+      LOG.log(DemoLevel.DEMO, "(TD ) Getting Transfer-Stream from: " + url);
       StreamProvider dl = getStreamProvider(url);
       return dl.getStream(url);
    }
@@ -117,7 +117,7 @@ public final class TransferDispatcher {
     * @throws NetInfNoStreamProviderFoundException
     */
    public InputStream getStream(Chunk chunk, String chunkUrl) throws IOException, NetInfNoStreamProviderFoundException {
-      LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Getting Transfer-Stream for Chunk from: " + chunkUrl);
+      LOG.log(DemoLevel.DEMO, "(TD ) Getting Transfer-Stream for Chunk from: " + chunkUrl);
       StreamProvider dl = getStreamProvider(chunkUrl);
       return dl.getStream(chunk, chunkUrl);
    }
@@ -131,12 +131,12 @@ public final class TransferDispatcher {
     * @throws IOException
     */
    public InputStream getStream(DataObject dataObj) throws IOException {
-      LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Getting Transfer-Stream from IO: " + dataObj.getIdentifier());
+      LOG.log(DemoLevel.DEMO, "(TD ) Getting Transfer-Stream from IO: " + dataObj.getIdentifier());
 
       // try to use at first chunks/ranges
       try {
          ChunkedBO chunkedBO = new ChunkedBO(dataObj);
-         LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Chunks exist, use them...");
+         LOG.log(DemoLevel.DEMO, "(TD ) Chunks exist, use them...");
 
          switch (chunkingTechnique) {
          case 1:
@@ -156,6 +156,7 @@ public final class TransferDispatcher {
 
       // then try normal locators
       LOG.info("(TransferDispatcher ) Try to get stream over normal locators");
+      LOG.log(DemoLevel.DEMO, "(TD ) Try to get stream over normal locators");
       LocatorSelector locSel = new LocatorSelector(dataObj);
       while (locSel.hasNext()) {
          try {
@@ -190,7 +191,7 @@ public final class TransferDispatcher {
          return;
       }
 
-      LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Starting Download from: " + url);
+      LOG.log(DemoLevel.DEMO, "(TD ) Starting Download from: " + url);
       InputStream is = getStream(url);
       DataOutputStream dos = null;
       try {
@@ -216,7 +217,7 @@ public final class TransferDispatcher {
    StreamProvider getStreamProvider(String url) throws NetInfNoStreamProviderFoundException {
       for (StreamProvider sp : streamProviders) {
          if (sp.canHandle(url)) {
-            LOG.log(DemoLevel.DEMO, "(TransferDispatcher ) Using " + sp.describe());
+            LOG.log(DemoLevel.DEMO, "(TD ) Using " + sp.describe());
             return sp;
          }
       }
