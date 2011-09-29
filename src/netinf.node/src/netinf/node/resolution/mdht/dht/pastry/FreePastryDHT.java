@@ -145,7 +145,7 @@ public class FreePastryDHT implements DHT, Application {
       // PastryNode setup, including logging. Change the WARNING below to DEBUG if needed.
       environment = new Environment();
       environment.getParameters().setString("logging_enable", "false");
-      environment.getParameters().setString("loglevel", "trace");
+      environment.getParameters().setString("loglevel", "OFF");
 
       // Instruct FreePastry to force start a seed node if given boostrap host is "localhost".
       if (bootHost.contains("localhost")) {
