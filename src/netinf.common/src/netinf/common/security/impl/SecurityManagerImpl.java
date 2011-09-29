@@ -76,7 +76,7 @@ public class SecurityManagerImpl implements SecurityManager {
          String privateKey) throws NetInfCheckedException, NoSuchAlgorithmException {
 
       if (userName != null && privateKey != null) {
-         LOG.log(DemoLevel.DEMO, "(SEC  ) Performing (incoming) security-check for " + informationObject.describe()
+         LOG.info("(SEC  ) Performing (incoming) security-check for " + informationObject.describe()
                + " for user " + userName);
          InformationObject checkedIO = this.factory.copyObject(informationObject);
          checkedIO = decryptInformationObjectRecursively(informationObject, userName, privateKey);
@@ -91,7 +91,7 @@ public class SecurityManagerImpl implements SecurityManager {
    @Override
    public InformationObject checkIncommingInformationObject(InformationObject informationObject, boolean receiverIsTrusted)
    throws NetInfCheckedException, NoSuchAlgorithmException {
-      LOG.log(DemoLevel.DEMO, "(SEC  ) Performing (incoming) security-check for " + informationObject.describe()
+	  LOG.info("(SEC  ) Performing (incoming) security-check for " + informationObject.describe()
             + " - its receiver is " + (receiverIsTrusted ? "" : "un") + "trusted");
       InformationObject checkedIO = this.factory.copyObject(informationObject);
       checkedIO = decryptInformationObjectRecursively(informationObject, null, null);
@@ -108,7 +108,7 @@ public class SecurityManagerImpl implements SecurityManager {
    public InformationObject checkOutgoingInformationObject(InformationObject informationObject, String userName, String privKey)
    throws NetInfCheckedException, NoSuchAlgorithmException {
       if (userName != null && privKey != null) {
-         LOG.log(DemoLevel.DEMO, "(SEC  ) Performing (outgoing) security-check for " + informationObject.describe()
+    	 LOG.info("(SEC  ) Performing (outgoing) security-check for " + informationObject.describe()
                + " for user " + userName);
          InformationObject checkedIO = this.factory.copyObject(informationObject);
          checkedIO = handleSignCommandsRecursively(informationObject, userName, privKey);
@@ -123,7 +123,7 @@ public class SecurityManagerImpl implements SecurityManager {
    @Override
    public InformationObject checkOutgoingInformationObject(InformationObject informationObject, boolean senderIsTrusted)
    throws NetInfCheckedException, NoSuchAlgorithmException {
-      LOG.log(DemoLevel.DEMO, "(SEC  ) Performing (outgoing) security-check for " + informationObject.describe()
+	   LOG.info("(SEC  ) Performing (outgoing) security-check for " + informationObject.describe()
             + " - its sender is " + (senderIsTrusted ? "" : "un") + "trusted");
       InformationObject checkedIO = this.factory.copyObject(informationObject);
       if (senderIsTrusted) {

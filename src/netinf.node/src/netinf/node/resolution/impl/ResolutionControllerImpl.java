@@ -143,7 +143,7 @@ public class ResolutionControllerImpl implements ResolutionController {
          gotAtLeastOne = true;
          InformationObject io = null;
          try {
-            LOG.log(DemoLevel.DEMO, "(NODE ) Trying to resolve over " + rs.describe());
+            LOG.info("(NODE ) Trying to resolve over " + rs.describe());
             io = rs.get(identifier);
          } catch (Exception ex) {
             LOG.warn("Could not use Resolution service " + rs + " Exception: " + ex);

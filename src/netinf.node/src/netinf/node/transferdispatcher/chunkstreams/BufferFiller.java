@@ -76,8 +76,7 @@ public class BufferFiller extends Thread {
             for (String baseUrl : baseUrls) {
                try {
                   Chunk chunk = getChunkByNumber(curr);
-                  LOG.log(DemoLevel.DEMO, "(TD ) Serving Chunk No: " + curr + " of total " + max);
-                  System.out.println("curr = " + curr + " chunk: " + chunk + " max:" + max);
+                  LOG.log(DemoLevel.DEMO, "(TD ) Serving Chunk No: " + curr + " of total " + max + 1);
                   in = TransferDispatcher.getInstance().getStream(chunk, baseUrl);
                   curr += incr;
                   IOUtils.copy(in, out);
