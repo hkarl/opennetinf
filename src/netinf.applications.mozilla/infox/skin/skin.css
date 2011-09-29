@@ -177,11 +177,10 @@ a.netinf-selected:active{
 	padding: 60px;
 	color: #336699;
 }
-#errortitle {
-	padding: 14 0 14 80px;
-	background: url("chrome://infox/skin/oni64.png") no-repeat left center;
+#errorpage img {
+	float: left;
+	margin-right: 20px;
 }
 #errorsubtitle {
 	padding: 0 0 0 80px;
 }
-	
