@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    <info
+        organisation="netinf"
+        module="netinf.tools.productlist"
+        status="integration">
+	</info>
+	<dependency
+        org="log4j"
+        name="log4j"
+        rev="1.2.16" />
+    <dependency
+        org="com.google.inject"
+        name="guice"
+        rev="2.0" />
+    <dependency
+        org="com.miglayout"
+        name="miglayout"
+        rev="3.7.4" />
+</ivy-module>
