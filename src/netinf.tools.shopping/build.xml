@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="netinf.tools.shopping">
+	<property environment="env" />
+	<property name="netinf.common.location" value="../netinf.common" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.6" />
+	<property name="source" value="1.6" />
+	<path id="JUnit 4.libraryclasspath">
+		<pathelement location="../../../../../../Program Files (x86)/eclipse/plugins/org.junit4_4.5.0.v20090824/junit.jar" />
+		<pathelement location="../../../../../../Program Files (x86)/eclipse/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar" />
+	</path>
+	<path id="netinf.common.classpath">
+		<pathelement location="${netinf.common.location}/bin" />
+		<pathelement location="${netinf.common.location}/lib/log4j-1.2.15.jar" />
+		<pathelement location="${netinf.common.location}/lib/commons-io-1.4.jar" />
+		<pathelement location="${netinf.common.location}/lib/commons-lang-2.4.jar" />
+		<pathelement location="${netinf.common.location}/lib/aopalliance.jar" />
+		<pathelement location="${netinf.common.location}/lib/guice-2.0.jar" />
+		<pathelement location="${netinf.common.location}/lib/google-protobuf.jar" />
+		<pathelement location="${netinf.common.location}/lib/commons-codec-1.4.jar" />
+		<path refid="JUnit 4.libraryclasspath" />
+		<pathelement location="${netinf.common.location}/lib/jena.jar" />
+		<pathelement location="${netinf.common.location}/lib/arq.jar" />
+		<pathelement location="${netinf.common.location}/lib/arq-extra.jar" />
+		<pathelement location="${netinf.common.location}/lib/guice-2.0-src.zip" />
+		<pathelement location="${netinf.common.location}/lib/icu4j_3_4.jar" />
+		<pathelement location="${netinf.common.location}/lib/iri.jar" />
+		<pathelement location="${netinf.common.location}/lib/jenatest.jar" />
+		<pathelement location="${netinf.common.location}/lib/json.jar" />
+		<pathelement location="${netinf.common.location}/lib/junit-4.5.jar" />
+		<pathelement location="${netinf.common.location}/lib/lucene-core-2.3.1.jar" />
+		<pathelement location="${netinf.common.location}/lib/sdb.jar" />
+		<pathelement location="${netinf.common.location}/lib/slf4j-api-1.5.6.jar" />
+		<pathelement location="${netinf.common.location}/lib/slf4j-log4j12-1.5.6.jar" />
+		<pathelement location="${netinf.common.location}/lib/stax-api-1.0.jar" />
+		<pathelement location="${netinf.common.location}/lib/wstx-asl-3.0.0.jar" />
+		<pathelement location="${netinf.common.location}/lib/xercesImpl.jar" />
+		<pathelement location="${netinf.common.location}/lib-test/easymock.jar" />
+		<pathelement location="${netinf.common.location}/lib-test/easymockclassextension.jar" />
+		<pathelement location="${netinf.common.location}/lib-test/cglib-nodep-2.2.jar" />
+	</path>
+	<path id="netinf.tools.shopping.classpath">
+		<pathelement location="bin" />
+		<path refid="netinf.common.classpath" />
+		<pathelement location="lib/swingx-1.6.jar" />
+		<pathelement location="lib/swingx-beaninfo-1.6.jar" />
+		<pathelement location="lib/swingx-ws-1.0.jar" />
+	</path>
+	<target name="init">
+		<mkdir dir="bin" />
+		<copy includeemptydirs="false" todir="bin">
+			<fileset dir="src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<copy includeemptydirs="false" todir="bin">
+			<fileset dir="images">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="clean">
+		<delete dir="bin" />
+	</target>
+	<target depends="clean" name="cleanall">
+		<ant antfile="${netinf.common.location}/build.xml" dir="${netinf.common.location}" inheritAll="false" target="clean" />
+	</target>
+	<target depends="build-subprojects,build-project" name="build" />
+	<target name="build-subprojects">
+		<ant antfile="${netinf.common.location}/build.xml" dir="${netinf.common.location}" inheritAll="false" target="build-project" />
+	</target>
+	<target depends="init" name="build-project">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+			<src path="src" />
+			<classpath refid="netinf.tools.shopping.classpath" />
+		</javac>
+		<javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+			<src path="images" />
+			<classpath refid="netinf.tools.shopping.classpath" />
+		</javac>
+	</target>
+	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
+	<target name="ShoppingTool">
+		<java classname="netinf.tools.shopping.StarterShopping" failonerror="true" fork="yes">
+			<classpath refid="netinf.tools.shopping.classpath" />
+		</java>
+	</target>
+	<target name="Scenario 2 - StarterShoppingPeter">
+		<java classname="netinf.tools.shopping.StarterShopping" failonerror="true" fork="yes">
+			<arg line="netinf.tools.shopping.scenario2.ShoppingPeterModule" />
+			<classpath refid="netinf.tools.shopping.classpath" />
+		</java>
+	</target>
+	<target name="Scenario 2 - StarterShopping">
+		<java classname="netinf.tools.shopping.StarterShopping" failonerror="true" fork="yes">
+			<classpath refid="netinf.tools.shopping.classpath" />
+		</java>
+	</target>
+	<target name="Scenario 2 - StarterShoppingJack">
+		<java classname="netinf.tools.shopping.StarterShopping" failonerror="true" fork="yes">
+			<arg line="netinf.tools.shopping.scenario2.ShoppingJackModule" />
+			<classpath refid="netinf.tools.shopping.classpath" />
+		</java>
+	</target>
+</project>

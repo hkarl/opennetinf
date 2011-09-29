@@ -1,0 +1,5 @@
+This is a description of the integrated scenario which is running here.
+
+We have 2 different nodes, and a communicator (which connects from somewhere remote).
+
+CC <-> resolve_name <-> add_anme

@@ -1,0 +1,5 @@
+content     inbird	chrome/content/
+overlay		chrome://messenger/content/messengercompose/messengercompose.xul	chrome://inbird/content/InBirdOverlay.xul
+
+skin		inbird	classic/1.0	skin/
+locale		inbird	en-US		locale/en-US/
