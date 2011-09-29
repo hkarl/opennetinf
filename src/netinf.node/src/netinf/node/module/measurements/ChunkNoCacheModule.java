@@ -33,15 +33,11 @@ import netinf.common.datamodel.translation.module.DatamodelTranslationModule;
 import netinf.common.utils.Utils;
 import netinf.node.access.AccessServer;
 import netinf.node.access.rest.module.RESTModule;
-import netinf.node.cache.CachingInterceptor;
 import netinf.node.module.AbstractNodeModule;
 import netinf.node.resolution.ResolutionInterceptor;
 import netinf.node.resolution.ResolutionService;
-import netinf.node.resolution.locator.impl.LocatorSelectorImpl;
 import netinf.node.resolution.remote.RemoteResolutionFactory;
 import netinf.node.search.SearchService;
-import netinf.node.search.rdf.SearchServiceRDF;
-import netinf.node.search.rdf.module.SearchServiceRDFModule;
 
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -67,16 +63,6 @@ public class ChunkNoCacheModule extends AbstractNodeModule {
 
       // Need a binding to AccessServer
       install(new RESTModule());
-
-      // The SearchServices
-      install(new SearchServiceRDFModule());
-
-      // Peer Caching
-      // install(new LocalIOCachingModule());
-
-      // install(new NetworkCacheModule());
-
-      // bind(StorageService.class).to(MDHTResolutionService.class).in(Singleton.class);
    }
 
    @Singleton
@@ -85,35 +71,16 @@ public class ChunkNoCacheModule extends AbstractNodeModule {
       return remoteResolutionFactory.getRemoteResolutionServices().toArray(new ResolutionService[] {});
    }
 
-   /**
-    * This method provides all the {@link ResolutionInterceptor}s which are automatically inserted into the node. In order to get
-    * an instance of the according {@link ResolutionInterceptor}, add an additional parameter to this method, since this puts
-    * GUICE in charge of creating the correct instance of the according service. The {@link ResolutionInterceptor}s will be called
-    * in the given order.
-    * 
-    * @param localResolutionService
-    * @param rdfResolutionService
-    * @return
-    */
    @Singleton
    @Provides
-   ResolutionInterceptor[] provideResolutionInterceptors(CachingInterceptor cache /* IOCacheImpl ioCache */,
-         LocatorSelectorImpl locatorSelector) {
-      return new ResolutionInterceptor[] { cache, locatorSelector };
+   ResolutionInterceptor[] provideResolutionInterceptors() {
+      return new ResolutionInterceptor[] {};
    }
 
-   /**
-    * This method provides all the {@link SearchService}s which are automatically inserted into the node. In order to get an
-    * instance of the according {@link SearchService}, add an additional parameter to this method, since this puts GUICE in charge
-    * of creating the correct instance of the according service.
-    * 
-    * @param searchServiceRdf
-    * @return
-    */
    @Singleton
    @Provides
-   SearchService[] provideSearchServices(SearchServiceRDF searchServiceRdf) {
-      return new SearchService[] { searchServiceRdf };
+   SearchService[] provideSearchServices() {
+      return new SearchService[] {};
    }
 
    @Singleton
@@ -127,11 +94,4 @@ public class ChunkNoCacheModule extends AbstractNodeModule {
    AccessServer[] providesAccessServer(AccessServer accServ) {
       return new AccessServer[] { accServ };
    }
-
-   /***** Uncomment below to provide Peerside and NetworkCaches ****/
-   /*
-    * @Singleton
-    * @Provides BOCacheServer[] provideBOCaches(NetworkCache nw ,PeersideCache ps) { return new BOCacheServer[] { ps, nw }; }
-    */
-
 }
