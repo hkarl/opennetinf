@@ -25,6 +25,9 @@
  */
 package netinf.node.access.rest;
 
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
+
 import netinf.common.communication.NetInfNodeConnection;
 import netinf.common.datamodel.DatamodelFactory;
 import netinf.common.datamodel.translation.DatamodelTranslator;
@@ -53,6 +56,11 @@ public class RESTApplication extends Application {
    private DatamodelTranslator datamodelTranslator;
 
    public RESTApplication(NetInfNodeConnection connection, DatamodelFactory factory, DatamodelTranslator translator) {
+      // Disable Restlet Logging
+      java.util.logging.Logger rootLogger = LogManager.getLogManager().getLogger("");
+      Handler[] handlers = rootLogger.getHandlers();
+      rootLogger.removeHandler(handlers[0]);
+
       nodeConnection = connection;
       datamodelFactory = factory;
       datamodelTranslator = translator;
