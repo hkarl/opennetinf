@@ -425,7 +425,7 @@
 		</fileset>
         </path>
 	</pathconvert>
-        <echo message="Classphat is ${libs.node.project}"/>
+        <echo message="Classpath is ${libs.node.project}"/>
        
 
 		<jar destfile="${jar.location}/node.jar">
