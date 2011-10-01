@@ -46,7 +46,7 @@
 		<pathelement location="lib/easymock-2.5.2.jar" />
 		<pathelement location="lib/easymockclassextension-2.5.2.jar" />
 		<pathelement location="lib/cglib-nodep-2.2.jar" />
-		<pathelement location="ehcache-core-2.4.5.jar" />
+		<pathelement location="lib/ehcache-core-2.4.5.jar" />
 	</path>
 	<path id="netinf.database.classpath">
 		<pathelement location="${netinf.database.location}/bin" />
