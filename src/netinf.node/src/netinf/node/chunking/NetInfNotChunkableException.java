@@ -28,7 +28,7 @@ package netinf.node.chunking;
 import netinf.common.exceptions.NetInfCheckedException;
 
 /**
- * @author PG NetInf 3
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class NetInfNotChunkableException extends NetInfCheckedException {
 
