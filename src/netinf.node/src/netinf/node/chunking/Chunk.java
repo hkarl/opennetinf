@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
 /**
  * This class represents a single chunk.
  * 
- * @author PG NetInf 3, University of Paderborn
+ * @author PG NetInf 3, University of Paderborn.
  */
 public class Chunk {
 

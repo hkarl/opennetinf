@@ -38,7 +38,7 @@ import netinf.node.chunking.Chunk;
 public interface StreamProvider {
 
    /**
-    * Provides an appropriate stream for the fiven URL
+    * Provides an appropriate stream for the given URL.
     * 
     * @param url
     *           The URL of the file.
@@ -48,6 +48,16 @@ public interface StreamProvider {
     */
    InputStream getStream(String url) throws IOException;
 
+   /**
+    * Provides an appropriate stream for the given Chunk.
+    * 
+    * @param chunk
+    *           The Chunk.
+    * @param chunkUrl
+    *           The BaseURL to the Chunk.
+    * @return The Stream to that single Chunk.
+    * @throws IOException
+    */
    InputStream getStream(Chunk chunk, String chunkUrl) throws IOException;
 
    /**

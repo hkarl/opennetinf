@@ -60,7 +60,7 @@ import org.apache.log4j.Logger;
 public class ChunkedBO {
 
    private static final Logger LOG = Logger.getLogger(ChunkedBO.class);
-   private int chunkSizeInBytes = 256 * 1024;
+   private int chunkSizeInBytes = 256 * 1024; // 256 KiB
    private List<Chunk> chunkList;
    private int totalNoOfChunks;
    private List<String> baseUrls;
