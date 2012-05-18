@@ -182,6 +182,7 @@
                 <copy todir="${libs.location}">
 			<fileset dir="${netinf.common.location}/lib"/>
 		</copy>
+		<delete file="${libs.location}/slf4j-jdk14-1.6.1.jar" />
 	</target>
 
 	<target name="copyconfig">
