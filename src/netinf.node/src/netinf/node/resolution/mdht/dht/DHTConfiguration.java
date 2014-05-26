@@ -36,6 +36,7 @@ public class DHTConfiguration {
    private int bootPort;
    private int listenPort;
    private int level;
+   private String listenAddress;
 
    /**
     * Parameterized constructor for the configuration.
@@ -45,11 +46,12 @@ public class DHTConfiguration {
     * @param listenPort The port to listen on for DHT services on the local node.
     * @param level	This parameter describes which level is being configured on the current node.
     */
-   public DHTConfiguration(String bootHost, int bootPort, int listenPort, int level) {
+   public DHTConfiguration(String bootHost, int bootPort, int listenPort, int level, String listenAddress) {
       this.bootHost = bootHost;
       this.bootPort = bootPort;
       this.listenPort = listenPort;
       this.level = level;
+      this.listenAddress= listenAddress;
    }
 
    public String getBootHost() {
@@ -67,5 +69,11 @@ public class DHTConfiguration {
    public int getLevel() {
       return level;
    }
+
+	public String getListenAddress() {
+		return listenAddress;
+	}
+
+
 
 }

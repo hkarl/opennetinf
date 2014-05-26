@@ -26,6 +26,11 @@
 package netinf.node.cache;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.List;
 
 import netinf.common.datamodel.DataObject;
 import netinf.common.datamodel.DefinedAttributePurpose;
@@ -75,6 +80,8 @@ public class BOCache {
    public boolean cache(DataObject dataObject, String downloadedTmpFile) {
       String hashOfBO = DatamodelUtils.getHash(dataObject);
       String urlPath = cacheServer.getURL(hashOfBO);
+      // Quickhack for ADT Multilocation Placement 
+      urlPath = BOCache.replaceHostnameByIP(urlPath);
 
       if (!contains(hashOfBO)) {
          try {
@@ -82,10 +89,17 @@ public class BOCache {
                                                                                                     // byteArray
             if (success) {
                addLocator(dataObject, urlPath);
-               return true;
+               //return true;
+            }
+            else{
+            	LOG.info("Remove Locator");
+            	this.removeLocator(dataObject, urlPath);
+            	//return true;
             }
          } catch (IOException e) {
-            e.printStackTrace();
+            LOG.debug("Cache BO failed.", e);
+            this.removeLocator(dataObject, urlPath);
+            //return true;
          }
       } else {
          LOG.info("DO already in cache, but locator not in DO - adding locator entry...");
@@ -93,8 +107,32 @@ public class BOCache {
          return true;
       }
 
-      return false;
+      return true;
    }
+   
+   /**
+    * Replace the hostname in the given url by the ip of the hostname
+    * @param purl 
+    * 			the url  
+    */
+	public static String replaceHostnameByIP(String purl) {
+		try {
+			URL url = new URL(purl);
+			String host_name = url.getHost();
+			
+			InetAddress foo = InetAddress.getByName(host_name);
+			purl = purl.replaceFirst(host_name, foo.getHostAddress());
+			return purl;
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			//e1.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		return purl;
+
+	}
 
    /**
     * Checks if the cache contains a specific BO
@@ -140,6 +178,38 @@ public class BOCache {
       return cacheName;
    }
 
+   
+   private Attribute createAttribute(DataObject dataObject, String url){
+	      // Locator - http_url
+	      Attribute attribute = dataObject.getDatamodelFactory().createAttribute();
+	      attribute.setAttributePurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
+	      attribute.setIdentification(DefinedAttributeIdentification.HTTP_URL.getURI());
+	      attribute.setValue(url);
+
+	      // Cache marker
+	      Attribute cacheMarker = dataObject.getDatamodelFactory().createAttribute();
+	      cacheMarker.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+	      cacheMarker.setIdentification(DefinedAttributeIdentification.CACHE.getURI());
+	      cacheMarker.setValue("true");
+	      attribute.addSubattribute(cacheMarker);
+
+	      // add chunk/range enabled flag
+	      Attribute chunkFlag = dataObject.getDatamodelFactory().createAttribute();
+	      chunkFlag.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+	      chunkFlag.setIdentification(DefinedAttributeIdentification.CHUNKED.getURI());
+	      chunkFlag.setValue("true");
+	      attribute.addSubattribute(chunkFlag);
+
+	      // add cache priority = cache level
+	      Attribute locPrio = dataObject.getDatamodelFactory().createAttribute();
+	      locPrio.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
+	      locPrio.setIdentification(DefinedAttributeIdentification.LOCATOR_PRIORITY.getURI());
+	      locPrio.setValue(mdhtLevel);
+	      attribute.addSubattribute(locPrio);
+	      
+	      
+	      return attribute;
+   }
    /**
     * Adds a new locator to the DataObject
     * 
@@ -149,32 +219,8 @@ public class BOCache {
     *           The URL of the locator
     */
    private void addLocator(DataObject dataObject, String url) {
-      // Locator - http_url
-      Attribute attribute = dataObject.getDatamodelFactory().createAttribute();
-      attribute.setAttributePurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
-      attribute.setIdentification(DefinedAttributeIdentification.HTTP_URL.getURI());
-      attribute.setValue(url);
-
-      // Cache marker
-      Attribute cacheMarker = dataObject.getDatamodelFactory().createAttribute();
-      cacheMarker.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
-      cacheMarker.setIdentification(DefinedAttributeIdentification.CACHE.getURI());
-      cacheMarker.setValue("true");
-      attribute.addSubattribute(cacheMarker);
-
-      // add chunk/range enabled flag
-      Attribute chunkFlag = dataObject.getDatamodelFactory().createAttribute();
-      chunkFlag.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
-      chunkFlag.setIdentification(DefinedAttributeIdentification.CHUNKED.getURI());
-      chunkFlag.setValue("true");
-      attribute.addSubattribute(chunkFlag);
-
-      // add cache priority = cache level
-      Attribute locPrio = dataObject.getDatamodelFactory().createAttribute();
-      locPrio.setAttributePurpose(DefinedAttributePurpose.SYSTEM_ATTRIBUTE.getAttributePurpose());
-      locPrio.setIdentification(DefinedAttributeIdentification.LOCATOR_PRIORITY.getURI());
-      locPrio.setValue(mdhtLevel);
-      attribute.addSubattribute(locPrio);
+	   
+	   Attribute attribute = this.createAttribute(dataObject, url);
 
       // add new locator
       if (!dataObject.getAttributes().contains(attribute)) {
@@ -195,6 +241,18 @@ public class BOCache {
          dataObject.addAttribute(level);
       }
 
+   }
+   
+   private void removeLocator(DataObject dataObject, String url){
+	   List<Attribute> attributes = dataObject.getAttributesForPurpose(DefinedAttributePurpose.LOCATOR_ATTRIBUTE.toString());
+	   for(Attribute attr:attributes){
+		   List<Attribute> subattributes = attr.getSubattribute(DefinedAttributeIdentification.CACHE.getURI());
+		   LOG.info("Found " + subattributes.size() + " Cache subattributes");
+		   if (subattributes.size() > 0){
+			   dataObject.removeAttribute(attr);
+			   LOG.info("Removed Locator");
+		   }
+	   }
    }
 
    /**

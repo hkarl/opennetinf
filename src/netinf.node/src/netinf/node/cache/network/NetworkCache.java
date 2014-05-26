@@ -26,8 +26,10 @@
 package netinf.node.cache.network;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 import netinf.node.cache.BOCacheServer;
 
@@ -79,8 +81,30 @@ public class NetworkCache implements BOCacheServer {
       }
    }
 
-   @Override
+   
+   @Override 
    public boolean cacheBO(byte[] bo, String hashOfBO) {
+	   if (isConnected()){
+		   return cacheBOintern(bo,hashOfBO);
+	   }
+	   else{
+	      if (!cacheExists(cacheAddress)) {
+	    	  LOG.info("Create new Cache");
+	    	  isConnected = createCache(cacheAddress);
+	       } else {
+	    	  LOG.info("Cache already exits");
+	          isConnected = true;
+	       }	      
+	      if (isConnected){
+	    	  return cacheBOintern(bo,hashOfBO);
+	      }
+	      else{
+	    	  return false;
+	      }
+	   }
+   }
+
+   private boolean cacheBOintern(byte[] bo, String hashOfBO) {
       if (isConnected()) {
          HttpClient client = new DefaultHttpClient();
          HttpPut httpPut = new HttpPut(cacheAddress + "/" + hashOfBO);
@@ -105,9 +129,30 @@ public class NetworkCache implements BOCacheServer {
 
       return false; // not connected
    }
+   
+   @Override 
+   public boolean containsBO( String hashOfBO) {
+	   if (isConnected()){
+		   return containsBOintern(hashOfBO);
+	   }
+	   else{
+	      if (!cacheExists(cacheAddress)) {
+	    	  LOG.info("Create new Cache");
+	    	  isConnected = createCache(cacheAddress);
+	       } else {
+	    	  LOG.info("Cache already exits");
+	          isConnected = true;
+	       }
+	      if (isConnected){
+	    	  return containsBOintern(hashOfBO);
+	      }
+	      else{
+	    	  return false;
+	      }
+	   }
+   }
 
-   @Override
-   public boolean containsBO(String hashOfBO) {
+   private boolean containsBOintern(String hashOfBO) {
       if (isConnected()) {
          HttpClient client = new DefaultHttpClient();
          HttpHead httpHead = new HttpHead(cacheAddress + "/" + hashOfBO);
@@ -132,7 +177,7 @@ public class NetworkCache implements BOCacheServer {
 
    @Override
    public boolean isConnected() {
-      if (isConnected) {
+      if (isConnected && cacheExists(cacheAddress)) {
          return true;
       }
       return false;
@@ -176,6 +221,7 @@ public class NetworkCache implements BOCacheServer {
    private boolean createCache(String pathOfCache) {
       HttpClient client = new DefaultHttpClient();
       HttpPut httpPut = new HttpPut(pathOfCache);
+      LOG.info(httpPut.toString());
       try {
          HttpResponse response = client.execute(httpPut);
          int statusCode = response.getStatusLine().getStatusCode();
@@ -183,6 +229,8 @@ public class NetworkCache implements BOCacheServer {
             LOG.info("Cache server running - created cache tables");
             return true;
          }
+         LOG.info("Could not create cache tables");
+         LOG.info(response.getStatusLine().toString());
          return false;
       } catch (ClientProtocolException e) {
          LOG.error("ProtocolException in EhCache");
@@ -200,25 +248,28 @@ public class NetworkCache implements BOCacheServer {
     *           the address of the host that runs the cache server
     * @return the URL of the cache
     */
-   private String buildCacheAddress(String host, String port, String tablename) {
-      String cacheUrl = "http://" + host + ":" + port;
-      try {
-         URL url = new URL(cacheUrl);
-         LOG.info("Using cache server on IP: " + url.getHost());
-      } catch (MalformedURLException e) {
-         LOG.warn("Wrong cache address - trying with localhost...");
-         cacheUrl = "http://127.0.0.1:8080";
-      }
+   private String buildCacheAddress(String host, String port, String tablename){
+	  
 
-      return cacheUrl + tablename;
+		String cacheUrl = "http://" + host + ":" + port;
+		try {
+		   URL url = new URL(cacheUrl);
+		   LOG.info("Using cache server on IP: " + url.getHost());
+		} catch (MalformedURLException e) {
+		   LOG.warn("Wrong cache address - trying with localhost...");
+		   cacheUrl = "http://127.0.0.1:8080";
+		}
+		
+		return cacheUrl + tablename;
    }
 
    @Override
    public String getURL(String hashOfBO) {
-      if (isConnected()) {
+		
+	    
+	    
+	    // Implementation before ;)
          return cacheAddress + "/" + hashOfBO;
-      }
-      return null;
    }
 
    @Override

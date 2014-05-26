@@ -50,6 +50,7 @@ import netinf.node.transferdispatcher.streamprovider.NetInfNoStreamProviderFound
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.util.log.Log;
 
 /**
  * A single CacheJob. Used by {@link CachingInterceptor}
@@ -165,6 +166,7 @@ public class CacheJob extends Thread {
       LocatorSelector locSel = new LocatorSelector(toBeCached);
       while (locSel.hasNext()) {
          String url = locSel.next();
+
          try {
             String destination = Utils.getTmpFolder("netinfCache") + File.separator + hashOfBO + ".tmp";
             transferDispatcher.getStreamAndSave(url, destination, false);
@@ -178,6 +180,7 @@ public class CacheJob extends Thread {
                LOG.log(DemoLevel.DEMO, "(CacheJob ) Hash of file is VALID");
                return destination;
             } else {
+               Log.info("URL of file: " + url + " stored at: "+destination);
                LOG.info("Hash of file: " + hashOfBO + " -- Other: " + Utils.hexStringFromBytes(hashBytes));
                LOG.log(DemoLevel.DEMO, "(CacheJob ) Hash of downloaded file is invalid. Trying next locator");
             }
