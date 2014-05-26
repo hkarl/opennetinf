@@ -1,0 +1,20 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:netinf="http://rdf.netinf.org/2009/netinf-rdf/1.0/#">
+  <rdf:Description>
+    <netinf:transportedIO>
+      <rdf:Description rdf:about="ni:HASH_OF_PK=560822d0da71369f1efe70fb96c7a9aa586b9836~HASH_OF_PK_IDENT=SHA1~VERSION_KIND=UNVERSIONED~UNIQUE_LABEL=TEST">
+        <netinf:hash_of_data rdf:parseType="Resource">
+          <netinf:attributePurpose>SYSTEM_ATTRIBUTE</netinf:attributePurpose>
+          <netinf:attributeValue>String:b487593f2d091623e201fc449d1bf5020a12d05b</netinf:attributeValue>
+        </netinf:hash_of_data>
+        <netinf:http_url rdf:parseType="Resource">
+          <netinf:attributePurpose>LOCATOR_ATTRIBUTE</netinf:attributePurpose>
+          <netinf:attributeValue>String:http://agk-lpc27.cs.upb.de/agk.png</netinf:attributeValue>
+        </netinf:http_url>
+      </rdf:Description>
+    </netinf:transportedIO>
+    <netinf:ioType>netinf.common.datamodel.rdf.DataObjectRdf</netinf:ioType>
+  </rdf:Description>
+</rdf:RDF>
+
