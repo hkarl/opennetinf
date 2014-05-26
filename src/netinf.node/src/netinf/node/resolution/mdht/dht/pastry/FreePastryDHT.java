@@ -136,7 +136,7 @@ public class FreePastryDHT implements DHT, Application {
     *            Thrown when unable to resolve hosts
     */
    public FreePastryDHT(final int listenPort, final String bootHost, final int bootPort, final String pastName,
-         final MDHTResolutionService pParent)
+         final MDHTResolutionService pParent, final String listenAddress)
 
    throws IOException {
 
@@ -146,6 +146,8 @@ public class FreePastryDHT implements DHT, Application {
       environment = new Environment();
       environment.getParameters().setString("logging_enable", "false");
       environment.getParameters().setString("loglevel", "OFF");
+      
+
 
       // Instruct FreePastry to force start a seed node if given boostrap host is "localhost".
       if (bootHost.contains("localhost")) {
@@ -153,8 +155,15 @@ public class FreePastryDHT implements DHT, Application {
       }
 
       NodeIdFactory nodeIdFactory = new RandomNodeIdFactory(environment);
-
-      PastryNodeFactory pastryNodeFactory = new SocketPastryNodeFactory(nodeIdFactory, listenPort, environment);
+      
+      PastryNodeFactory pastryNodeFactory = null;
+      if ((listenAddress != null) && (!listenAddress.equals("localhost"))){
+    	  InetAddress listen = InetAddress.getByName(listenAddress);
+    	  pastryNodeFactory = new SocketPastryNodeFactory(nodeIdFactory,listen, listenPort, environment);
+      }
+      else{
+    	  pastryNodeFactory = new SocketPastryNodeFactory(nodeIdFactory, listenPort, environment);
+      }
 
       pastryNode = pastryNodeFactory.newNode();
 
@@ -175,7 +184,7 @@ public class FreePastryDHT implements DHT, Application {
    }
 
    public FreePastryDHT(DHTConfiguration config, MDHTResolutionService pParent) throws IOException {
-      this(config.getListenPort(), config.getBootHost(), config.getBootPort(), "Level-" + config.getLevel(), pParent);
+      this(config.getListenPort(), config.getBootHost(), config.getBootPort(), "Level-" + config.getLevel(), pParent, config.getListenAddress());
    }
 
    @Override

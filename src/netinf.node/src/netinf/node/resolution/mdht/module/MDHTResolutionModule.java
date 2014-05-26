@@ -63,9 +63,10 @@ public class MDHTResolutionModule extends AbstractModule {
       List<DHTConfiguration> configs = new ArrayList<DHTConfiguration>();
       for (int i = 0; i < mdhtlevels; i++) {
          String bootHost = properties.getProperty("mdht." + i + ".boothost");
+         String listenAddress = properties.getProperty("mdht." + i + ".listenaddress");
          int bootPort = Integer.parseInt(properties.getProperty("mdht." + i + ".bootport"));
          int listenPort = Integer.parseInt(properties.getProperty("mdht." + i + ".listenport"));
-         DHTConfiguration config = new DHTConfiguration(bootHost, bootPort, listenPort, i);
+         DHTConfiguration config = new DHTConfiguration(bootHost, bootPort, listenPort, i, listenAddress);
          configs.add(config);
       }
       return configs;

@@ -21,7 +21,7 @@
   </appender>
 
   <appender name="SOCK" class="org.apache.log4j.net.SocketAppender">
-    <param name="RemoteHost" value="localhost" />
+    <param name="RemoteHost" value="fg-cn-cl1" />
     <param name="Port" value="4560" />
     <param name="LocationInfo" value="true" />
     <param name="Application" value="node" />

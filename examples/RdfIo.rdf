@@ -10,7 +10,7 @@
         </netinf:hash_of_data>
         <netinf:http_url rdf:parseType="Resource">
           <netinf:attributePurpose>LOCATOR_ATTRIBUTE</netinf:attributePurpose>
-          <netinf:attributeValue>String:http://www.michael-hess.net/sonstiges/Testbild.jpg</netinf:attributeValue>
+          <netinf:attributeValue>String:http://agk-lpc27.cs.upb.de/agk.png</netinf:attributeValue>
         </netinf:http_url>
         <netinf:http_url rdf:parseType="Resource">
           <netinf:attributePurpose>LOCATOR_ATTRIBUTE</netinf:attributePurpose>

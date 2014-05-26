@@ -96,13 +96,13 @@ public class CachingInterceptor implements ResolutionInterceptor {
       for (NetworkCache cache : caches) {
          if (!cache.isConnected()) {
             LOG.info("(CachingInterceptor ) NetworkCache " + cache.getAddress() + " is not connected");
-            LOG.log(DemoLevel.DEMO, "(Caching ) I cannot cache via the NetworkCache on: " + cache.getAddress());
+            LOG.log(DemoLevel.DEMO, "(Caching ) I actually cannot cache via the NetworkCache on: " + cache.getAddress());
          } else {
-            BOCache netCache = new BOCache((BOCacheServer) cache, "NetworkCache", cache.getScope());
-            usedCaches.add(netCache);
             LOG.info("(CachingInterceptor ) " + cache.getAddress() + " connected");
             LOG.log(DemoLevel.DEMO, "(Caching ) I can cache via the NetworkCache on: " + cache.getAddress());
          }
+         BOCache netCache = new BOCache((BOCacheServer) cache, "NetworkCache", cache.getScope());
+         usedCaches.add(netCache);
       }
    }
 

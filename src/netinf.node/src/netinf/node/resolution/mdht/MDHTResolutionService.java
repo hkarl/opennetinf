@@ -124,9 +124,12 @@ public class MDHTResolutionService extends AbstractResolutionService {
       // Create DHTs
       for (DHTConfiguration config : configs) {
          try {
-            dhts.put(config.getLevel(), createDHT(config));
+        	DHT dht= createDHT(config);
+        	Integer level = config.getLevel();
+            dhts.put(level, dht);
+            //dhts.put(config.getLevel(), createDHT(config));
          } catch (IOException e) {
-            LOG.error("(MDHT ) Could not create DHT at level " + config.getLevel() + ", break");
+            LOG.error("(MDHT ) Could not create DHT at level " + config.getLevel() + ", break", e);
             break;
          }
       }
